@@ -1,5 +1,5 @@
 "use client";
-import { client } from "@/lib/thirdweb";
+import { thirdwebClientSide } from "@/lib/thirdweb";
 import { sepolia, optimismSepolia } from "thirdweb/chains";
 import { ConnectButton } from "thirdweb/react";
 import { createWallet, inAppWallet } from "thirdweb/wallets";
@@ -14,7 +14,7 @@ export const ConnectWallet = () => {
   return (
     <div>
       <ConnectButton
-        client={client}
+        client={thirdwebClientSide}
         showAllWallets={false}
         wallets={wallets}
         chains={chains}
