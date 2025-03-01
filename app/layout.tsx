@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ThirdwebProvider } from "thirdweb/react";
+import { MainHeader } from "@/components/commons/MainHeader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +29,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <ThirdwebProvider>
+          <MainHeader />
+          <div>{children}</div>
+        </ThirdwebProvider>
       </body>
     </html>
   );
