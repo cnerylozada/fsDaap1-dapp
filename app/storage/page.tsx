@@ -1,11 +1,18 @@
-import { ReadContract } from "./_components/ReadContract";
+import { storageContractServerSideOpSepolia } from "@/contracts/storage";
+import { readContract } from "thirdweb";
 
-export default function Page() {
+export default async function Page() {
+  const course = await readContract({
+    contract: storageContractServerSideOpSepolia,
+    method: "function getCourse() external view returns (string memory)",
+    params: [],
+  });
+
   return (
     <div>
-      <div>Storage</div>
+      <div className="font-bold">Storage Contract</div>
       <div>
-        <ReadContract />
+        <span className="font-bold">Course:</span> {course}
       </div>
     </div>
   );

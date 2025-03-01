@@ -1,5 +1,5 @@
 "use client";
-import { thirdwebClientSide } from "@/lib/thirdweb";
+import { thirdwebClientSide } from "@/lib/thirdweb/client";
 import { sepolia, optimismSepolia } from "thirdweb/chains";
 import { ConnectButton } from "thirdweb/react";
 import { createWallet, inAppWallet } from "thirdweb/wallets";
