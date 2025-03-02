@@ -4,13 +4,16 @@ import { useReadContract } from "thirdweb/react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useState } from "react";
 
 const schema = z.object({
-  index: z.number().int(),
+  index: z.number({ invalid_type_error: "Only integers" }).int(),
 });
 type SchemaType = z.infer<typeof schema>;
 
 export const GetStudent = () => {
+  const [submittedIndex, setSubmittedIndex] = useState<number | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -20,20 +23,24 @@ export const GetStudent = () => {
     mode: "all",
     resolver: zodResolver(schema),
   });
-  const onSubmit: SubmitHandler<SchemaType> = () => {
-    refetch();
+  const onSubmit: SubmitHandler<SchemaType> = async (data) => {
+    setSubmittedIndex(data.index);
+    await refetch();
   };
 
-  const { data, isLoading, refetch } = useReadContract({
+  const { data, isLoading, error, refetch } = useReadContract({
     contract: storageContractClientSideOpSepolia,
     method:
       "function getStudentByIndex(uint _index) external view returns (Utils.Student memory)",
     params: [BigInt(isNaN(getValues("index")) ? 0 : getValues("index"))],
+    queryOptions: {
+      enabled: !!submittedIndex,
+    },
   });
 
   return (
     <div>
-      <div className="font-bold">GetStudent</div>
+      <div className="font-bold">GetStudent by index</div>
       <div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex space-x-2 items-center">
@@ -64,11 +71,13 @@ export const GetStudent = () => {
         </form>
       </div>
       <div>
-        {isLoading && <div>Searching student ...</div>}
-        {!isLoading && !data && (
-          <div>No results for student index: {getValues("index")}</div>
+        {isLoading && (
+          <div className="text-sm">Searching student by index ...</div>
         )}
-        {!isLoading && !!data && <div>{JSON.stringify(data)}</div>}
+        {!isLoading && !error && <div>{JSON.stringify(data)}</div>}
+        {error && (
+          <div>There is no results for student-index: {getValues("index")}</div>
+        )}
       </div>
     </div>
   );
