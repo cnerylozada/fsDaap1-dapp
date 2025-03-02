@@ -10,9 +10,9 @@ export default async function Page() {
   });
 
   return (
-    <div>
+    <div className="px-4">
       <div className="font-bold">Storage Contract</div>
-      <div>
+      <div className="mb-4">
         <span className="font-bold">Course:</span> {course}
       </div>
       <Students />
