@@ -1,5 +1,6 @@
-import { storageContractServerSideOpSepolia } from "@/contracts/storage";
 import { readContract } from "thirdweb";
+import { Students } from "./_components/Students";
+import { storageContractServerSideOpSepolia } from "@/contracts/server";
 
 export default async function Page() {
   const course = await readContract({
@@ -14,6 +15,7 @@ export default async function Page() {
       <div>
         <span className="font-bold">Course:</span> {course}
       </div>
+      <Students />
     </div>
   );
 }
