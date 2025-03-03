@@ -5,6 +5,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState } from "react";
+import { studentLevels } from "./AddNewStudentForm";
 
 const schema = z.object({
   index: z.number({ invalid_type_error: "Only integers" }).int(),
@@ -74,9 +75,16 @@ export const GetStudent = () => {
         {isLoading && (
           <div className="text-sm">Searching student by index ...</div>
         )}
-        {!isLoading && !error && <div>{JSON.stringify(data)}</div>}
+        {!isLoading && !error && data && (
+          <div>
+            Name: {data[0]} Level:{" "}
+            {studentLevels.filter((_) => _.value === data[1])[0].label}
+          </div>
+        )}
         {error && (
-          <div>There is no results for student-index: {getValues("index")}</div>
+          <div className="text-sm">
+            There is no results for student-index: {getValues("index")}
+          </div>
         )}
       </div>
     </div>

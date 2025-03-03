@@ -13,7 +13,7 @@ import {
 import { shortenHex } from "thirdweb/utils";
 import { z } from "zod";
 
-const studentLevels = [
+export const studentLevels = [
   { value: 0, label: "Beginner" },
   { value: 1, label: "Medium" },
   { value: 2, label: "Advanced" },
