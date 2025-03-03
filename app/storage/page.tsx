@@ -1,21 +1,28 @@
-import { readContract } from "thirdweb";
-import { Students } from "./_components/Students";
-import { storageContractServerSideOpSepolia } from "@/contracts/server";
+import { appNetworks } from "@/contracts/networks";
+import Link from "next/link";
+import { formatToValidPath } from "@/components/utils";
 
 export default async function Page() {
-  const course = await readContract({
-    contract: storageContractServerSideOpSepolia,
-    method: "function getCourse() external view returns (string memory)",
-    params: [],
-  });
-
   return (
-    <div className="px-4">
-      <div className="font-bold">Storage Contract</div>
-      <div className="mb-4">
-        <span className="font-bold">Course:</span> {course}
+    <div className="px-4 space-y-4">
+      <div>
+        <div className="font-bold">Storage Contract</div>
+        <div>Select your network:</div>
+        <div className="space-x-4">
+          {appNetworks.map((_) => (
+            <div
+              key={_.chain.name}
+              className="border rounded-md p-1 inline-block"
+            >
+              <Link
+                href={`storage/networks/${formatToValidPath(_.chain.name!)}`}
+              >
+                {_.chain.name}
+              </Link>
+            </div>
+          ))}
+        </div>
       </div>
-      <Students />
     </div>
   );
 }
