@@ -1,6 +1,7 @@
 import { GetCourse } from "../../_components/GetCourse";
 import { notFound } from "next/navigation";
 import { appNetworks } from "@/contracts/networks";
+import { Students } from "../../_components/Students";
 
 export default async function Page({
   params,
@@ -15,7 +16,7 @@ export default async function Page({
     <div className="px-4">
       <div>{validChain.chain.name}</div>
       <GetCourse chain={validChain.chain} />
-      {/* <Students /> */}
+      <Students contractChain={validChain.chain} />
     </div>
   );
 }

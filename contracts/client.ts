@@ -10,7 +10,7 @@ export const getStorageContractClientSideByNetwork = (chain: ChainOptions) => {
 
   return getContract({
     client: thirdwebClientSide,
+    chain: appNetworks.filter((_) => _.chain.name === chain.name)[0].chain,
     address,
-    chain: appNetworks.filter((_) => _.chain === chain)[0].chain,
   });
 };
