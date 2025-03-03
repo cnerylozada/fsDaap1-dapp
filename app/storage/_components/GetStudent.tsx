@@ -31,7 +31,7 @@ export const GetStudent = () => {
   const { data, isLoading, error, refetch } = useReadContract({
     contract: storageContractClientSideOpSepolia,
     method:
-      "function getStudentByIndex(uint _index) external view returns (Utils.Student memory)",
+      "function getStudentByIndex(uint _index) external view returns (string memory, uint8)",
     params: [BigInt(isNaN(getValues("index")) ? 0 : getValues("index"))],
     queryOptions: {
       enabled: !!submittedIndex,

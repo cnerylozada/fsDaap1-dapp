@@ -1,3 +1,3 @@
 export const storageContractAddress = {
-  opSepolia: "0xb534EbB6309D6E9D3CF222C16a1b55FfE19f1c87",
+  opSepolia: "0x9c55CC433789a94d9f8b170eAdD10ac370599eED",
 };
