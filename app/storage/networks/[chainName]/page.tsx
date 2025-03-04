@@ -1,7 +1,15 @@
-import { GetCourse } from "../../_components/GetCourse";
+import {
+  appNetworks,
+  storageFactoryContractAddress,
+} from "@/contracts/networks";
+import { readContract } from "thirdweb";
+import {
+  getServerSideContractByChainAndAddress,
+  getStorageFactoryContractServerSideByNetwork,
+} from "@/contracts/server";
+import { optimismSepolia } from "thirdweb/chains";
+import { shortenAddress } from "thirdweb/utils";
 import { notFound } from "next/navigation";
-import { appNetworks } from "@/contracts/networks";
-import { Students } from "../../_components/Students";
 
 export default async function Page({
   params,
@@ -9,14 +17,51 @@ export default async function Page({
   params: Promise<{ chainName: string }>;
 }) {
   const { chainName } = await params;
-  const validChain = appNetworks.find((_) => _.path === chainName);
+  const validChain = storageFactoryContractAddress
+    .map((_) => ({
+      ...appNetworks.filter((item) => item.chain === _.chain)[0],
+    }))
+    .find((_) => _.path === chainName);
   if (!validChain) return notFound();
+
+  const addressList = await readContract({
+    contract: getStorageFactoryContractServerSideByNetwork(validChain.chain),
+    method:
+      "function getAddressList() external view returns (address[] memory)",
+    params: [],
+  });
 
   return (
     <div className="px-4">
-      <div>{validChain.chain.name}</div>
-      <GetCourse chain={validChain.chain} />
-      <Students contractChain={validChain.chain} />
+      <div className="mb-4">
+        <div className="font-bold">
+          StorageFactory Contract: {validChain.chain.name}
+        </div>
+        <div>List of classrooms:</div>
+      </div>
+      <div className="space-y-4">
+        {addressList.length ? (
+          addressList.map(async (_) => {
+            const course = await readContract({
+              contract: getServerSideContractByChainAndAddress(
+                optimismSepolia,
+                _
+              ),
+              method:
+                "function getCourse() external view returns (string memory)",
+              params: [],
+            });
+            return (
+              <div key={_} className="border rounded-md p-3">
+                <div>Contract Address: {shortenAddress(_)}</div>
+                <div>Course: {course}</div>
+              </div>
+            );
+          })
+        ) : (
+          <div>There are no classrooms created yet</div>
+        )}
+      </div>
     </div>
   );
 }

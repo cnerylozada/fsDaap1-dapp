@@ -13,13 +13,11 @@ export const appNetworks = [
     scan: `https://sepolia.etherscan.io/tx`,
   },
 ];
-export const storageContractAddress = [
+
+export const storageFactoryContractAddress = [
   {
-    chainId: optimismSepolia.id,
-    address: "0x9c55CC433789a94d9f8b170eAdD10ac370599eED",
+    chain: optimismSepolia,
+    address: "0x1bc57f55070Bd358A36e7B4ebFd266f6a78376ef",
   },
-  {
-    chainId: sepolia.id,
-    address: "0x09fc0F69F069e71D7C18666A05aB01f4a3375bd6",
-  },
+  { chain: sepolia, address: "0x1859164F9778565a7fe479b349B4A1aD8A7608D7" },
 ];

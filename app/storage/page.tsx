@@ -1,4 +1,4 @@
-import { appNetworks } from "@/contracts/networks";
+import { storageFactoryContractAddress } from "@/contracts/networks";
 import Link from "next/link";
 import { formatToValidPath } from "@/components/utils";
 
@@ -6,10 +6,10 @@ export default async function Page() {
   return (
     <div className="px-4 space-y-4">
       <div>
-        <div className="font-bold">Storage Contract</div>
+        <div className="font-bold">Storage Factory Contract</div>
         <div>Select your network:</div>
         <div className="space-x-4">
-          {appNetworks.map((_) => (
+          {storageFactoryContractAddress.map((_) => (
             <div
               key={_.chain.name}
               className="border rounded-md p-1 inline-block"
