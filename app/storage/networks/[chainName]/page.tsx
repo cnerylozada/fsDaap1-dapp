@@ -7,9 +7,9 @@ import {
   getServerSideContractByChainAndAddress,
   getStorageFactoryContractServerSideByNetwork,
 } from "@/contracts/server";
-import { optimismSepolia } from "thirdweb/chains";
 import { shortenAddress } from "thirdweb/utils";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 
 export default async function Page({
   params,
@@ -42,9 +42,12 @@ export default async function Page({
       <div className="space-y-4">
         {addressList.length ? (
           addressList.map(async (_) => {
+            const contractChain = appNetworks.filter(
+              (item) => item.path === chainName
+            )[0].chain;
             const course = await readContract({
               contract: getServerSideContractByChainAndAddress(
-                optimismSepolia,
+                contractChain,
                 _
               ),
               method:
@@ -52,10 +55,14 @@ export default async function Page({
               params: [],
             });
             return (
-              <div key={_} className="border rounded-md p-3">
+              <Link
+                href={`${chainName}/${_}`}
+                key={_}
+                className="block border rounded-md p-3"
+              >
                 <div>Contract Address: {shortenAddress(_)}</div>
                 <div>Course: {course}</div>
-              </div>
+              </Link>
             );
           })
         ) : (

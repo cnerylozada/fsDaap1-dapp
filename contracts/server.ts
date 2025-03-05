@@ -10,7 +10,7 @@ export const getServerSideContractByChainAndAddress = (
   return getContract({
     client: thirdwebServerSide,
     address,
-    chain: appNetworks.filter((_) => _.chain === chain)[0].chain,
+    chain: appNetworks.filter((_) => _.chain.id === chain.id)[0].chain,
   });
 };
 

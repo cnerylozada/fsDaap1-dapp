@@ -1,5 +1,5 @@
 "use client";
-import { getStorageContractClientSideByNetwork } from "@/contracts/client";
+import { getClientSideContractByChainAndAddress } from "@/contracts/client";
 import { appNetworks } from "@/contracts/networks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -28,8 +28,10 @@ type SchemaType = z.infer<typeof schema>;
 
 export const AddNewStudentForm = ({
   contractChain,
+  contractAddress,
 }: {
   contractChain: ChainOptions;
+  contractAddress: string;
 }) => {
   const appNetwork = appNetworks.filter(
     (_) => _.chain.name === contractChain.name
@@ -56,7 +58,10 @@ export const AddNewStudentForm = ({
 
   const onSubmit: SubmitHandler<SchemaType> = async (data) => {
     const tx = prepareContractCall({
-      contract: getStorageContractClientSideByNetwork(contractChain),
+      contract: getClientSideContractByChainAndAddress(
+        contractChain,
+        contractAddress
+      ),
       method:
         "function addNewStudent(string calldata _name, uint8 _level) external",
       params: [data.name, data.level],
