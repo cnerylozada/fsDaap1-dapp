@@ -9,7 +9,7 @@ import { studentLevels } from "./AddNewStudentForm";
 import { getClientSideContractByChainAndAddress } from "@/contracts/client";
 
 const schema = z.object({
-  index: z.number({ invalid_type_error: "Only integers" }).int(),
+  index: z.number({ invalid_type_error: "Only integers" }).int().min(0),
 });
 type SchemaType = z.infer<typeof schema>;
 

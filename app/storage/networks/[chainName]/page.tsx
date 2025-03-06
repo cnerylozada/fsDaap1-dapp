@@ -2,11 +2,8 @@ import {
   appNetworks,
   storageFactoryContractAddress,
 } from "@/contracts/networks";
-import { readContract } from "thirdweb";
-import {
-  getServerSideContractByChainAndAddress,
-  getStorageFactoryContractServerSideByNetwork,
-} from "@/contracts/server";
+import { getContractEvents, prepareEvent } from "thirdweb";
+import { getStorageFactoryContractServerSideByNetwork } from "@/contracts/server";
 import { shortenAddress } from "thirdweb/utils";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -24,50 +21,54 @@ export default async function Page({
     .find((_) => _.path === chainName);
   if (!validChain) return notFound();
 
-  const addressList = await readContract({
+  const newContractCreatedEvent = prepareEvent({
+    signature: "event NewContractCreated(address _address, string _course)",
+  });
+  const storageFactoryEvents = await getContractEvents({
     contract: getStorageFactoryContractServerSideByNetwork(validChain.chain),
-    method:
-      "function getAddressList() external view returns (address[] memory)",
-    params: [],
+    events: [newContractCreatedEvent],
+    fromBlock: "earliest",
+    toBlock: "latest",
   });
 
   return (
-    <div className="px-4">
-      <div className="mb-4">
+    <div className="p-4 space-y-4">
+      <div>
         <div className="font-bold">
           StorageFactory Contract: {validChain.chain.name}
         </div>
-        <div>List of classrooms:</div>
       </div>
-      <div className="space-y-4">
-        {addressList.length ? (
-          addressList.map(async (_) => {
-            const contractChain = appNetworks.filter(
-              (item) => item.path === chainName
-            )[0].chain;
-            const course = await readContract({
-              contract: getServerSideContractByChainAndAddress(
-                contractChain,
-                _
-              ),
-              method:
-                "function getCourse() external view returns (string memory)",
-              params: [],
-            });
-            return (
-              <Link
-                href={`${chainName}/${_}`}
-                key={_}
-                className="block border rounded-md p-3"
-              >
-                <div>Contract Address: {shortenAddress(_)}</div>
-                <div>Course: {course}</div>
-              </Link>
-            );
-          })
-        ) : (
-          <div>There are no classrooms created yet</div>
-        )}
+
+      <div>
+        <Link
+          href={`./${chainName}/new-contract`}
+          className="p-2 bg-blue-100 rounded-md"
+        >
+          Create new contract
+        </Link>
+      </div>
+
+      <div>
+        <div>List of classrooms:</div>
+        <div className="space-y-4">
+          {storageFactoryEvents.length ? (
+            storageFactoryEvents.map(async (event) => {
+              const { transactionHash, args } = event;
+              return (
+                <Link
+                  href={`${chainName}/${args._address}`}
+                  key={transactionHash}
+                  className="block border rounded-md p-3"
+                >
+                  <div>Contract Address: {shortenAddress(args._address)}</div>
+                  <div>Course: {args._course}</div>
+                </Link>
+              );
+            })
+          ) : (
+            <div>There are no classrooms created yet</div>
+          )}
+        </div>
       </div>
     </div>
   );

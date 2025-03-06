@@ -17,7 +17,7 @@ export const appNetworks = [
 export const storageFactoryContractAddress = [
   {
     chain: optimismSepolia,
-    address: "0x1bc57f55070Bd358A36e7B4ebFd266f6a78376ef",
+    address: "0xe71AfF81de4451020a21F7FEF4952B5e6A7EB4c0",
   },
-  { chain: sepolia, address: "0x1859164F9778565a7fe479b349B4A1aD8A7608D7" },
+  { chain: sepolia, address: "0x78b0bFFca466232BA064E98a5476E9E272888B63" },
 ];
