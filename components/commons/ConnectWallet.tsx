@@ -1,6 +1,6 @@
 "use client";
 import { thirdwebClientSide } from "@/lib/thirdweb/client";
-import { sepolia, optimismSepolia } from "thirdweb/chains";
+import { sepolia, optimismSepolia, arbitrumSepolia } from "thirdweb/chains";
 import { ConnectButton } from "thirdweb/react";
 import { createWallet, inAppWallet } from "thirdweb/wallets";
 
@@ -9,7 +9,7 @@ export const ConnectWallet = () => {
     inAppWallet({ auth: { options: ["google"] } }),
     createWallet("io.metamask"),
   ];
-  const chains = [sepolia, optimismSepolia];
+  const chains = [sepolia, optimismSepolia, arbitrumSepolia];
 
   return (
     <div>

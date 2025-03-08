@@ -4,22 +4,20 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState } from "react";
-import { ChainOptions } from "thirdweb/chains";
 import { studentLevels } from "./AddNewStudentForm";
 import { getClientSideContractByChainAndAddress } from "@/contracts/client";
+import { useParams } from "next/navigation";
+import { appNetworks } from "@/contracts/networks";
 
 const schema = z.object({
   index: z.number({ invalid_type_error: "Only integers" }).int().min(0),
 });
 type SchemaType = z.infer<typeof schema>;
 
-export const GetStudent = ({
-  contractChain,
-  contractAddress,
-}: {
-  contractChain: ChainOptions;
-  contractAddress: string;
-}) => {
+export const GetStudent = () => {
+  const { chainName, address: contractAddress } = useParams();
+  const appNetwork = appNetworks.filter((item) => item.path === chainName)[0];
+
   const [submittedIndex, setSubmittedIndex] = useState<number | null>(null);
 
   const {
@@ -38,8 +36,8 @@ export const GetStudent = ({
 
   const { data, isLoading, error, refetch } = useReadContract({
     contract: getClientSideContractByChainAndAddress(
-      contractChain,
-      contractAddress
+      appNetwork.chain,
+      `${contractAddress}`
     ),
     method:
       "function getStudentByIndex(uint _index) external view returns (string memory, uint8)",

@@ -12,16 +12,19 @@ export default async function Page({
 
   const contractChain = appNetworks.filter((item) => item.path === chainName)[0]
     .chain;
-  const course = await readContract({
+
+  const [course, createdAt] = await readContract({
     contract: getServerSideContractByChainAndAddress(contractChain, address),
-    method: "function getCourse() external view returns (string memory)",
+    method:
+      "function getMetadata() external view returns (string memory, uint)",
     params: [],
   });
 
   return (
     <div className="px-4">
-      <div>Course: {course}</div>
-      <Students contractChain={contractChain} address={address} />
+      <div>Course: {course} </div>
+      <div>Created at: {createdAt} </div>
+      <Students />
     </div>
   );
 }

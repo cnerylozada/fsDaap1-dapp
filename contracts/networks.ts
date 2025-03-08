@@ -1,5 +1,5 @@
 import { formatToValidPath } from "@/components/utils";
-import { optimismSepolia, sepolia } from "thirdweb/chains";
+import { arbitrumSepolia, optimismSepolia, sepolia } from "thirdweb/chains";
 
 export const appNetworks = [
   {
@@ -12,6 +12,11 @@ export const appNetworks = [
     path: formatToValidPath(sepolia.name!),
     scan: `https://sepolia.etherscan.io/tx`,
   },
+  {
+    chain: arbitrumSepolia,
+    path: formatToValidPath(arbitrumSepolia.name!),
+    scan: `https://sepolia.arbiscan.io/tx`,
+  },
 ];
 
 export const storageFactoryContractAddress = [
@@ -19,5 +24,8 @@ export const storageFactoryContractAddress = [
     chain: optimismSepolia,
     address: "0xe71AfF81de4451020a21F7FEF4952B5e6A7EB4c0",
   },
-  { chain: sepolia, address: "0x78b0bFFca466232BA064E98a5476E9E272888B63" },
+  {
+    chain: arbitrumSepolia,
+    address: "0xd124F47C397b50cD91e99FbbC98649fe7FD8D2F7",
+  },
 ];

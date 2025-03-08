@@ -1,16 +1,13 @@
 "use client";
+import { useCheckWalletAndChainConnection } from "@/components/hooks";
 import { getClientSideContractByChainAndAddress } from "@/contracts/client";
 import { appNetworks } from "@/contracts/networks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { prepareContractCall } from "thirdweb";
-import { ChainOptions } from "thirdweb/chains";
-import {
-  useActiveAccount,
-  useActiveWalletChain,
-  useSendAndConfirmTransaction,
-} from "thirdweb/react";
+import { useSendAndConfirmTransaction } from "thirdweb/react";
 import { shortenHex } from "thirdweb/utils";
 import { z } from "zod";
 
@@ -26,18 +23,13 @@ const schema = z.object({
 });
 type SchemaType = z.infer<typeof schema>;
 
-export const AddNewStudentForm = ({
-  contractChain,
-  contractAddress,
-}: {
-  contractChain: ChainOptions;
-  contractAddress: string;
-}) => {
-  const appNetwork = appNetworks.filter(
-    (_) => _.chain.name === contractChain.name
-  )[0];
-  const activeAccount = useActiveAccount();
-  const activeWalletChain = useActiveWalletChain();
+export const AddNewStudentForm = () => {
+  const { chainName, address: contractAddress } = useParams();
+  const appNetwork = appNetworks.filter((item) => item.path === chainName)[0];
+
+  const { isWalletConnectedToCorrectChain } = useCheckWalletAndChainConnection(
+    `${chainName}`
+  );
 
   const {
     mutate: sendAndConfirmTx,
@@ -59,8 +51,8 @@ export const AddNewStudentForm = ({
   const onSubmit: SubmitHandler<SchemaType> = async (data) => {
     const tx = prepareContractCall({
       contract: getClientSideContractByChainAndAddress(
-        contractChain,
-        contractAddress
+        appNetwork.chain,
+        `${contractAddress}`
       ),
       method:
         "function addNewStudent(string calldata _name, uint8 _level) external",
@@ -72,9 +64,7 @@ export const AddNewStudentForm = ({
   return (
     <div>
       <div className="font-bold">AddNewStudentForm</div>
-      {activeAccount &&
-      activeWalletChain &&
-      activeWalletChain.id === contractChain.id ? (
+      {isWalletConnectedToCorrectChain ? (
         <div>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
             <div>
@@ -135,8 +125,8 @@ export const AddNewStudentForm = ({
         <div>
           <div>
             Please connect your wallet and change to{" "}
-            <span className="font-bold">{contractChain.name}</span> to perform
-            this operation
+            <span className="font-bold">{appNetwork.chain.name}</span> to
+            perform this operation
           </div>
         </div>
       )}
