@@ -1,7 +1,6 @@
 "use client";
 import { useCheckWalletAndChainConnection } from "@/components/hooks";
 import { getStorageFactoryContractClientSideByNetwork } from "@/contracts/client";
-import { appNetworks } from "@/contracts/networks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -14,13 +13,11 @@ type SchemaType = z.infer<typeof schema>;
 
 export const CreateNewClassroom = () => {
   const { chainName } = useParams();
-  const appNetwork = appNetworks.filter((item) => item.path === chainName)[0];
 
   const { mutateAsync: sendAndConfirmTx, isPending } =
     useSendAndConfirmTransaction();
-  const { isWalletConnectedToCorrectChain } = useCheckWalletAndChainConnection(
-    `${chainName}`
-  );
+  const { isWalletConnectedToCorrectChain, targetAppNetwork } =
+    useCheckWalletAndChainConnection(`${chainName}`);
 
   const router = useRouter();
 
@@ -32,7 +29,9 @@ export const CreateNewClassroom = () => {
 
   const onSubmit: SubmitHandler<SchemaType> = async (data) => {
     const tx = prepareContractCall({
-      contract: getStorageFactoryContractClientSideByNetwork(appNetwork.chain),
+      contract: getStorageFactoryContractClientSideByNetwork(
+        targetAppNetwork.chain
+      ),
       method: "function createStorage(string calldata _course) external",
       params: [data.course],
     });
@@ -81,7 +80,7 @@ export const CreateNewClassroom = () => {
         <div>
           <div>
             Please connect your wallet and change to{" "}
-            <span className="font-bold">{appNetwork.chain.name}</span> to
+            <span className="font-bold">{targetAppNetwork.chain.name}</span> to
             perform this operation
           </div>
         </div>

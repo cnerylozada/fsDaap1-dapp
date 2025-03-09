@@ -1,6 +1,7 @@
 import { getServerSideContractByChainAndAddress } from "@/contracts/server";
 import { readContract } from "thirdweb";
 import { ChainOptions } from "thirdweb/chains";
+import { AddFundsForm } from "./AddFundsForm";
 
 export const FundMe = async ({
   currentChain,
@@ -21,8 +22,13 @@ export const FundMe = async ({
 
   return (
     <div>
-      <div>CrowdFunding</div>
-      <div>getMinAmountInUSD: USD$ {minAmountInUSD.toString()}</div>
+      <div className="mb-4">
+        <div>CrowdFunding</div>
+        <div>getMinAmountInUSD: USD$ {minAmountInUSD.toString()}</div>
+        <div>Current: USD$ {minAmountInUSD.toString()}</div>
+      </div>
+
+      <AddFundsForm minAmountInUSD={minAmountInUSD} />
     </div>
   );
 };

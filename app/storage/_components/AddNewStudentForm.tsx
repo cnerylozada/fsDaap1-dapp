@@ -1,7 +1,6 @@
 "use client";
 import { useCheckWalletAndChainConnection } from "@/components/hooks";
 import { getClientSideContractByChainAndAddress } from "@/contracts/client";
-import { appNetworks } from "@/contracts/networks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -25,11 +24,9 @@ type SchemaType = z.infer<typeof schema>;
 
 export const AddNewStudentForm = () => {
   const { chainName, address: contractAddress } = useParams();
-  const appNetwork = appNetworks.filter((item) => item.path === chainName)[0];
 
-  const { isWalletConnectedToCorrectChain } = useCheckWalletAndChainConnection(
-    `${chainName}`
-  );
+  const { isWalletConnectedToCorrectChain, targetAppNetwork } =
+    useCheckWalletAndChainConnection(`${chainName}`);
 
   const {
     mutate: sendAndConfirmTx,
@@ -51,7 +48,7 @@ export const AddNewStudentForm = () => {
   const onSubmit: SubmitHandler<SchemaType> = async (data) => {
     const tx = prepareContractCall({
       contract: getClientSideContractByChainAndAddress(
-        appNetwork.chain,
+        targetAppNetwork.chain,
         `${contractAddress}`
       ),
       method:
@@ -110,7 +107,7 @@ export const AddNewStudentForm = () => {
               <div>
                 Check your transaction:{" "}
                 <Link
-                  href={`${appNetwork.scan}/${data.transactionHash}`}
+                  href={`${targetAppNetwork.scan}/${data.transactionHash}`}
                   target="_blank"
                   className="text-blue-700 text-sm underline"
                 >
@@ -125,7 +122,7 @@ export const AddNewStudentForm = () => {
         <div>
           <div>
             Please connect your wallet and change to{" "}
-            <span className="font-bold">{appNetwork.chain.name}</span> to
+            <span className="font-bold">{targetAppNetwork.chain.name}</span> to
             perform this operation
           </div>
         </div>

@@ -12,5 +12,9 @@ export const useCheckWalletAndChainConnection = (chainName: string) => {
     activeWalletChain &&
     activeWalletChain.id === contractChain.id;
 
-  return { isWalletConnectedToCorrectChain };
+  const targetAppNetwork = appNetworks.filter(
+    (item) => item.path === chainName
+  )[0];
+
+  return { isWalletConnectedToCorrectChain, targetAppNetwork };
 };
