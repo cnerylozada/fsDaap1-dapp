@@ -29,3 +29,10 @@ export const storageFactoryContractAddress = [
     address: "0xd124F47C397b50cD91e99FbbC98649fe7FD8D2F7",
   },
 ];
+
+export const fundMeFactoryContractAddress = [
+  {
+    chain: optimismSepolia,
+    address: "0xA3befA1c11f67813Bb0482e1F8b11fB8c161A1C0",
+  },
+];
