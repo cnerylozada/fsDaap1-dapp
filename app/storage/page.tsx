@@ -1,6 +1,6 @@
 import { storageFactoryContractAddress } from "@/contracts/networks";
 import Link from "next/link";
-import { formatToValidPath } from "@/components/utils";
+import { formatToValidPath } from "@/components/utils/utils";
 
 export default async function Page() {
   return (

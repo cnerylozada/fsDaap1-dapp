@@ -1,4 +1,4 @@
-import { getAppContractByChain } from "@/app/server/utils";
+import { getAppContractByChain } from "@/components/utils/contracts";
 import { fundMeFactoryContractAddress } from "@/contracts/networks";
 import { notFound } from "next/navigation";
 import { Metadata } from "./_components/Metadata";

@@ -1,4 +1,4 @@
-import { formatToValidPath } from "@/components/utils";
+import { formatToValidPath } from "@/components/utils/utils";
 import { fundMeFactoryContractAddress } from "@/contracts/networks";
 import Link from "next/link";
 

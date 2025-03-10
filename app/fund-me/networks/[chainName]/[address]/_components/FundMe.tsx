@@ -29,7 +29,12 @@ export const FundMe = async ({
     address
   );
 
-  const [currentBalance, minAmountInUSD, funders] = await Promise.all([
+  const [owner, currentBalance, minAmountInUSD, funders] = await Promise.all([
+    readContract({
+      contract: fundMeContract,
+      method: "function getOwner() external view returns (address)",
+      params: [],
+    }),
     readContract({
       contract: fundMeContract,
       method: "function getBalance() external view returns (uint)",
@@ -52,16 +57,21 @@ export const FundMe = async ({
     <div>
       <div className="mb-4">
         <div>CrowdFunding</div>
+        <div>Owner: {owner}</div>
         <div>getBalance: {toEther(currentBalance)} ETH</div>
         <div>getMinAmountInUSD: USD$ {minAmountInUSD.toString()}</div>
         <div>
           <div>Funders:</div>
-          {funders.map((_) => (
-            <div key={_.transactionHash}>
-              <div>User Address: {shortenAddress(_.args._address)}</div>
-              <div>Amount: {toEther(_.args._amount)} ETH</div>
-            </div>
-          ))}
+          {funders.length ? (
+            funders.map((_) => (
+              <div key={_.transactionHash}>
+                <div>User Address: {shortenAddress(_.args._address)}</div>
+                <div>Amount: {toEther(_.args._amount)} ETH</div>
+              </div>
+            ))
+          ) : (
+            <div>There are no funders yet</div>
+          )}
         </div>
       </div>
 

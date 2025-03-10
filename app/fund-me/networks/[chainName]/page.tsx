@@ -1,4 +1,4 @@
-import { getAppContractByChain } from "@/app/server/utils";
+import { getAppContractByChain } from "@/components/utils/contracts";
 import { fundMeFactoryContractAddress } from "@/contracts/networks";
 import { getServerSideContractByChainAndAddress } from "@/contracts/server";
 import Link from "next/link";
@@ -34,7 +34,15 @@ export default async function Page({
   });
 
   return (
-    <div className="p-4">
+    <div className="p-4 space-y-4">
+      <div>
+        <Link
+          href={`./${chainName}/new-contract`}
+          className="p-2 bg-blue-100 rounded-md"
+        >
+          Create new contract
+        </Link>
+      </div>
       <div>
         <div className="mb-2 font-bold">List of crowd-funding:</div>
         <div className="space-y-4">

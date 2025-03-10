@@ -1,4 +1,4 @@
-import { formatToValidPath } from "@/components/utils";
+import { formatToValidPath } from "@/components/utils/utils";
 import { arbitrumSepolia, optimismSepolia, sepolia } from "thirdweb/chains";
 
 export const appNetworks = [
@@ -32,7 +32,7 @@ export const storageFactoryContractAddress = [
 
 export const fundMeFactoryContractAddress = [
   {
-    chain: arbitrumSepolia,
-    address: "0x2653cc279e220d6AC5a7c5Eac53b55c1D345C510",
+    chain: optimismSepolia,
+    address: "0x81F24c2654dC74Ada49ec3AEa415B94e89Eb5DDC",
   },
 ];
