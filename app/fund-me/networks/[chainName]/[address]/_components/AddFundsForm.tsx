@@ -1,24 +1,22 @@
 "use client";
 import { useCheckWalletAndChainConnection } from "@/components/hooks";
+import { getClientSideContractByChainAndAddress } from "@/contracts/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useParams } from "next/navigation";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { prepareContractCall, toWei } from "thirdweb";
+import { useSendAndConfirmTransaction } from "thirdweb/react";
+import { shortenHex } from "thirdweb/utils";
 import { z } from "zod";
 
-const schema = (minAmountInUSD: number) =>
-  z.object({
-    funds: z
-      .number({ invalid_type_error: "Enter a valid amount" })
-      .min(minAmountInUSD),
-  });
-type SchemaType = z.infer<ReturnType<typeof schema>>;
+const schema = z.object({
+  funds: z.number({ invalid_type_error: "Enter a valid amount" }).positive(),
+});
+type SchemaType = z.infer<typeof schema>;
 
-export const AddFundsForm = ({
-  minAmountInUSD,
-}: {
-  minAmountInUSD: bigint;
-}) => {
-  const { chainName } = useParams();
+export const AddFundsForm = () => {
+  const { chainName, address: contractAddress } = useParams();
   const { isWalletConnectedToCorrectChain, targetAppNetwork } =
     useCheckWalletAndChainConnection(`${chainName}`);
 
@@ -28,11 +26,26 @@ export const AddFundsForm = ({
     formState: { errors },
   } = useForm<SchemaType>({
     mode: "all",
-    resolver: zodResolver(schema(+minAmountInUSD.toString())),
+    resolver: zodResolver(schema),
   });
 
+  const { mutateAsync, data, isPending, isSuccess, error } =
+    useSendAndConfirmTransaction();
+
+  const router = useRouter();
+
   const onSubmit: SubmitHandler<SchemaType> = async (data) => {
-    console.log(`data`, data);
+    const tx = prepareContractCall({
+      contract: getClientSideContractByChainAndAddress(
+        targetAppNetwork.chain,
+        `${contractAddress}`
+      ),
+      method: "function fund() external payable",
+      params: [],
+      value: toWei(data.funds.toString()),
+    });
+    await mutateAsync(tx);
+    router.refresh();
   };
 
   return (
@@ -47,7 +60,7 @@ export const AddFundsForm = ({
                 <input
                   {...register("funds", { valueAsNumber: true })}
                   className="border"
-                  placeholder="$3"
+                  placeholder="0.5 ETH"
                 />
               </div>
               <div>
@@ -67,6 +80,22 @@ export const AddFundsForm = ({
               </button>
             </div>
           </form>
+          <div>
+            {isPending && <div>Loading transaction ...</div>}
+            {isSuccess && (
+              <div>
+                Check your transaction:{" "}
+                <Link
+                  href={`${targetAppNetwork.scan}/${data.transactionHash}`}
+                  target="_blank"
+                  className="text-blue-700 text-sm underline"
+                >
+                  Transaction Hash: {shortenHex(data.transactionHash)}
+                </Link>
+              </div>
+            )}
+            {error && <div>{JSON.stringify(error)}</div>}
+          </div>
         </div>
       ) : (
         <div>
