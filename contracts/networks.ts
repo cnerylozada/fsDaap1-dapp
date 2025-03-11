@@ -35,4 +35,8 @@ export const fundMeFactoryContractAddress = [
     chain: optimismSepolia,
     address: "0x81F24c2654dC74Ada49ec3AEa415B94e89Eb5DDC",
   },
+  {
+    chain: arbitrumSepolia,
+    address: "0xF50b41c16ABAcDa7eeEaCbb185662B36B9DA3dE3",
+  },
 ];

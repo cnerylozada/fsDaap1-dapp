@@ -10,9 +10,22 @@ import { useSendAndConfirmTransaction } from "thirdweb/react";
 import Link from "next/link";
 import { shortenHex } from "thirdweb/utils";
 
+const priceFeedAddresses = [
+  {
+    address: "0x61Ec26aA57019C486B10502285c5A3D4A4750AD7",
+    decimals: 8,
+    chainId: 11155420,
+  },
+  {
+    address: "0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165",
+    decimals: 8,
+    chainId: 421614,
+  },
+];
+
 const schema = z.object({
-  title: z.string(),
-  description: z.string(),
+  title: z.string().min(5).max(30),
+  description: z.string().min(5).max(50),
   minAmountInUsd: z
     .number({ invalid_type_error: "Enter a valid number" })
     .positive(),
@@ -39,6 +52,10 @@ export const CreateNewCrowdFundingForm = ({
   } = useForm({ mode: "all", resolver: zodResolver(schema) });
 
   const onSubmit: SubmitHandler<SchemaType> = async (data) => {
+    const dataFeed = priceFeedAddresses.filter(
+      (_) => _.chainId === targetAppNetwork.chain.id
+    )[0];
+
     const tx = prepareContractCall({
       contract: getClientSideContractByChainAndAddress(
         targetAppNetwork.chain,
@@ -50,8 +67,8 @@ export const CreateNewCrowdFundingForm = ({
         data.title,
         data.description,
         BigInt(3),
-        "0x61Ec26aA57019C486B10502285c5A3D4A4750AD7",
-        BigInt(8),
+        dataFeed.address,
+        BigInt(dataFeed.decimals),
       ],
     });
     await mutateAsync(tx);

@@ -55,17 +55,18 @@ export const FundMe = async ({
 
   return (
     <div>
-      <div className="mb-4">
-        <div>CrowdFunding</div>
-        <div>Owner: {owner}</div>
-        <div>getBalance: {toEther(currentBalance)} ETH</div>
-        <div>getMinAmountInUSD: USD$ {minAmountInUSD.toString()}</div>
+      <div className="mb-4 block border rounded-md p-3">
+        <div className="font-bold">Owner: {shortenAddress(owner)}</div>
+        <div className="flex gap-x-5">
+          <div>Balance: {toEther(currentBalance)} ETH</div>
+          <div>Min: USD$ {minAmountInUSD.toString()}</div>
+        </div>
         <div>
-          <div>Funders:</div>
+          <div className="font-bold">Funders:</div>
           {funders.length ? (
             funders.map((_) => (
-              <div key={_.transactionHash}>
-                <div>User Address: {shortenAddress(_.args._address)}</div>
+              <div key={_.transactionHash} className="flex gap-x-5">
+                <div>Wallet: {shortenAddress(_.args._address)}</div>
                 <div>Amount: {toEther(_.args._amount)} ETH</div>
               </div>
             ))

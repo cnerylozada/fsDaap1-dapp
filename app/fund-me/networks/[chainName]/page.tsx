@@ -1,4 +1,5 @@
 import { getAppContractByChain } from "@/components/utils/contracts";
+import { getDateAndTime } from "@/components/utils/utils";
 import { fundMeFactoryContractAddress } from "@/contracts/networks";
 import { getServerSideContractByChainAndAddress } from "@/contracts/server";
 import Link from "next/link";
@@ -57,7 +58,7 @@ export default async function Page({
                 >
                   <div>Title: {args._title}</div>
                   <div>Address: {shortenAddress(args._address)}</div>
-                  <div>Created at: {args._createdAt}</div>
+                  <div>Created at: {getDateAndTime(args._createdAt)}</div>
                 </Link>
               );
             })

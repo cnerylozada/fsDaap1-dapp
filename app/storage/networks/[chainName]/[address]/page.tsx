@@ -1,4 +1,5 @@
 import { Students } from "@/app/storage/_components/Students";
+import { getDateAndTime } from "@/components/utils/utils";
 import { appNetworks } from "@/contracts/networks";
 import { getServerSideContractByChainAndAddress } from "@/contracts/server";
 import { readContract } from "thirdweb";
@@ -23,7 +24,7 @@ export default async function Page({
   return (
     <div className="px-4">
       <div>Course: {course} </div>
-      <div>Created at: {createdAt} </div>
+      <div>Created at: {getDateAndTime(createdAt)} </div>
       <Students />
     </div>
   );
