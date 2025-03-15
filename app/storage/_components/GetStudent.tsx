@@ -5,9 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState } from "react";
 import { studentLevels } from "./AddNewStudentForm";
-import { getClientSideContractByChainAndAddress } from "@/contracts/client";
 import { useParams } from "next/navigation";
-import { appNetworks } from "@/contracts/networks";
+import { getContractByChainAndAddress } from "@/contracts/client";
+import { getAppChainIdByPath } from "@/components/utils/contracts";
 
 const schema = z.object({
   index: z.number({ invalid_type_error: "Only integers" }).int().min(0),
@@ -15,8 +15,8 @@ const schema = z.object({
 type SchemaType = z.infer<typeof schema>;
 
 export const GetStudent = () => {
-  const { chainName, address: contractAddress } = useParams();
-  const appNetwork = appNetworks.filter((item) => item.path === chainName)[0];
+  const { networkName, address } = useParams();
+  const appChainId = getAppChainIdByPath(`${networkName}`);
 
   const [submittedIndex, setSubmittedIndex] = useState<number | null>(null);
 
@@ -35,10 +35,7 @@ export const GetStudent = () => {
   };
 
   const { data, isLoading, error, refetch } = useReadContract({
-    contract: getClientSideContractByChainAndAddress(
-      appNetwork.chain,
-      `${contractAddress}`
-    ),
+    contract: getContractByChainAndAddress(appChainId, `${address}`),
     method:
       "function getStudentByIndex(uint _index) external view returns (string memory, uint8)",
     params: [BigInt(isNaN(getValues("index")) ? 0 : getValues("index"))],

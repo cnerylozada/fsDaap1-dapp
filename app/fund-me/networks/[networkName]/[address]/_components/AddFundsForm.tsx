@@ -4,37 +4,26 @@ import { getContractByChainAndAddress } from "@/contracts/client";
 import { appScanURLRecord } from "@/contracts/settings";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { prepareContractCall } from "thirdweb";
+import { prepareContractCall, toWei } from "thirdweb";
 import { useSendAndConfirmTransaction } from "thirdweb/react";
 import { shortenHex } from "thirdweb/utils";
 import { z } from "zod";
 
-export const studentLevels = [
-  { value: 0, label: "Beginner" },
-  { value: 1, label: "Medium" },
-  { value: 2, label: "Advanced" },
-];
-
 const schema = z.object({
-  name: z.string().min(5),
-  level: z.number().int(),
+  funds: z.number({ invalid_type_error: "Enter a valid amount" }).positive(),
 });
 type SchemaType = z.infer<typeof schema>;
 
-export const AddNewStudentForm = () => {
+export const AddFundsForm = () => {
   const { networkName, address } = useParams();
-
   const {
     isWalletConnectedToCorrectChain,
     targetAppNetwork,
     appChainId,
     walletAddress,
   } = useCheckWalletAndNetwork(`${networkName}`);
-
-  const { mutate, data, isPending, isSuccess, error } =
-    useSendAndConfirmTransaction();
 
   const {
     register,
@@ -45,14 +34,20 @@ export const AddNewStudentForm = () => {
     resolver: zodResolver(schema),
   });
 
+  const { mutateAsync, data, isPending, isSuccess, error } =
+    useSendAndConfirmTransaction();
+
+  const router = useRouter();
+
   const onSubmit: SubmitHandler<SchemaType> = async (data) => {
     const tx = prepareContractCall({
       contract: getContractByChainAndAddress(appChainId, `${address}`),
-      method:
-        "function addNewStudent(string calldata _name, uint8 _level) external",
-      params: [data.name, data.level],
+      method: "function fund() external payable",
+      params: [],
+      value: toWei(data.funds.toString()),
     });
-    mutate(tx);
+    await mutateAsync(tx);
+    router.refresh();
   };
 
   if (!walletAddress || !isWalletConnectedToCorrectChain)
@@ -64,43 +59,31 @@ export const AddNewStudentForm = () => {
 
   return (
     <div>
-      <div className="font-bold">AddNewStudentForm</div>
+      <div className="font-bold">AddFundsForm</div>
       <div>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
           <div>
             <div>
               <input
-                {...register("name")}
+                {...register("funds", { valueAsNumber: true })}
                 className="border"
-                placeholder="Name"
+                placeholder="0.5 ETH"
               />
             </div>
             <div>
-              {!!errors.name && (
+              {!!errors.funds && (
                 <div className="mt-1 text-sm text-red-700">
-                  {errors.name.message}
+                  {errors.funds.message}
                 </div>
               )}
-            </div>
-          </div>
-          <div>
-            <div>
-              <select {...register("level", { valueAsNumber: true })}>
-                {studentLevels.map((_) => (
-                  <option key={_.value} value={_.value}>
-                    {_.label}
-                  </option>
-                ))}
-              </select>
             </div>
           </div>
           <div>
             <button
               className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200"
               type="submit"
-              disabled={isPending}
             >
-              Add new student
+              Add funds
             </button>
           </div>
         </form>

@@ -1,5 +1,5 @@
-import { formatToValidPath } from "@/components/utils/utils";
-import { fundMeFactoryContractAddress } from "@/contracts/networks";
+import { fundMeFactoryContracts } from "@/contracts/contracts";
+import { appNetworkPathRecord, appNetworkRecord } from "@/contracts/settings";
 import Link from "next/link";
 
 export default function Page() {
@@ -9,15 +9,12 @@ export default function Page() {
         <div className="font-bold">FundMe Factory Contract</div>
         <div>Select your network:</div>
         <div className="space-x-4">
-          {fundMeFactoryContractAddress.map((_) => (
-            <div
-              key={_.chain.name}
-              className="border rounded-md p-1 inline-block"
-            >
+          {fundMeFactoryContracts.map((_) => (
+            <div key={_.address} className="border rounded-md p-1 inline-block">
               <Link
-                href={`fund-me/networks/${formatToValidPath(_.chain.name!)}`}
+                href={`fund-me/networks/${appNetworkPathRecord[_.chainId]}`}
               >
-                {_.chain.name}
+                {appNetworkRecord[_.chainId]?.name}
               </Link>
             </div>
           ))}

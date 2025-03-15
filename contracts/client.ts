@@ -1,25 +1,14 @@
 import { thirdwebClientSide } from "@/lib/thirdweb/client";
 import { getContract } from "thirdweb";
-import { ChainOptions } from "thirdweb/chains";
-import { appNetworks, storageFactoryContractAddress } from "./networks";
+import { AppChainId, appNetworkRecord } from "./settings";
 
-export const getClientSideContractByChainAndAddress = (
-  chain: ChainOptions,
+export const getContractByChainAndAddress = (
+  chain: AppChainId,
   address: string
 ) => {
   return getContract({
     client: thirdwebClientSide,
     address,
-    chain: appNetworks.filter((_) => _.chain.id === chain.id)[0].chain,
+    chain: appNetworkRecord[chain],
   });
-};
-
-export const getStorageFactoryContractClientSideByNetwork = (
-  chain: ChainOptions
-) => {
-  const address = storageFactoryContractAddress.filter(
-    (_) => _.chain.id === chain.id
-  )[0].address;
-
-  return getClientSideContractByChainAndAddress(chain, address);
 };

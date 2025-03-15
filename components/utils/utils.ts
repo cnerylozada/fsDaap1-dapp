@@ -1,4 +1,8 @@
-export const formatToValidPath = (text: string) => {
+import { ChainOptions } from "thirdweb/chains";
+
+export const formatToValidPath = (chain: ChainOptions) => {
+  if (!chain.name) return "";
+  const text = chain.name;
   const lowercase = text.toLowerCase();
   const hyphenated = lowercase.replace(/\s+/g, "-");
   const cleaned = hyphenated.replace(/[^a-z0-9-]/g, "");

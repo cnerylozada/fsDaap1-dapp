@@ -1,7 +1,8 @@
-import { getAppContractByChain } from "@/components/utils/contracts";
+import { getAppChainIdByPath } from "@/components/utils/contracts";
 import { getDateAndTime } from "@/components/utils/utils";
-import { fundMeFactoryContractAddress } from "@/contracts/networks";
-import { getServerSideContractByChainAndAddress } from "@/contracts/server";
+import { getContractByChainAndAddress } from "@/contracts/server";
+import { fundMeFactoryContracts } from "@/contracts/contracts";
+import { appNetworkPathRecord } from "@/contracts/settings";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getContractEvents, prepareEvent } from "thirdweb";
@@ -10,23 +11,26 @@ import { shortenAddress } from "thirdweb/utils";
 export default async function Page({
   params,
 }: {
-  params: Promise<{ chainName: string }>;
+  params: Promise<{ networkName: string }>;
 }) {
-  const { chainName } = await params;
-  const appContract = getAppContractByChain(
-    fundMeFactoryContractAddress,
-    chainName
+  const { networkName } = await params;
+  const isValidNetwork = Object.values(appNetworkPathRecord).find(
+    (_) => _ === networkName
   );
-  if (!appContract) return notFound();
+  if (!isValidNetwork) return notFound();
+
+  const appChainId = getAppChainIdByPath(networkName);
+  const appContract = fundMeFactoryContracts.filter(
+    (_) => _.chainId === appChainId
+  )[0];
 
   const newCrowdFundingEvent = prepareEvent({
     signature:
       "event NewCrowdFunding(address indexed _address, uint _createdAt, string _title, string _description, uint _minAmountInUsd, address _priceFeedAddress, int _priceFeedDecimals)",
   });
-
   const crowdFundingList = await getContractEvents({
-    contract: getServerSideContractByChainAndAddress(
-      appContract.chain,
+    contract: getContractByChainAndAddress(
+      appContract.chainId,
       appContract.address
     ),
     events: [newCrowdFundingEvent],
@@ -38,7 +42,7 @@ export default async function Page({
     <div className="p-4 space-y-4">
       <div>
         <Link
-          href={`./${chainName}/new-contract`}
+          href={`./${networkName}/new-contract`}
           className="p-2 bg-blue-100 rounded-md"
         >
           Create new contract
@@ -53,7 +57,7 @@ export default async function Page({
               return (
                 <Link
                   key={transactionHash}
-                  href={`${chainName}/${args._address}`}
+                  href={`${networkName}/${args._address}`}
                   className="block border rounded-md p-3"
                 >
                   <div>Title: {args._title}</div>

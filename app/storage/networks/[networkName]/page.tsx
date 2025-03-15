@@ -1,31 +1,36 @@
-import {
-  appNetworks,
-  storageFactoryContractAddress,
-} from "@/contracts/networks";
 import { getContractEvents, prepareEvent } from "thirdweb";
-import { getStorageFactoryContractServerSideByNetwork } from "@/contracts/server";
 import { shortenAddress } from "thirdweb/utils";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { getAppChainIdByPath } from "@/components/utils/contracts";
+import { appNetworkPathRecord, appNetworkRecord } from "@/contracts/settings";
+import { getContractByChainAndAddress } from "@/contracts/server";
+import { storageFactoryContracts } from "@/contracts/contracts";
 
 export default async function Page({
   params,
 }: {
-  params: Promise<{ chainName: string }>;
+  params: Promise<{ networkName: string }>;
 }) {
-  const { chainName } = await params;
-  const validChain = storageFactoryContractAddress
-    .map((_) => ({
-      ...appNetworks.filter((item) => item.chain === _.chain)[0],
-    }))
-    .find((_) => _.path === chainName);
-  if (!validChain) return notFound();
+  const { networkName } = await params;
+  const isValidNetwork = Object.values(appNetworkPathRecord).find(
+    (_) => _ === networkName
+  );
+  if (!isValidNetwork) return notFound();
+
+  const appChainId = getAppChainIdByPath(networkName);
+  const appContract = storageFactoryContracts.filter(
+    (_) => _.chainId === appChainId
+  )[0];
 
   const newContractCreatedEvent = prepareEvent({
     signature: "event NewContractCreated(address _address, string _course)",
   });
   const storageFactoryEvents = await getContractEvents({
-    contract: getStorageFactoryContractServerSideByNetwork(validChain.chain),
+    contract: getContractByChainAndAddress(
+      appContract.chainId,
+      appContract.address
+    ),
     events: [newContractCreatedEvent],
     fromBlock: "earliest",
     toBlock: "latest",
@@ -35,13 +40,13 @@ export default async function Page({
     <div className="p-4 space-y-4">
       <div>
         <div className="font-bold">
-          StorageFactory Contract: {validChain.chain.name}
+          StorageFactory Contract: {appNetworkRecord[appChainId]?.name}
         </div>
       </div>
 
       <div>
         <Link
-          href={`./${chainName}/new-contract`}
+          href={`./${appNetworkPathRecord[appChainId]}/new-contract`}
           className="p-2 bg-blue-100 rounded-md"
         >
           Create new contract
@@ -56,7 +61,7 @@ export default async function Page({
               const { transactionHash, args } = event;
               return (
                 <Link
-                  href={`${chainName}/${args._address}`}
+                  href={`${appNetworkPathRecord[appChainId]}/${args._address}`}
                   key={transactionHash}
                   className="block border rounded-md p-3"
                 >

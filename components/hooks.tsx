@@ -1,20 +1,23 @@
-import { appNetworks } from "@/contracts/networks";
+import { appNetworkRecord } from "@/contracts/settings";
 import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
+import { getAppChainIdByPath } from "./utils/contracts";
 
-export const useCheckWalletAndChainConnection = (chainName: string) => {
-  const contractChain = appNetworks.filter((item) => item.path === chainName)[0]
-    .chain;
+export const useCheckWalletAndNetwork = (chainName: string) => {
+  const appChainId = getAppChainIdByPath(chainName);
+  const targetAppNetwork = appNetworkRecord[appChainId];
+
   const activeAccount = useActiveAccount();
   const activeWalletChain = useActiveWalletChain();
 
   const isWalletConnectedToCorrectChain =
     activeAccount &&
     activeWalletChain &&
-    activeWalletChain.id === contractChain.id;
+    activeWalletChain.id === targetAppNetwork.id;
 
-  const targetAppNetwork = appNetworks.filter(
-    (item) => item.path === chainName
-  )[0];
-
-  return { isWalletConnectedToCorrectChain, targetAppNetwork };
+  return {
+    appChainId,
+    walletAddress: activeAccount?.address,
+    isWalletConnectedToCorrectChain,
+    targetAppNetwork,
+  };
 };

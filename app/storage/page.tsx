@@ -1,6 +1,6 @@
-import { storageFactoryContractAddress } from "@/contracts/networks";
+import { storageFactoryContracts } from "@/contracts/contracts";
 import Link from "next/link";
-import { formatToValidPath } from "@/components/utils/utils";
+import { appNetworkPathRecord, appNetworkRecord } from "@/contracts/settings";
 
 export default async function Page() {
   return (
@@ -9,15 +9,12 @@ export default async function Page() {
         <div className="font-bold">Storage Factory Contract</div>
         <div>Select your network:</div>
         <div className="space-x-4">
-          {storageFactoryContractAddress.map((_) => (
-            <div
-              key={_.chain.name}
-              className="border rounded-md p-1 inline-block"
-            >
+          {storageFactoryContracts.map((_) => (
+            <div key={_.address} className="border rounded-md p-1 inline-block">
               <Link
-                href={`storage/networks/${formatToValidPath(_.chain.name!)}`}
+                href={`storage/networks/${appNetworkPathRecord[_.chainId]}`}
               >
-                {_.chain.name}
+                {appNetworkRecord[_.chainId]?.name}
               </Link>
             </div>
           ))}

@@ -1,33 +1,26 @@
-import { getServerSideContractByChainAndAddress } from "@/contracts/server";
 import {
   getContractEvents,
   prepareEvent,
   readContract,
   toEther,
 } from "thirdweb";
-import { ChainOptions } from "thirdweb/chains";
 import { AddFundsForm } from "./AddFundsForm";
 import { shortenAddress } from "thirdweb/utils";
+import { AppChainId } from "@/contracts/settings";
+import { getContractByChainAndAddress } from "@/contracts/server";
 
 export const FundMe = async ({
-  currentChain,
+  currentChainId,
   address,
 }: {
-  currentChain: Readonly<
-    ChainOptions & {
-      rpc: string;
-    }
-  >;
+  currentChainId: AppChainId;
   address: string;
 }) => {
   const newFunderEvent = prepareEvent({
     signature:
       "event NewFunder(address _address, uint _amount, uint _createdAt)",
   });
-  const fundMeContract = getServerSideContractByChainAndAddress(
-    currentChain,
-    address
-  );
+  const fundMeContract = getContractByChainAndAddress(currentChainId, address);
 
   const [owner, currentBalance, minAmountInUSD, funders] = await Promise.all([
     readContract({

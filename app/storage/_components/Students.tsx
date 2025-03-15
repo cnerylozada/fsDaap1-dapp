@@ -1,5 +1,5 @@
-import { GetStudent } from "./GetStudent";
 import { AddNewStudentForm } from "./AddNewStudentForm";
+import { GetStudent } from "./GetStudent";
 
 export const Students = () => {
   return (

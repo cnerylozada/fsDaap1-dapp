@@ -1,21 +1,20 @@
 import { Students } from "@/app/storage/_components/Students";
+import { getAppChainIdByPath } from "@/components/utils/contracts";
 import { getDateAndTime } from "@/components/utils/utils";
-import { appNetworks } from "@/contracts/networks";
-import { getServerSideContractByChainAndAddress } from "@/contracts/server";
+import { getContractByChainAndAddress } from "@/contracts/server";
 import { readContract } from "thirdweb";
 
 export default async function Page({
   params,
 }: {
-  params: Promise<{ chainName: string; address: string }>;
+  params: Promise<{ networkName: string; address: string }>;
 }) {
-  const { address, chainName } = await params;
+  const { address, networkName } = await params;
 
-  const contractChain = appNetworks.filter((item) => item.path === chainName)[0]
-    .chain;
+  const appChainId = getAppChainIdByPath(networkName);
 
   const [course, createdAt] = await readContract({
-    contract: getServerSideContractByChainAndAddress(contractChain, address),
+    contract: getContractByChainAndAddress(appChainId, address),
     method:
       "function getMetadata() external view returns (string memory, uint)",
     params: [],
