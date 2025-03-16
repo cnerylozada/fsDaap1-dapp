@@ -1,8 +1,6 @@
-import { getAppChainIdByPath } from "@/components/utils/contracts";
 import { getDateAndTime } from "@/components/utils/utils";
 import { getContractByChainAndAddress } from "@/contracts/server";
 import { fundMeFactoryContracts } from "@/contracts/contracts";
-import { appNetworkPathRecord } from "@/contracts/settings";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getContractEvents, prepareEvent } from "thirdweb";
@@ -14,15 +12,10 @@ export default async function Page({
   params: Promise<{ networkName: string }>;
 }) {
   const { networkName } = await params;
-  const isValidNetwork = Object.values(appNetworkPathRecord).find(
-    (_) => _ === networkName
+  const fundMeFactory = fundMeFactoryContracts.find(
+    (_) => _.path === networkName
   );
-  if (!isValidNetwork) return notFound();
-
-  const appChainId = getAppChainIdByPath(networkName);
-  const appContract = fundMeFactoryContracts.filter(
-    (_) => _.chainId === appChainId
-  )[0];
+  if (!fundMeFactory) return notFound();
 
   const newCrowdFundingEvent = prepareEvent({
     signature:
@@ -30,8 +23,8 @@ export default async function Page({
   });
   const crowdFundingList = await getContractEvents({
     contract: getContractByChainAndAddress(
-      appContract.chainId,
-      appContract.address
+      fundMeFactory.chainId,
+      fundMeFactory.address
     ),
     events: [newCrowdFundingEvent],
     fromBlock: "earliest",

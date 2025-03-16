@@ -1,6 +1,6 @@
-import { notFound } from "next/navigation";
-import { ActiveSubscriptions } from "./_components/ActiveSubscriptions";
 import { chainlinkVRFCoordinatorContracts } from "@/contracts/contracts";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export default async function Page({
   params,
@@ -14,9 +14,15 @@ export default async function Page({
   if (!isValidNetwork) return notFound();
 
   return (
-    <div className="p-4 space-y-4">
-      <div className="font-bold">Create new Lottery</div>
-      <ActiveSubscriptions />
+    <div className="p-4">
+      <div>
+        <Link
+          href={`./${networkName}/new-contract`}
+          className="p-2 bg-blue-100 rounded-md"
+        >
+          Create new Lottery
+        </Link>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use server";
 import { getContractByChainAndAddress } from "@/contracts/server";
-import { chainlinkVRFContracts } from "@/contracts/contracts";
+import { chainlinkVRFCoordinatorContracts } from "@/contracts/contracts";
 import { AppChainId } from "@/contracts/settings";
 import { getContractEvents, prepareEvent, readContract } from "thirdweb";
 
@@ -8,7 +8,7 @@ export const getActiveSubscriptionsByChainAndWallet = async (
   currentChain: AppChainId,
   walletAddress: string
 ) => {
-  const VRFContract = chainlinkVRFContracts.filter(
+  const VRFContract = chainlinkVRFCoordinatorContracts.filter(
     (_) => _.chainId === currentChain
   )[0];
 
@@ -59,7 +59,7 @@ export const getSubscriptionDetailByChainAndId = async (
   currentChain: AppChainId,
   subId: bigint
 ) => {
-  const VRFContract = chainlinkVRFContracts.filter(
+  const VRFContract = chainlinkVRFCoordinatorContracts.filter(
     (_) => _.chainId === currentChain
   )[0];
   try {

@@ -40,4 +40,5 @@ export const appScanURLRecord: Record<AppChainId, string> = {
 export interface IAppContact {
   chainId: AppChainId;
   address: string;
+  path: string;
 }

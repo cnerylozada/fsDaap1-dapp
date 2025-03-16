@@ -1,6 +1,6 @@
-import { CreateNewCrowdFundingForm } from "./CreateNewCrowdFundingForm";
 import { notFound } from "next/navigation";
-import { fundMeFactoryContracts } from "@/contracts/contracts";
+import { chainlinkVRFCoordinatorContracts } from "@/contracts/contracts";
+import { CreateSubscription } from "./CreateSubscription";
 
 export default async function Page({
   params,
@@ -8,14 +8,14 @@ export default async function Page({
   params: Promise<{ networkName: string }>;
 }) {
   const { networkName } = await params;
-  const isValidNetwork = fundMeFactoryContracts.find(
+  const isValidNetwork = chainlinkVRFCoordinatorContracts.find(
     (_) => _.path === networkName
   );
   if (!isValidNetwork) return notFound();
 
   return (
     <div className="p-4">
-      <CreateNewCrowdFundingForm factoryAddress={isValidNetwork.address} />
+      <CreateSubscription currentChainId={isValidNetwork.chainId} />
     </div>
   );
 }

@@ -2,8 +2,6 @@ import { getContractEvents, prepareEvent } from "thirdweb";
 import { shortenAddress } from "thirdweb/utils";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getAppChainIdByPath } from "@/components/utils/contracts";
-import { appNetworkPathRecord, appNetworkRecord } from "@/contracts/settings";
 import { getContractByChainAndAddress } from "@/contracts/server";
 import { storageFactoryContracts } from "@/contracts/contracts";
 
@@ -13,23 +11,18 @@ export default async function Page({
   params: Promise<{ networkName: string }>;
 }) {
   const { networkName } = await params;
-  const isValidNetwork = Object.values(appNetworkPathRecord).find(
-    (_) => _ === networkName
+  const storageFactory = storageFactoryContracts.find(
+    (_) => _.path === networkName
   );
-  if (!isValidNetwork) return notFound();
-
-  const appChainId = getAppChainIdByPath(networkName);
-  const appContract = storageFactoryContracts.filter(
-    (_) => _.chainId === appChainId
-  )[0];
+  if (!storageFactory) return notFound();
 
   const newContractCreatedEvent = prepareEvent({
     signature: "event NewContractCreated(address _address, string _course)",
   });
   const storageFactoryEvents = await getContractEvents({
     contract: getContractByChainAndAddress(
-      appContract.chainId,
-      appContract.address
+      storageFactory.chainId,
+      storageFactory.address
     ),
     events: [newContractCreatedEvent],
     fromBlock: "earliest",
@@ -40,13 +33,13 @@ export default async function Page({
     <div className="p-4 space-y-4">
       <div>
         <div className="font-bold">
-          StorageFactory Contract: {appNetworkRecord[appChainId]?.name}
+          StorageFactory Contract: {storageFactory.address}
         </div>
       </div>
 
       <div>
         <Link
-          href={`./${appNetworkPathRecord[appChainId]}/new-contract`}
+          href={`./${networkName}/new-contract`}
           className="p-2 bg-blue-100 rounded-md"
         >
           Create new contract
@@ -61,7 +54,7 @@ export default async function Page({
               const { transactionHash, args } = event;
               return (
                 <Link
-                  href={`${appNetworkPathRecord[appChainId]}/${args._address}`}
+                  href={`${networkName}/${args._address}`}
                   key={transactionHash}
                   className="block border rounded-md p-3"
                 >

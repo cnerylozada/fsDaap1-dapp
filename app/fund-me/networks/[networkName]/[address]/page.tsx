@@ -1,8 +1,8 @@
 import { fundMeFactoryContracts } from "@/contracts/contracts";
 import { Metadata } from "./_components/Metadata";
 import { getContractByChainAndAddress } from "@/contracts/server";
-import { getAppChainIdByPath } from "@/components/utils/contracts";
 import { FundMe } from "./_components/FundMe";
+import { notFound } from "next/navigation";
 
 export default async function Page({
   params,
@@ -10,14 +10,14 @@ export default async function Page({
   params: Promise<{ networkName: string; address: string }>;
 }) {
   const { networkName, address } = await params;
+  const isValidNetwork = fundMeFactoryContracts.find(
+    (_) => _.path === networkName
+  );
+  if (!isValidNetwork) return notFound();
 
-  const appChainId = getAppChainIdByPath(networkName);
-  const appContract = fundMeFactoryContracts.filter(
-    (_) => _.chainId === appChainId
-  )[0];
   const fundMeFactoryContract = getContractByChainAndAddress(
-    appContract.chainId,
-    appContract.address
+    isValidNetwork.chainId,
+    isValidNetwork.address
   );
 
   return (
@@ -26,7 +26,7 @@ export default async function Page({
         fundMeFactoryContract={fundMeFactoryContract}
         address={address}
       />
-      <FundMe currentChainId={appContract.chainId} address={address} />
+      <FundMe currentChainId={isValidNetwork.chainId} address={address} />
     </div>
   );
 }

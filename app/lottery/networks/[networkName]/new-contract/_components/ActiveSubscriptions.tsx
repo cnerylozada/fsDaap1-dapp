@@ -1,9 +1,10 @@
 "use client";
 import { useCheckWalletAndNetwork } from "@/components/hooks";
-import { getActiveSubscriptionsByChainAndWallet } from "@/server/actions";
+import { getActiveSubscriptionsByChainAndWallet } from "@/server/vrf-subscription";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SubscriptionDetail } from "./SubscriptionDetail";
+import Link from "next/link";
 
 export const ActiveSubscriptions = () => {
   const { networkName } = useParams();
@@ -54,12 +55,22 @@ export const ActiveSubscriptions = () => {
             activeSubscriptions.map((_) => (
               <SubscriptionDetail
                 key={`${_}`}
-                appChainId={appChainId}
+                currentChainId={appChainId}
                 subscriptionId={_}
               />
             ))
           ) : (
-            <div>No active subscriptions found</div>
+            <div className="space-y-4">
+              <div>No active subscriptions found</div>
+              <div>
+                <Link
+                  href={`../${networkName}/new-subscription`}
+                  className="p-2 bg-blue-100 rounded-md"
+                >
+                  Create Subscription
+                </Link>
+              </div>
+            </div>
           )}
         </div>
       )}
