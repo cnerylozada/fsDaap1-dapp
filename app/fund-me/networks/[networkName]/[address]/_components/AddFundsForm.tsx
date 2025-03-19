@@ -101,7 +101,11 @@ export const AddFundsForm = () => {
               </Link>
             </div>
           )}
-          {error && <div>{JSON.stringify(error)}</div>}
+          {error && (
+            <div className="mt-1 text-red-700 text-sm">
+              {JSON.stringify(error.message)}
+            </div>
+          )}
         </div>
       </div>
     </div>

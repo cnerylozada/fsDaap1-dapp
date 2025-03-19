@@ -3,12 +3,12 @@ import { AppChainId, appNetworkPathRecord, IAppContact } from "./settings";
 export const storageFactoryContracts: IAppContact[] = [
   {
     chainId: AppChainId.optimismSepolia,
-    address: "0xe71AfF81de4451020a21F7FEF4952B5e6A7EB4c0",
+    address: "0x23dF64F029C525db788fD416Cb0Bc24f8B82496e",
     path: appNetworkPathRecord[AppChainId.optimismSepolia],
   },
   {
     chainId: AppChainId.arbitrumSepolia,
-    address: "0xd124F47C397b50cD91e99FbbC98649fe7FD8D2F7",
+    address: "0xdda090443d506d10530c4f2B5159634230a3484D",
     path: appNetworkPathRecord[AppChainId.arbitrumSepolia],
   },
 ];

@@ -3,7 +3,6 @@ import { useReadContract } from "thirdweb/react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useState } from "react";
 import { studentLevels } from "./AddNewStudentForm";
 import { useParams } from "next/navigation";
 import { getContractByChainAndAddress } from "@/contracts/client";
@@ -18,31 +17,29 @@ export const GetStudent = () => {
   const { networkName, address } = useParams();
   const appChainId = getAppChainIdByPath(`${networkName}`);
 
-  const [submittedIndex, setSubmittedIndex] = useState<number | null>(null);
-
   const {
     register,
     handleSubmit,
     getValues,
-    formState: { errors },
+    formState: { errors, isSubmitting, isValid },
   } = useForm<SchemaType>({
     mode: "all",
     resolver: zodResolver(schema),
   });
-  const onSubmit: SubmitHandler<SchemaType> = async (data) => {
-    setSubmittedIndex(data.index);
-    await refetch();
-  };
 
-  const { data, isLoading, error, refetch } = useReadContract({
+  const { data, isLoading, error, refetch, isSuccess } = useReadContract({
     contract: getContractByChainAndAddress(appChainId, `${address}`),
     method:
       "function getStudentByIndex(uint _index) external view returns (string memory, uint8)",
     params: [BigInt(isNaN(getValues("index")) ? 0 : getValues("index"))],
     queryOptions: {
-      enabled: !!submittedIndex,
+      enabled: !!isSubmitting,
     },
   });
+
+  const onSubmit: SubmitHandler<SchemaType> = async () => {
+    await refetch();
+  };
 
   return (
     <div>
@@ -68,7 +65,7 @@ export const GetStudent = () => {
               <button
                 className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200"
                 type="submit"
-                disabled={isLoading}
+                disabled={!isValid || isLoading}
               >
                 Search
               </button>
@@ -80,7 +77,7 @@ export const GetStudent = () => {
         {isLoading && (
           <div className="text-sm">Searching student by index ...</div>
         )}
-        {!isLoading && !error && data && (
+        {isSuccess && data && (
           <div>
             Name: {data[0]} Level:{" "}
             {studentLevels.filter((_) => _.value === data[1])[0].label}

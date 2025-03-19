@@ -43,6 +43,7 @@ export const CreateNewClassroom = ({
 
     await sendAndConfirmTx(tx);
     router.push(`../${networkName}/`);
+    router.refresh();
   };
 
   if (!walletAddress || !isWalletConnectedToCorrectChain)

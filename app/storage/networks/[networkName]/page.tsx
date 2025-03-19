@@ -33,7 +33,7 @@ export default async function Page({
     <div className="p-4 space-y-4">
       <div>
         <div className="font-bold">
-          StorageFactory Contract: {storageFactory.address}
+          StorageFactory Contract: {shortenAddress(storageFactory.address)}
         </div>
       </div>
 

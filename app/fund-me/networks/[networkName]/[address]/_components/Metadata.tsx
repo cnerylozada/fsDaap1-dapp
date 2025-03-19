@@ -1,5 +1,6 @@
 import { getDateAndTime } from "@/components/utils/utils";
 import { ContractOptions, getContractEvents, prepareEvent } from "thirdweb";
+import { shortenAddress } from "thirdweb/utils";
 
 export const Metadata = async ({
   fundMeFactoryContract,
@@ -26,7 +27,7 @@ export const Metadata = async ({
       {crowdFundingDetail.map((_) => (
         <div key={_.transactionHash} className="block border rounded-md p-3">
           <div>Title: {_.args._title}</div>
-          <div>Contract address: {_.args._address}</div>
+          <div>Contract address: {shortenAddress(_.args._address)}</div>
           <div>Created at: {getDateAndTime(_.args._createdAt)}</div>
           <div>Description: {_.args._description}</div>
         </div>
