@@ -31,7 +31,7 @@ export const GetStudent = () => {
     contract: getContractByChainAndAddress(appChainId, `${address}`),
     method:
       "function getStudentByIndex(uint _index) external view returns (string memory, uint8)",
-    params: [BigInt(isNaN(getValues("index")) ? 0 : getValues("index"))],
+    params: [BigInt(isValid ? getValues("index") : 0)],
     queryOptions: {
       enabled: !!isSubmitting,
     },
