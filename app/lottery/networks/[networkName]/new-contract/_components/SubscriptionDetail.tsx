@@ -31,6 +31,8 @@ export const SubscriptionDetail = ({
     setIsLoading(false);
   };
 
+  const MINIMUM_LINK_BALANCE = 2;
+
   return (
     <div className="p-2 border rounded-md space-y-3">
       <div className="md:flex md:items-center md:justify-between">
@@ -56,10 +58,12 @@ export const SubscriptionDetail = ({
               <div>Balance: {formatToken(detail.balance, 18)} LINK</div>
               <div>Native balance: {toEther(detail.nativeBalance)} ETH</div>
             </div>
-            <FundSubscription
-              currentChainId={currentChainId}
-              subscriptionId={subscriptionId}
-            />
+            {+formatToken(detail.balance, 18) < MINIMUM_LINK_BALANCE && (
+              <FundSubscription
+                currentChainId={currentChainId}
+                subscriptionId={subscriptionId}
+              />
+            )}
           </div>
         )}
         {error && (

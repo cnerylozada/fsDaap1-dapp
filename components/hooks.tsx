@@ -2,8 +2,8 @@ import { appNetworkRecord } from "@/contracts/settings";
 import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
 import { getAppChainIdByPath } from "./utils/contracts";
 
-export const useCheckWalletAndNetwork = (chainName: string) => {
-  const appChainId = getAppChainIdByPath(chainName);
+export const useCheckWalletAndNetwork = (pathName: string) => {
+  const appChainId = getAppChainIdByPath(pathName);
   const targetAppNetwork = appNetworkRecord[appChainId];
 
   const activeAccount = useActiveAccount();
