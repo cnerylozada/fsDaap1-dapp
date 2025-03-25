@@ -26,14 +26,6 @@ export const fundMeFactoryContracts: IAppContact[] = [
   },
 ];
 
-export const chainlinkVRFCoordinatorContracts: IAppContact[] = [
-  {
-    chainId: AppChainId.sepolia,
-    address: "0x9DdfaCa8183c41ad55329BdeeD9F6A8d53168B1B",
-    path: appNetworkPathRecord[AppChainId.sepolia],
-  },
-];
-
 export const basicUniswapV2Contracts: IAppContact[] = [
   {
     chainId: AppChainId.sepolia,

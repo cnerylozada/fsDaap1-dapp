@@ -1,11 +1,11 @@
 "use client";
 import { getContractByChainAndAddress } from "@/contracts/client";
-import { chainlinkVRFCoordinatorContracts } from "@/contracts/contracts";
 import { AppChainId, appScanURLRecord } from "@/contracts/settings";
 import { prepareContractCall } from "thirdweb";
 import { useSendAndConfirmTransaction } from "thirdweb/react";
 import Link from "next/link";
 import { shortenHex } from "thirdweb/utils";
+import { chainlinkVRFCoordinatorContracts } from "@/contracts/chainlink";
 
 export const CreateSubscription = ({
   currentChainId,
@@ -33,10 +33,11 @@ export const CreateSubscription = ({
     <div className="space-y-4">
       <div>
         <button
+          disabled={isPending}
           onClick={() => {
             onCreateSubscription();
           }}
-          className="p-2 bg-blue-100 rounded-md cursor-pointer"
+          className="p-2 bg-blue-100 rounded-md cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-200"
         >
           Create Subscription
         </button>
@@ -53,6 +54,11 @@ export const CreateSubscription = ({
                 className="text-blue-700 text-sm underline"
               >
                 Transaction Hash: {shortenHex(data.transactionHash)}
+              </Link>
+            </div>
+            <div>
+              <Link href={"./new-contract"} className="underline">
+                Return to my subscriptions
               </Link>
             </div>
           </div>

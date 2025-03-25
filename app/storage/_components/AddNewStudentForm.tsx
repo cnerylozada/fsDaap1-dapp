@@ -118,7 +118,7 @@ export const AddNewStudentForm = () => {
               </Link>
             </div>
           )}
-          {error && <div>{JSON.stringify(error)}</div>}
+          {error && <div>{error.message}</div>}
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { chainlinkVRFCoordinatorContracts } from "@/contracts/contracts";
+import { chainlinkVRFCoordinatorContracts } from "@/contracts/chainlink";
 import { appNetworkRecord } from "@/contracts/settings";
 import Link from "next/link";
 

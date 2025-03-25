@@ -102,9 +102,7 @@ export const AddFundsForm = () => {
             </div>
           )}
           {error && (
-            <div className="mt-1 text-red-700 text-sm">
-              {JSON.stringify(error.message)}
-            </div>
+            <div className="mt-1 text-red-700 text-sm">{error.message}</div>
           )}
         </div>
       </div>

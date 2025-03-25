@@ -1,10 +1,10 @@
 "use client";
 import { useCheckWalletAndNetwork } from "@/components/hooks";
 import { formatToken } from "@/components/utils/contracts";
+import { chainlinkVRFSupportedNetworks } from "@/contracts/chainlink";
 import { getContractByChainAndAddress } from "@/contracts/client";
 import { basicUniswapV2Contracts } from "@/contracts/contracts";
 import { AppChainId, appScanURLRecord } from "@/contracts/settings";
-import { chainlinkVRFSupportedNetworks } from "@/contracts/utils";
 import { getTokensBalance } from "@/server/tokens";
 import Link from "next/link";
 import { useParams } from "next/navigation";

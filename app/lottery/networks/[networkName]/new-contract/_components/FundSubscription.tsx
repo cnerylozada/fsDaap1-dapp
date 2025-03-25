@@ -1,9 +1,13 @@
+import {
+  chainlinkVRFCoordinatorContracts,
+  chainlinkVRFSupportedNetworks,
+} from "@/contracts/chainlink";
 import { getContractByChainAndAddress } from "@/contracts/client";
-import { chainlinkVRFCoordinatorContracts } from "@/contracts/contracts";
 import { AppChainId } from "@/contracts/settings";
-import { prepareContractCall, toWei } from "thirdweb";
+import { useRouter } from "next/navigation";
+import { prepareContractCall } from "thirdweb";
 import { useSendAndConfirmTransaction } from "thirdweb/react";
-import {} from "thirdweb/utils";
+import { encodeAbiParameters } from "thirdweb/utils";
 
 export const FundSubscription = ({
   currentChainId,
@@ -12,39 +16,48 @@ export const FundSubscription = ({
   currentChainId: AppChainId;
   subscriptionId: bigint;
 }) => {
-  const { mutate, isPending } = useSendAndConfirmTransaction();
-  const AMOUNT_TO_FUND = "0.003";
+  const { mutateAsync, isPending } = useSendAndConfirmTransaction();
+  const AMOUNT_TO_FUND = BigInt(1 * 10 ** 18);
+  const router = useRouter();
 
   const onFundSubscription = async (subscriptionId: bigint) => {
-    const appContract = chainlinkVRFCoordinatorContracts.filter(
+    const network = chainlinkVRFSupportedNetworks.filter(
       (_) => _.chainId === currentChainId
     )[0];
+    const VRFCoodinator = chainlinkVRFCoordinatorContracts.filter(
+      (_) => _.chainId === currentChainId
+    )[0];
+
+    const encodeSubId = encodeAbiParameters(
+      [{ name: "subId", type: "uint256" }],
+      [subscriptionId]
+    );
     const tx = prepareContractCall({
       contract: getContractByChainAndAddress(
-        appContract.chainId,
-        appContract.address
+        network.chainId,
+        network.LINKToken
       ),
       method:
-        "function fundSubscriptionWithNative(uint256 subId) external payable",
-      params: [subscriptionId],
-      value: toWei(AMOUNT_TO_FUND),
+        "function transferAndCall(address to, uint value, bytes memory data) public returns (bool success)",
+      params: [VRFCoodinator.address, AMOUNT_TO_FUND, encodeSubId],
     });
-    mutate(tx);
+    await mutateAsync(tx);
+    router.refresh();
   };
 
   return (
     <div>
-      <div className="text-right">
+      <div>
         <button
-          className="bg-blue-100 p-2 rounded-md cursor-pointer text-sm"
+          className="bg-orange-100 p-2 rounded-md cursor-pointer text-sm"
           onClick={async () => {
             await onFundSubscription(subscriptionId);
           }}
         >
-          Fund {AMOUNT_TO_FUND} ETH
+          Fund +1 LINK to subscription
         </button>
       </div>
-      <div>{isPending && <div>Loading ...</div>}</div>
+      {isPending && <div>Loading funding...</div>}
     </div>
   );
 };

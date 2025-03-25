@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { chainlinkVRFCoordinatorContracts } from "@/contracts/contracts";
 import { CreateSubscription } from "./CreateSubscription";
+import { chainlinkVRFCoordinatorContracts } from "@/contracts/chainlink";
 
 export default async function Page({
   params,

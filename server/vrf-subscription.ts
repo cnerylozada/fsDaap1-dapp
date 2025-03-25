@@ -1,6 +1,6 @@
 "use server";
+import { chainlinkVRFCoordinatorContracts } from "@/contracts/chainlink";
 import { getContractByChainAndAddress } from "@/contracts/server";
-import { chainlinkVRFCoordinatorContracts } from "@/contracts/contracts";
 import { AppChainId } from "@/contracts/settings";
 import { getContractEvents, prepareEvent, readContract } from "thirdweb";
 

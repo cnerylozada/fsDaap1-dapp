@@ -1,4 +1,4 @@
-import { chainlinkVRFCoordinatorContracts } from "@/contracts/contracts";
+import { chainlinkVRFCoordinatorContracts } from "@/contracts/chainlink";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 

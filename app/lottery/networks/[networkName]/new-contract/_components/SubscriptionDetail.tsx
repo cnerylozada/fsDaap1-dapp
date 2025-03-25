@@ -31,7 +31,7 @@ export const SubscriptionDetail = ({
     setIsLoading(false);
   };
 
-  const MINIMUM_LINK_BALANCE = 2;
+  const MINIMUM_LINK_BALANCE = BigInt(1 * 10 ** 18);
 
   return (
     <div className="p-2 border rounded-md space-y-3">
@@ -51,19 +51,37 @@ export const SubscriptionDetail = ({
         </div>
       </div>
       <div>
-        {isLoading && <div>Loading ...</div>}
+        {isLoading && <div>Loading detail ...</div>}
         {!isLoading && detail && (
           <div>
-            <div className="text-sm">
+            <div className="mb-2 text-sm">
               <div>Balance: {formatToken(detail.balance, 18)} LINK</div>
               <div>Native balance: {toEther(detail.nativeBalance)} ETH</div>
             </div>
-            {+formatToken(detail.balance, 18) < MINIMUM_LINK_BALANCE && (
-              <FundSubscription
-                currentChainId={currentChainId}
-                subscriptionId={subscriptionId}
-              />
-            )}
+            <div>
+              {detail.balance >= MINIMUM_LINK_BALANCE ? (
+                <div className="text-right">
+                  <button
+                    className="bg-green-100 p-2 rounded-md cursor-pointer text-sm"
+                    onClick={() => {
+                      console.log(`...`);
+                    }}
+                  >
+                    Select subscription and continue
+                  </button>
+                </div>
+              ) : (
+                <div className="text-sm">
+                  <div className="mb-1">
+                    Not enough LINKs to create a lottery
+                  </div>
+                  <FundSubscription
+                    currentChainId={currentChainId}
+                    subscriptionId={subscriptionId}
+                  />
+                </div>
+              )}
+            </div>
           </div>
         )}
         {error && (
