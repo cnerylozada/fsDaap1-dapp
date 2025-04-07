@@ -1,16 +1,23 @@
 import { formatToken } from "@/components/utils/contracts";
 import { AppChainId } from "@/contracts/settings";
 import { getSubscriptionDetailByChainAndId } from "@/server/vrf-subscription";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { shortenHex, toEther } from "thirdweb/utils";
 import { FundSubscription } from "./FundSubscription";
+import { Steps } from "./ManageCreation";
 
 export const SubscriptionDetail = ({
   currentChainId,
   subscriptionId,
+  setManageCreation,
 }: {
   currentChainId: AppChainId;
   subscriptionId: bigint;
+  setManageCreation: Dispatch<
+    SetStateAction<{
+      currentStep: Steps;
+    }>
+  >;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [detail, setDetail] = useState<{
@@ -64,7 +71,9 @@ export const SubscriptionDetail = ({
                   <button
                     className="bg-green-100 p-2 rounded-md cursor-pointer text-sm"
                     onClick={() => {
-                      console.log(`...`);
+                      setManageCreation({
+                        currentStep: Steps.CONFIG_AUTOMATION,
+                      });
                     }}
                   >
                     Select subscription and continue

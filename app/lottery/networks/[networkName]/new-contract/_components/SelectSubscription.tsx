@@ -1,52 +1,49 @@
 "use client";
-import { useCheckWalletAndNetwork } from "@/components/hooks";
 import { getActiveSubscriptionsByChainAndWallet } from "@/server/vrf-subscription";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { SubscriptionDetail } from "./SubscriptionDetail";
+import { AppChainId, appNetworkPathRecord } from "@/contracts/settings";
 import Link from "next/link";
+import { Steps } from "./ManageCreation";
 
-export const ActiveSubscriptions = () => {
-  const { networkName } = useParams();
-  const {
-    targetAppNetwork,
-    walletAddress,
-    isWalletConnectedToCorrectChain,
-    appChainId,
-  } = useCheckWalletAndNetwork(`${networkName}`);
-
+export const SelectSubscription = ({
+  walletAddress,
+  currentChainId,
+  setManageCreation,
+}: {
+  walletAddress: string;
+  currentChainId: AppChainId;
+  setManageCreation: Dispatch<
+    SetStateAction<{
+      currentStep: Steps;
+    }>
+  >;
+}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeSubscriptions, setActiveSubscriptions] = useState<
     bigint[] | null
   >(null);
 
-  const fetchActiveSubscriptions = async (walletAddress: string) => {
-    if (targetAppNetwork) {
-      setIsLoading(true);
-      const response = await getActiveSubscriptionsByChainAndWallet(
-        targetAppNetwork.id,
-        walletAddress
-      );
-      setActiveSubscriptions(response);
-      setIsLoading(false);
-    }
+  const fetchActiveSubscriptions = async (
+    walletAddress: string,
+    chainId: AppChainId
+  ) => {
+    setIsLoading(true);
+    const response = await getActiveSubscriptionsByChainAndWallet(
+      chainId,
+      walletAddress
+    );
+    setActiveSubscriptions(response);
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    if (walletAddress) {
-      fetchActiveSubscriptions(walletAddress);
-    }
-  }, [walletAddress]);
-
-  if (!walletAddress || !isWalletConnectedToCorrectChain)
-    return (
-      <div>
-        Connect your wallet to {targetAppNetwork?.name} to perform operations
-      </div>
-    );
+    fetchActiveSubscriptions(walletAddress, currentChainId);
+  }, []);
 
   return (
     <div>
+      <div>Select a subscription with at least 1 LINK token</div>
       {isLoading ? (
         <div>Loading subscriptions ...</div>
       ) : (
@@ -55,8 +52,9 @@ export const ActiveSubscriptions = () => {
             activeSubscriptions.map((_) => (
               <SubscriptionDetail
                 key={`${_}`}
-                currentChainId={appChainId}
+                currentChainId={currentChainId}
                 subscriptionId={_}
+                setManageCreation={setManageCreation}
               />
             ))
           ) : (
@@ -64,7 +62,7 @@ export const ActiveSubscriptions = () => {
               <div>No active subscriptions found</div>
               <div>
                 <Link
-                  href={`../${networkName}/new-subscription`}
+                  href={`../${appNetworkPathRecord[currentChainId]}/new-subscription`}
                   className="p-2 bg-blue-100 rounded-md"
                 >
                   Create Subscription
