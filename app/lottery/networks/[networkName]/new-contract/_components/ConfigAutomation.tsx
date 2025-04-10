@@ -1,12 +1,58 @@
 import { useSendAndConfirmTransaction } from "thirdweb/react";
 import { IManageCreation } from "./LotteryCreationFlow";
-import { prepareContractCall, toWei } from "thirdweb";
+import { AppChainId } from "@/contracts/settings";
+import { prepareContractCall } from "thirdweb";
+import { registerUpkeepContracts } from "@/contracts/contracts";
+import { LINKTokenContracts } from "@/contracts/chainlink";
 import { getContractByChainAndAddress } from "@/contracts/client";
-import { AppChainId, appScanURLRecord } from "@/contracts/settings";
-import { lotteryFactoryContracts } from "@/contracts/contracts";
-import { chainlinkVRFCoordinatorContracts } from "@/contracts/chainlink";
-import Link from "next/link";
-import { shortenHex } from "thirdweb/utils";
+
+const RegisterNewUpkeep = ({
+  currentChainId,
+  lotteryContractAddress,
+}: {
+  currentChainId: AppChainId;
+  lotteryContractAddress: string;
+}) => {
+  const { data, mutate, isPending, isSuccess, isError, error } =
+    useSendAndConfirmTransaction();
+
+  const onAddConsumer = async () => {
+    const registerUpkeep = registerUpkeepContracts.find(
+      (_) => _.chainId === currentChainId
+    );
+    if (registerUpkeep) {
+      const tx = prepareContractCall({
+        contract: getContractByChainAndAddress(
+          registerUpkeep.chainId,
+          registerUpkeep.address
+        ),
+        method:
+          "function registerAndPredictID(string memory _name, address _contractAddress) external",
+        params: [`lottery${Date.now()}`, lotteryContractAddress],
+      });
+      mutate(tx);
+    }
+  };
+
+  return (
+    <div>
+      {!data && (
+        <div>
+          <button
+            className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200"
+            onClick={() => onAddConsumer()}
+            disabled={isPending}
+          >
+            Register automation
+          </button>
+        </div>
+      )}
+      {isPending && <div>Registering new upkeep ...</div>}
+      {isSuccess && data && <div>END</div>}
+      {isError && <div className="text-sm text-red-700">{error.message}</div>}
+    </div>
+  );
+};
 
 export const ConfigAutomation = ({
   manageCreation,
@@ -17,76 +63,59 @@ export const ConfigAutomation = ({
 }) => {
   const { data, mutate, isPending, isSuccess, isError, error } =
     useSendAndConfirmTransaction();
+  const { lotteryContractAddress } = manageCreation;
 
-  const { metadata, subscriptionId } = manageCreation;
-
-  const onCreateLottery = async () => {
-    const lotteryFactory = lotteryFactoryContracts.find(
+  const onFundAutomation = async () => {
+    const registerUpkeep = registerUpkeepContracts.find(
       (_) => _.chainId === currentChainId
     );
-
-    const VRFCoordinator = chainlinkVRFCoordinatorContracts.find(
+    const LINKToken = LINKTokenContracts.find(
       (_) => _.chainId === currentChainId
     );
-
-    if (lotteryFactory && metadata && subscriptionId && VRFCoordinator) {
-      const { title, description, numTickets, ticketPrice, prize } = metadata;
-      const tx = prepareContractCall({
+    if (registerUpkeep && LINKToken) {
+      const sendLINkTx = prepareContractCall({
         contract: getContractByChainAndAddress(
           currentChainId,
-          lotteryFactory.address
+          LINKToken.address
         ),
         method:
-          "function createLottery(string memory _title, string memory _description, uint _numTickets, uint _dateInSeconds, uint _ticketPrice, address _vrfCoordinator, uint _subscriptionId, bytes32 _keyHash) external payable",
-        params: [
-          title,
-          description,
-          BigInt(numTickets),
-          BigInt(60 * 10),
-          toWei(`${ticketPrice}`),
-          VRFCoordinator.address,
-          subscriptionId,
-          VRFCoordinator.keyHash,
-        ],
-        value: toWei(`${prize}`),
+          "function transfer(address to, uint256 amount) public returns (bool)",
+        params: [registerUpkeep.address, BigInt(1 * 10 ** 18)],
       });
-
-      mutate(tx);
+      mutate(sendLINkTx);
     }
   };
-
-  console.log(`data`, data);
 
   return (
     <div>
       <div>Your lottery inputs:</div>
-      <div>
-        <button
-          className="p-2 bg-blue-100 rounded-md"
-          onClick={onCreateLottery}
-        >
-          Create Lottery
-        </button>
-      </div>
+      <div></div>
 
-      <div>
-        {isPending && <div>Loading ...</div>}
-        {isSuccess && data && (
+      {isSuccess && data && lotteryContractAddress ? (
+        <RegisterNewUpkeep
+          currentChainId={currentChainId}
+          lotteryContractAddress={lotteryContractAddress}
+        />
+      ) : (
+        <>
           <div>
-            <div>
-              Check your transaction:{" "}
-              <Link
-                href={`${appScanURLRecord[currentChainId]}/${data.transactionHash}`}
-                target="_blank"
-                className="text-blue-700 text-sm underline"
-              >
-                Transaction Hash: {shortenHex(data.transactionHash)}
-              </Link>
-            </div>
+            <button
+              className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200"
+              onClick={onFundAutomation}
+              disabled={isPending}
+            >
+              Fund Automation
+            </button>
           </div>
-        )}
-        {isError && <div className="text-sm text-red-700">{error.message}</div>}
-      </div>
+
+          <div>
+            {isPending && <div>Funding automation ...</div>}
+            {isError && (
+              <div className="text-sm text-red-700">{error.message}</div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };

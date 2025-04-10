@@ -69,7 +69,7 @@ export const SubscriptionDetail = ({
                     onClick={() => {
                       setManageCreation((_) => ({
                         ..._,
-                        currentStep: Steps.CONFIG_AUTOMATION,
+                        currentStep: Steps.ADD_CONSUMER,
                         subscriptionId,
                       }));
                     }}

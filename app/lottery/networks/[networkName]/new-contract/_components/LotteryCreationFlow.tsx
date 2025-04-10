@@ -6,10 +6,12 @@ import { z } from "zod";
 import { EnterLotteryDataForm } from "./EnterLotteryDataForm";
 import { SelectSubscription } from "./SelectSubscription";
 import { ConfigAutomation } from "./ConfigAutomation";
+import { ConnectNewLotteryWithSubscription } from "./ConnectNewLotteryWithSubscription";
 
 export enum Steps {
   ENTER_DATA,
   SELECT_SUBSCRIPTION,
+  ADD_CONSUMER,
   CONFIG_AUTOMATION,
 }
 
@@ -35,6 +37,7 @@ export type SchemaType = z.infer<typeof schema>;
 export interface IManageCreation {
   currentStep: Steps;
   metadata: SchemaType | null;
+  lotteryContractAddress: string | null;
   subscriptionId: bigint | null;
 }
 
@@ -51,6 +54,7 @@ export const LotteryCreationFlow = () => {
   const [manageCreation, setManageCreation] = useState<IManageCreation>({
     currentStep: Steps.ENTER_DATA,
     metadata: null,
+    lotteryContractAddress: null,
     subscriptionId: null,
   });
 
@@ -70,6 +74,13 @@ export const LotteryCreationFlow = () => {
         <SelectSubscription
           walletAddress={walletAddress}
           currentChainId={appChainId}
+          setManageCreation={setManageCreation}
+        />
+      )}
+      {manageCreation.currentStep === Steps.ADD_CONSUMER && (
+        <ConnectNewLotteryWithSubscription
+          currentChainId={appChainId}
+          manageCreation={manageCreation}
           setManageCreation={setManageCreation}
         />
       )}
