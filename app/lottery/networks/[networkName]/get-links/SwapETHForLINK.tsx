@@ -1,7 +1,7 @@
 "use client";
 import { useCheckWalletAndNetwork } from "@/components/hooks";
 import { formatToken } from "@/components/utils/contracts";
-import { chainlinkVRFSupportedNetworks } from "@/contracts/chainlink";
+import { LINKTokenContracts } from "@/contracts/chainlink";
 import { getContractByChainAndAddress } from "@/contracts/client";
 import { basicUniswapV2Contracts } from "@/contracts/contracts";
 import { AppChainId, appScanURLRecord } from "@/contracts/settings";
@@ -84,15 +84,15 @@ export const SwapETHForLINK = ({
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchTokens = async (walletAddress: string) => {
-    const token = chainlinkVRFSupportedNetworks.find(
+    const LINKToken = LINKTokenContracts.find(
       (_) => _.chainId === currentChainId
     );
 
     setIsLoading(true);
-    if (token) {
+    if (LINKToken) {
       const tokens = await getTokensBalance(walletAddress, currentChainId, [
         "",
-        token.LINKToken,
+        LINKToken.address,
       ]);
       setTokenList(
         tokens.map((_) => ({

@@ -16,18 +16,21 @@ export const CreateSubscription = ({
     useSendAndConfirmTransaction();
 
   const onCreateSubscription = async () => {
-    const appContract = chainlinkVRFCoordinatorContracts.filter(
+    const VRFContract = chainlinkVRFCoordinatorContracts.find(
       (_) => _.chainId === currentChainId
-    )[0];
-    const tx = prepareContractCall({
-      contract: getContractByChainAndAddress(
-        appContract.chainId,
-        appContract.address
-      ),
-      method: "function createSubscription() external returns (uint256 subId)",
-      params: [],
-    });
-    mutate(tx);
+    );
+    if (VRFContract) {
+      const tx = prepareContractCall({
+        contract: getContractByChainAndAddress(
+          VRFContract.chainId,
+          VRFContract.address
+        ),
+        method:
+          "function createSubscription() external returns (uint256 subId)",
+        params: [],
+      });
+      mutate(tx);
+    }
   };
   return (
     <div className="space-y-4">

@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { SubscriptionDetail } from "./SubscriptionDetail";
 import { AppChainId, appNetworkPathRecord } from "@/contracts/settings";
 import Link from "next/link";
-import { Steps } from "./ManageCreation";
+import { IManageCreation } from "./LotteryCreationFlow";
 
 export const SelectSubscription = ({
   walletAddress,
@@ -13,11 +13,7 @@ export const SelectSubscription = ({
 }: {
   walletAddress: string;
   currentChainId: AppChainId;
-  setManageCreation: Dispatch<
-    SetStateAction<{
-      currentStep: Steps;
-    }>
-  >;
+  setManageCreation: Dispatch<SetStateAction<IManageCreation>>;
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeSubscriptions, setActiveSubscriptions] = useState<
@@ -43,7 +39,10 @@ export const SelectSubscription = ({
 
   return (
     <div>
-      <div>Select a subscription with at least 1 LINK token</div>
+      <div>
+        Check the funds in your subscriptions then select one with at least 1
+        LINK token
+      </div>
       {isLoading ? (
         <div>Loading subscriptions ...</div>
       ) : (
@@ -51,7 +50,7 @@ export const SelectSubscription = ({
           {activeSubscriptions && activeSubscriptions.length ? (
             activeSubscriptions.map((_) => (
               <SubscriptionDetail
-                key={`${_}`}
+                key={_}
                 currentChainId={currentChainId}
                 subscriptionId={_}
                 setManageCreation={setManageCreation}

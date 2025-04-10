@@ -1,35 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { z } from "zod";
-import { Steps } from "./ManageCreation";
-
-const schema = z.object({
-  title: z.string().min(5).max(30),
-  description: z.string().min(5).max(50),
-  numTickets: z.number().int().positive().min(2).max(5),
-  date: z.date().refine(
-    (date) => {
-      const minDate = new Date();
-      minDate.setMinutes(minDate.getMinutes() + 10);
-      return date >= minDate;
-    },
-    {
-      message: "Date must be at least 10 minutes from now",
-    }
-  ),
-  ticketPrice: z.number().positive().min(0.0032),
-});
-type SchemaType = z.infer<typeof schema>;
+import {
+  IManageCreation,
+  schema,
+  SchemaType,
+  Steps,
+} from "./LotteryCreationFlow";
 
 export const EnterLotteryDataForm = ({
   setManageCreation,
 }: {
-  setManageCreation: Dispatch<
-    SetStateAction<{
-      currentStep: Steps;
-    }>
-  >;
+  setManageCreation: Dispatch<SetStateAction<IManageCreation>>;
 }) => {
   const {
     register,
@@ -44,9 +26,11 @@ export const EnterLotteryDataForm = ({
   const onSubmit: SubmitHandler<SchemaType> = async (data) => {
     console.log("data", (data.date.getTime() - new Date().getTime()) / 1000);
 
-    setManageCreation({
+    setManageCreation((_) => ({
+      ..._,
       currentStep: Steps.SELECT_SUBSCRIPTION,
-    });
+      metadata: data,
+    }));
   };
 
   useEffect(() => {
@@ -85,6 +69,22 @@ export const EnterLotteryDataForm = ({
             {!!errors.description && (
               <div className="mt-1 text-sm text-red-700">
                 {errors.description.message}
+              </div>
+            )}
+          </div>
+        </div>
+        <div>
+          <div>
+            <input
+              {...register("prize", { valueAsNumber: true })}
+              placeholder="Prize in ETH"
+              className="border"
+            />
+          </div>
+          <div>
+            {!!errors.prize && (
+              <div className="mt-1 text-sm text-red-700">
+                {errors.prize.message}
               </div>
             )}
           </div>

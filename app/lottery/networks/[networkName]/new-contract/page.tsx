@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { chainlinkVRFCoordinatorContracts } from "@/contracts/chainlink";
 import { LotteryCreationFlow } from "./_components/LotteryCreationFlow";
+import { lotteryFactoryContracts } from "@/contracts/contracts";
 
 export default async function Page({
   params,
@@ -8,7 +8,7 @@ export default async function Page({
   params: Promise<{ networkName: string }>;
 }) {
   const { networkName } = await params;
-  const isValidNetwork = chainlinkVRFCoordinatorContracts.find(
+  const isValidNetwork = lotteryFactoryContracts.find(
     (_) => _.path === networkName
   );
   if (!isValidNetwork) return notFound();

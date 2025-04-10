@@ -1,6 +1,6 @@
 import {
   chainlinkVRFCoordinatorContracts,
-  chainlinkVRFSupportedNetworks,
+  LINKTokenContracts,
 } from "@/contracts/chainlink";
 import { getContractByChainAndAddress } from "@/contracts/client";
 import { AppChainId } from "@/contracts/settings";
@@ -21,28 +21,30 @@ export const FundSubscription = ({
   const router = useRouter();
 
   const onFundSubscription = async (subscriptionId: bigint) => {
-    const network = chainlinkVRFSupportedNetworks.filter(
+    const LINKToken = LINKTokenContracts.find(
       (_) => _.chainId === currentChainId
-    )[0];
-    const VRFCoodinator = chainlinkVRFCoordinatorContracts.filter(
+    );
+    const VRFCoodinator = chainlinkVRFCoordinatorContracts.find(
       (_) => _.chainId === currentChainId
-    )[0];
+    );
 
     const encodeSubId = encodeAbiParameters(
       [{ name: "subId", type: "uint256" }],
       [subscriptionId]
     );
-    const tx = prepareContractCall({
-      contract: getContractByChainAndAddress(
-        network.chainId,
-        network.LINKToken
-      ),
-      method:
-        "function transferAndCall(address to, uint value, bytes memory data) public returns (bool success)",
-      params: [VRFCoodinator.address, AMOUNT_TO_FUND, encodeSubId],
-    });
-    await mutateAsync(tx);
-    router.refresh();
+    if (LINKToken && VRFCoodinator) {
+      const tx = prepareContractCall({
+        contract: getContractByChainAndAddress(
+          LINKToken.chainId,
+          LINKToken.address
+        ),
+        method:
+          "function transferAndCall(address to, uint value, bytes memory data) public returns (bool success)",
+        params: [VRFCoodinator.address, AMOUNT_TO_FUND, encodeSubId],
+      });
+      await mutateAsync(tx);
+      router.refresh();
+    }
   };
 
   return (

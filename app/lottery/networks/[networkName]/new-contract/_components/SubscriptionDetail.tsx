@@ -4,7 +4,7 @@ import { getSubscriptionDetailByChainAndId } from "@/server/vrf-subscription";
 import { Dispatch, SetStateAction, useState } from "react";
 import { shortenHex, toEther } from "thirdweb/utils";
 import { FundSubscription } from "./FundSubscription";
-import { Steps } from "./ManageCreation";
+import { IManageCreation, Steps } from "./LotteryCreationFlow";
 
 export const SubscriptionDetail = ({
   currentChainId,
@@ -13,11 +13,7 @@ export const SubscriptionDetail = ({
 }: {
   currentChainId: AppChainId;
   subscriptionId: bigint;
-  setManageCreation: Dispatch<
-    SetStateAction<{
-      currentStep: Steps;
-    }>
-  >;
+  setManageCreation: Dispatch<SetStateAction<IManageCreation>>;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [detail, setDetail] = useState<{
@@ -71,12 +67,14 @@ export const SubscriptionDetail = ({
                   <button
                     className="bg-green-100 p-2 rounded-md cursor-pointer text-sm"
                     onClick={() => {
-                      setManageCreation({
+                      setManageCreation((_) => ({
+                        ..._,
                         currentStep: Steps.CONFIG_AUTOMATION,
-                      });
+                        subscriptionId,
+                      }));
                     }}
                   >
-                    Select subscription and continue
+                    Select and continue
                   </button>
                 </div>
               ) : (

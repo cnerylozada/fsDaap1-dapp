@@ -26,10 +26,42 @@ export const fundMeFactoryContracts: IAppContact[] = [
   },
 ];
 
+export const lotteryFactoryContracts: IAppContact[] = [
+  {
+    chainId: AppChainId.optimismSepolia,
+    address: "0xf197570D8AE24014496c9FBf3C7CC5071814AD70",
+    path: appNetworkPathRecord[AppChainId.optimismSepolia],
+  },
+  {
+    chainId: AppChainId.arbitrumSepolia,
+    address: "0xbE40b3F06AD824aa4DF6983122431f980935EB96",
+    path: appNetworkPathRecord[AppChainId.arbitrumSepolia],
+  },
+  {
+    chainId: AppChainId.sepolia,
+    address: "0x3EF93881459119772A776ED5c348436AF5ED7158",
+    path: appNetworkPathRecord[AppChainId.sepolia],
+  },
+];
+
 export const basicUniswapV2Contracts: IAppContact[] = [
   {
     chainId: AppChainId.sepolia,
     address: "0x38E131d58Cc9D660Efe5251FB9feF895aFE6C6FC",
     path: appNetworkPathRecord[AppChainId.sepolia],
+  },
+];
+
+export const registerUpkeepContracts: {
+  chainId: AppChainId;
+  address: string;
+}[] = [
+  {
+    chainId: AppChainId.sepolia,
+    address: "0x932856dDa48a0857a276E360FE2E84Db061a9A80",
+  },
+  {
+    chainId: AppChainId.optimismSepolia,
+    address: "0xDd9c3BCF5A4d6b00DBcf783f37F48E8ED4787324",
   },
 ];

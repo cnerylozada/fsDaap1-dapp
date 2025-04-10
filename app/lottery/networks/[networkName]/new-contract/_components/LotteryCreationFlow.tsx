@@ -1,9 +1,42 @@
 "use client";
 import { useCheckWalletAndNetwork } from "@/components/hooks";
-import { appNetworkRecord } from "@/contracts/settings";
 import { useParams } from "next/navigation";
-import { useSwitchActiveWalletChain } from "thirdweb/react";
-import { ManageCreation } from "./ManageCreation";
+import { useState } from "react";
+import { z } from "zod";
+import { EnterLotteryDataForm } from "./EnterLotteryDataForm";
+import { SelectSubscription } from "./SelectSubscription";
+import { ConfigAutomation } from "./ConfigAutomation";
+
+export enum Steps {
+  ENTER_DATA,
+  SELECT_SUBSCRIPTION,
+  CONFIG_AUTOMATION,
+}
+
+export const schema = z.object({
+  title: z.string().min(5).max(30),
+  description: z.string().min(5).max(50),
+  prize: z.number().positive().min(0.0032),
+  numTickets: z.number().int().positive().min(2).max(5),
+  date: z.date().refine(
+    (date) => {
+      const minDate = new Date();
+      minDate.setMinutes(minDate.getMinutes() + 10);
+      return date >= minDate;
+    },
+    {
+      message: "Date must be at least 10 minutes from now",
+    }
+  ),
+  ticketPrice: z.number().positive().min(0.0032),
+});
+export type SchemaType = z.infer<typeof schema>;
+
+export interface IManageCreation {
+  currentStep: Steps;
+  metadata: SchemaType | null;
+  subscriptionId: bigint | null;
+}
 
 export const LotteryCreationFlow = () => {
   const { networkName } = useParams();
@@ -15,28 +48,37 @@ export const LotteryCreationFlow = () => {
     appChainId,
   } = useCheckWalletAndNetwork(`${networkName}`);
 
-  const switchChain = useSwitchActiveWalletChain();
+  const [manageCreation, setManageCreation] = useState<IManageCreation>({
+    currentStep: Steps.ENTER_DATA,
+    metadata: null,
+    subscriptionId: null,
+  });
 
   if (!walletAddress || !isWalletConnectedToCorrectChain)
     return (
       <div>
-        <div>
-          Connect your wallet to {targetAppNetwork?.name} to perform operations
-        </div>
-        {!!walletAddress && (
-          <div>
-            <button
-              className="bg-blue-100 p-2 rounded-md cursor-pointer text-sm"
-              onClick={() => switchChain(appNetworkRecord[appChainId])}
-            >
-              Switch to {targetAppNetwork?.name}
-            </button>
-          </div>
-        )}
+        Connect your wallet to {targetAppNetwork?.name} to perform operations
       </div>
     );
 
   return (
-    <ManageCreation walletAddress={walletAddress} currentChainId={appChainId} />
+    <div>
+      {manageCreation.currentStep === Steps.ENTER_DATA && (
+        <EnterLotteryDataForm setManageCreation={setManageCreation} />
+      )}
+      {manageCreation.currentStep === Steps.SELECT_SUBSCRIPTION && (
+        <SelectSubscription
+          walletAddress={walletAddress}
+          currentChainId={appChainId}
+          setManageCreation={setManageCreation}
+        />
+      )}
+      {manageCreation.currentStep === Steps.CONFIG_AUTOMATION && (
+        <ConfigAutomation
+          manageCreation={manageCreation}
+          currentChainId={appChainId}
+        />
+      )}
+    </div>
   );
 };
