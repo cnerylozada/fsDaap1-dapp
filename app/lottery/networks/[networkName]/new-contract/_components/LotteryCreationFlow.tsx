@@ -5,7 +5,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { EnterLotteryDataForm } from "./EnterLotteryDataForm";
 import { SelectSubscription } from "./SelectSubscription";
-import { ConfigAutomation } from "./ConfigAutomation";
+import { ConfigureAutomation } from "./ConfigureAutomation";
 import { ConnectNewLotteryWithSubscription } from "./ConnectNewLotteryWithSubscription";
 
 export enum Steps {
@@ -20,7 +20,7 @@ export const schema = z.object({
   description: z.string().min(5).max(50),
   prize: z.number().positive().min(0.0032),
   numTickets: z.number().int().positive().min(2).max(5),
-  date: z.date().refine(
+  eventDate: z.date().refine(
     (date) => {
       const minDate = new Date();
       minDate.setMinutes(minDate.getMinutes() + 10);
@@ -32,11 +32,11 @@ export const schema = z.object({
   ),
   ticketPrice: z.number().positive().min(0.0032),
 });
-export type SchemaType = z.infer<typeof schema>;
+export type LotterySchemaType = z.infer<typeof schema>;
 
 export interface IManageCreation {
   currentStep: Steps;
-  metadata: SchemaType | null;
+  metadata: LotterySchemaType | null;
   lotteryContractAddress: string | null;
   subscriptionId: bigint | null;
 }
@@ -85,7 +85,7 @@ export const LotteryCreationFlow = () => {
         />
       )}
       {manageCreation.currentStep === Steps.CONFIG_AUTOMATION && (
-        <ConfigAutomation
+        <ConfigureAutomation
           manageCreation={manageCreation}
           currentChainId={appChainId}
         />

@@ -1,10 +1,11 @@
 import { useSendAndConfirmTransaction } from "thirdweb/react";
 import { IManageCreation } from "./LotteryCreationFlow";
 import { AppChainId } from "@/contracts/settings";
-import { prepareContractCall } from "thirdweb";
+import { prepareContractCall, toEther } from "thirdweb";
 import { registerUpkeepContracts } from "@/contracts/contracts";
 import { LINKTokenContracts } from "@/contracts/chainlink";
 import { getContractByChainAndAddress } from "@/contracts/client";
+import { LotteryData } from "./LotteryData";
 
 const RegisterNewUpkeep = ({
   currentChainId,
@@ -54,16 +55,17 @@ const RegisterNewUpkeep = ({
   );
 };
 
-export const ConfigAutomation = ({
+export const ConfigureAutomation = ({
   manageCreation,
   currentChainId,
 }: {
   manageCreation: IManageCreation;
   currentChainId: AppChainId;
 }) => {
+  const NUMBER_TOKENS_TO_SEND = BigInt(1 * 10 ** 18);
   const { data, mutate, isPending, isSuccess, isError, error } =
     useSendAndConfirmTransaction();
-  const { lotteryContractAddress } = manageCreation;
+  const { lotteryContractAddress, metadata } = manageCreation;
 
   const onFundAutomation = async () => {
     const registerUpkeep = registerUpkeepContracts.find(
@@ -80,7 +82,7 @@ export const ConfigAutomation = ({
         ),
         method:
           "function transfer(address to, uint256 amount) public returns (bool)",
-        params: [registerUpkeep.address, BigInt(1 * 10 ** 18)],
+        params: [registerUpkeep.address, NUMBER_TOKENS_TO_SEND],
       });
       mutate(sendLINkTx);
     }
@@ -88,8 +90,10 @@ export const ConfigAutomation = ({
 
   return (
     <div>
-      <div>Your lottery inputs:</div>
-      <div></div>
+      <div>Lottery inputs:</div>
+      {metadata && (
+        <LotteryData lotteryDataEntered={metadata} className="mb-4" />
+      )}
 
       {isSuccess && data && lotteryContractAddress ? (
         <RegisterNewUpkeep
@@ -104,7 +108,7 @@ export const ConfigAutomation = ({
               onClick={onFundAutomation}
               disabled={isPending}
             >
-              Fund Automation
+              Send +{toEther(NUMBER_TOKENS_TO_SEND)} LINK to Automation
             </button>
           </div>
 

@@ -57,6 +57,7 @@ export default async function Page({
                     <div>Title: {_detail[0]} </div>
                     <div>Owner: {shortenAddress(_detail[2])}</div>
                     <div>Prize: {toEther(_detail[6])} ETH</div>
+                    <div>Event date: {getDateAndTime(_detail[3])}</div>
                     <div>Created at: {getDateAndTime(_createdAt)}</div>
                   </div>
                 );

@@ -4,7 +4,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import {
   IManageCreation,
   schema,
-  SchemaType,
+  LotterySchemaType,
   Steps,
 } from "./LotteryCreationFlow";
 
@@ -18,14 +18,12 @@ export const EnterLotteryDataForm = ({
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<SchemaType>({
+  } = useForm<LotterySchemaType>({
     mode: "all",
     resolver: zodResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<SchemaType> = async (data) => {
-    console.log("data", (data.date.getTime() - new Date().getTime()) / 1000);
-
+  const onSubmit: SubmitHandler<LotterySchemaType> = async (data) => {
     setManageCreation((_) => ({
       ..._,
       currentStep: Steps.SELECT_SUBSCRIPTION,
@@ -124,15 +122,15 @@ export const EnterLotteryDataForm = ({
         <div>
           <div>
             <input
-              {...register("date", { valueAsDate: true })}
+              {...register("eventDate", { valueAsDate: true })}
               type="datetime-local"
               className="border"
             />
           </div>
           <div>
-            {!!errors.date && (
+            {!!errors.eventDate && (
               <div className="mt-1 text-sm text-red-700">
-                {errors.date.message}
+                {errors.eventDate.message}
               </div>
             )}
           </div>

@@ -12,6 +12,7 @@ import {
 } from "thirdweb";
 import { getContractByChainAndAddress } from "@/contracts/client";
 import { TransactionReceipt } from "thirdweb/transaction";
+import { LotteryData } from "./LotteryData";
 
 const getLotteryContractAddress = (txReceipt: TransactionReceipt) => {
   const newLotteryEvent = prepareEvent({
@@ -27,7 +28,7 @@ const getLotteryContractAddress = (txReceipt: TransactionReceipt) => {
   return _address;
 };
 
-const AddConsumer = ({
+const AddLotteryAsConsumer = ({
   currentChainId,
   subscriptionId,
   setManageCreation,
@@ -72,7 +73,7 @@ const AddConsumer = ({
           </button>
         </div>
       )}
-      {isPending && <div>Adding lottery to subscription ...</div>}
+      {isPending && <div>Adding lottery as consumer ...</div>}
       {isSuccess && data && (
         <div>
           <button
@@ -85,7 +86,7 @@ const AddConsumer = ({
               }));
             }}
           >
-            Config Automation
+            Configure Automation
           </button>
         </div>
       )}
@@ -118,19 +119,23 @@ export const ConnectNewLotteryWithSubscription = ({
     );
 
     if (lotteryFactory && metadata && subscriptionId && VRFCoordinator) {
-      const { title, description, numTickets, ticketPrice, prize } = metadata;
+      const { title, description, numTickets, ticketPrice, prize, eventDate } =
+        metadata;
       const tx = prepareContractCall({
         contract: getContractByChainAndAddress(
           currentChainId,
           lotteryFactory.address
         ),
         method:
-          "function createLottery(string memory _title, string memory _description, uint _numTickets, uint _dateInSeconds, uint _ticketPrice, address _vrfCoordinator, uint _subscriptionId, bytes32 _keyHash) external payable",
+          "function createLottery(string memory _title, string memory _description, uint _eventDate, uint _secondsToEvent, uint _numTickets, uint _ticketPrice, address _vrfCoordinator, uint _subscriptionId, bytes32 _keyHash) external payable",
         params: [
           title,
           description,
+          BigInt(Math.round(eventDate.getTime() / 1000)),
+          BigInt(
+            Math.round((eventDate.getTime() - new Date().getTime()) / 1000)
+          ),
           BigInt(numTickets),
-          BigInt(60 * 10),
           toWei(`${ticketPrice}`),
           VRFCoordinator.address,
           subscriptionId,
@@ -144,11 +149,13 @@ export const ConnectNewLotteryWithSubscription = ({
 
   return (
     <div>
-      <div>Your lottery inputs:</div>
-      <div></div>
+      <div>Lottery inputs:</div>
+      {metadata && (
+        <LotteryData lotteryDataEntered={metadata} className="mb-4" />
+      )}
 
       {subscriptionId && isSuccess && data ? (
-        <AddConsumer
+        <AddLotteryAsConsumer
           currentChainId={currentChainId}
           subscriptionId={subscriptionId}
           lotteryContractAddress={getLotteryContractAddress(data)}
@@ -162,12 +169,12 @@ export const ConnectNewLotteryWithSubscription = ({
               onClick={onCreateLottery}
               disabled={isPending}
             >
-              Create Lottery without automation
+              Save lottery data
             </button>
           </div>
 
           <div>
-            {isPending && <div>Creating lottery without automation ...</div>}
+            {isPending && <div>Savin lottery data ...</div>}
             {isError && (
               <div className="text-sm text-red-700">{error.message}</div>
             )}
