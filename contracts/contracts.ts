@@ -29,7 +29,7 @@ export const fundMeFactoryContracts: IAppContact[] = [
 export const lotteryFactoryContracts: IAppContact[] = [
   {
     chainId: AppChainId.optimismSepolia,
-    address: "0xABaE5fd3fc9e1df219aC9e84C0f4f8AEb82680aE",
+    address: "0x2e4c03Dce41b6C45A73432C8ea98261158DD7F1F",
     path: appNetworkPathRecord[AppChainId.optimismSepolia],
   },
   {
@@ -39,7 +39,7 @@ export const lotteryFactoryContracts: IAppContact[] = [
   },
   {
     chainId: AppChainId.sepolia,
-    address: "0x7A4EF9d1C894C21d3C9a7c2F7BD0C7DfCcB7bF00",
+    address: "0xfeD58721897c20694B5598f0a4D438eadf90B0C2",
     path: appNetworkPathRecord[AppChainId.sepolia],
   },
 ];

@@ -39,7 +39,7 @@ export const SelectSubscription = ({
 
   return (
     <div>
-      <div>
+      <div className="mb-2">
         Check the funds in your subscriptions then select one with at least 1
         LINK token
       </div>
