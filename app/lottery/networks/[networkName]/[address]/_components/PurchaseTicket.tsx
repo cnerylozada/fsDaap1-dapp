@@ -47,7 +47,7 @@ export const PurchaseTicket = ({ ticketPrice }: { ticketPrice: bigint }) => {
             onPurchaseTicket();
           }}
         >
-          Purchase 1 ticket
+          Purchase 1 ticket!
         </button>
       </div>
     </div>
