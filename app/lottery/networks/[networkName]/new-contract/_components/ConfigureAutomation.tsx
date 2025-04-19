@@ -6,6 +6,7 @@ import { registerUpkeepContracts } from "@/contracts/contracts";
 import { LINKTokenContracts } from "@/contracts/chainlink";
 import { getContractByChainAndAddress } from "@/contracts/client";
 import { LotteryData } from "./LotteryData";
+import Link from "next/link";
 
 const RegisterNewUpkeep = ({
   currentChainId,
@@ -39,6 +40,7 @@ const RegisterNewUpkeep = ({
     <div>
       {!data && (
         <div>
+          <div>Finally connect your lottery with your automation</div>
           <button
             className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200"
             onClick={() => onAddConsumer()}
@@ -49,7 +51,16 @@ const RegisterNewUpkeep = ({
         </div>
       )}
       {isPending && <div>Registering new upkeep ...</div>}
-      {isSuccess && data && <div>END</div>}
+      {isSuccess && data && (
+        <div>
+          <Link
+            href={"./"}
+            className="bg-green-100 p-2 rounded-md cursor-pointer"
+          >
+            Kudos! Go back to lottery list
+          </Link>
+        </div>
+      )}
       {isError && <div className="text-sm text-red-700">{error.message}</div>}
     </div>
   );
@@ -103,6 +114,10 @@ export const ConfigureAutomation = ({
       ) : (
         <>
           <div>
+            <div>
+              Now lets send some tokens to perform automation, it means winner
+              selection process will be triggered automatic
+            </div>
             <button
               className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200"
               onClick={onFundAutomation}

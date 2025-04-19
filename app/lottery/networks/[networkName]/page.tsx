@@ -47,10 +47,11 @@ export default async function Page({
           <>
             <div className="mb-2 font-bold">List of lotteries:</div>
             <div className="space-y-4">
-              {lotteryList.map(({ args, transactionHash }) => {
-                const { _detail, _createdAt } = args;
+              {lotteryList.reverse().map(({ args, transactionHash }) => {
+                const { _detail, _createdAt, _address } = args;
                 return (
-                  <div
+                  <Link
+                    href={`./${networkName}/${_address}`}
                     key={transactionHash}
                     className="block border rounded-md p-3"
                   >
@@ -59,7 +60,7 @@ export default async function Page({
                     <div>Prize: {toEther(_detail[6])} ETH</div>
                     <div>Event date: {getDateAndTime(_detail[3])}</div>
                     <div>Created at: {getDateAndTime(_createdAt)}</div>
-                  </div>
+                  </Link>
                 );
               })}
             </div>

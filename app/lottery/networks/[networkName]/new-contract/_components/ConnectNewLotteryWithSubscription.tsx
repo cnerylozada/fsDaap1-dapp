@@ -64,6 +64,10 @@ const AddLotteryAsConsumer = ({
     <div>
       {!data && (
         <div>
+          <div>
+            To perform randomness selection in your lottery you need to connect
+            with your subscription
+          </div>
           <button
             className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200"
             onClick={() => addConsumerToSubscription()}
