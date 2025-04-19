@@ -1,6 +1,6 @@
 import { getContractByChainAndAddress } from "@/contracts/server";
 import { AppChainId } from "@/contracts/settings";
-import { readContract, toEther, toUnits, ZERO_ADDRESS } from "thirdweb";
+import { readContract, toEther, ZERO_ADDRESS } from "thirdweb";
 import { shortenAddress } from "thirdweb/utils";
 import { PurchaseTicket } from "./PurchaseTicket";
 

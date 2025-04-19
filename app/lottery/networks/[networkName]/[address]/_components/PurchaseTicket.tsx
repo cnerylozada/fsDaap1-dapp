@@ -15,8 +15,7 @@ export const PurchaseTicket = ({ ticketPrice }: { ticketPrice: bigint }) => {
     walletAddress,
   } = useCheckWalletAndNetwork(`${networkName}`);
 
-  const { mutateAsync, data, isPending, isSuccess, error } =
-    useSendAndConfirmTransaction();
+  const { mutateAsync, isPending } = useSendAndConfirmTransaction();
 
   const router = useRouter();
 
