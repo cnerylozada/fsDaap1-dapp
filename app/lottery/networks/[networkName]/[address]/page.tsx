@@ -1,8 +1,8 @@
 import { lotteryFactoryContracts } from "@/contracts/contracts";
 import { Metadata } from "./_components/Metadata";
 import { notFound } from "next/navigation";
-import { getContractByChainAndAddress } from "@/contracts/server";
 import { Lottery } from "./_components/Lottery";
+import { isAddress } from "thirdweb";
 
 export default async function Page({
   params,
@@ -10,23 +10,15 @@ export default async function Page({
   params: Promise<{ address: string; networkName: string }>;
 }) {
   const { address, networkName } = await params;
-  const isValidNetwork = lotteryFactoryContracts.find(
+  const lotteryFactory = lotteryFactoryContracts.find(
     (_) => _.path === networkName
   );
-  if (!isValidNetwork) return notFound();
-
-  const lotteryFactoryContract = getContractByChainAndAddress(
-    isValidNetwork.chainId,
-    isValidNetwork.address
-  );
+  if (!lotteryFactory || !isAddress(address)) return notFound();
 
   return (
     <div className="p-4 space-y-4">
-      <Metadata
-        address={address}
-        lotteryFactoryContract={lotteryFactoryContract}
-      />
-      <Lottery currentChainId={isValidNetwork.chainId} address={address} />
+      <Metadata lotteryFactory={lotteryFactory} address={address} />
+      <Lottery currentChainId={lotteryFactory.chainId} address={address} />
     </div>
   );
 }

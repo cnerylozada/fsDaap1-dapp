@@ -75,7 +75,7 @@ export const ConfigureAutomation = ({
   manageCreation: IManageCreation;
   currentChainId: AppChainId;
 }) => {
-  const LINK_TOKENS_TO_SEND = BigInt(0.1 * 10 ** 18);
+  const LINK_TOKENS_TO_SEND = BigInt(0.2 * 10 ** 18);
   const { data, mutate, isPending, isSuccess, isError, error } =
     useSendAndConfirmTransaction();
   const { lotteryContractAddress, metadata } = manageCreation;

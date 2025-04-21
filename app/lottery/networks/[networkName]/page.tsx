@@ -1,9 +1,9 @@
 import { getDateAndTime } from "@/components/utils/utils";
 import { lotteryFactoryContracts } from "@/contracts/contracts";
-import { getContractByChainAndAddress } from "@/contracts/server";
+import { getLotteryList } from "@/server/lottery";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { readContract, toEther } from "thirdweb";
+import { toEther } from "thirdweb";
 import { shortenAddress } from "thirdweb/utils";
 
 export default async function Page({
@@ -17,17 +17,10 @@ export default async function Page({
   );
   if (!lotteryFactory) return notFound();
 
-  const lotteryList = await readContract({
-    contract: getContractByChainAndAddress(
-      lotteryFactory.chainId,
-      lotteryFactory.address
-    ),
-    method:
-      "function contractsCreated() external view returns ((address, uint, (string, string, address, uint, uint, uint, uint))[] memory)",
-    params: [],
-  });
-
-  console.log(`lotteryList`, lotteryList);
+  const lotteryList = await getLotteryList(
+    lotteryFactory.chainId,
+    lotteryFactory.address
+  );
 
   return (
     <div className="p-4 space-y-4">

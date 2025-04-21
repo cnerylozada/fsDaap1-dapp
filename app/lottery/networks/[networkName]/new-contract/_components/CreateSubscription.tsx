@@ -41,7 +41,7 @@ const AddFundsToSubscription = ({
   currentChainId: AppChainId;
   setManageCreation: Dispatch<SetStateAction<IManageCreation>>;
 }) => {
-  const AMOUNT_TO_FUND = BigInt(0.1 * 10 ** 18);
+  const AMOUNT_TO_FUND = BigInt(1.4 * 10 ** 18);
   const { mutate, data, isError, error, isSuccess, isPending } =
     useSendAndConfirmTransaction();
 

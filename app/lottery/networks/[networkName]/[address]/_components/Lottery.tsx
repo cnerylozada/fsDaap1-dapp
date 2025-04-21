@@ -13,7 +13,7 @@ export const Lottery = async ({
 }) => {
   const lotteryContract = getContractByChainAndAddress(currentChainId, address);
 
-  const [state, winnerAddress, participants, ticketPrice] = await Promise.all([
+  const data = await Promise.all([
     readContract({
       contract: lotteryContract,
       method: "function getState() external view returns (uint8)",
@@ -35,13 +35,26 @@ export const Lottery = async ({
       method: "function getTicketPrice() external view returns (uint)",
       params: [],
     }),
+    readContract({
+      contract: lotteryContract,
+      method: "function getNumTickets() external view returns (uint)",
+      params: [],
+    }),
   ]);
+
+  const [state, winnerAddress, participants, ticketPrice, numberOfTickets] =
+    data;
+  const isSoldOut = participants.length === +numberOfTickets.toString();
 
   return (
     <div className="space-y-4">
       <div>
-        <div>Price of token: {toEther(ticketPrice)} ETH</div>
+        <div>Price of ticket: {toEther(ticketPrice)} ETH</div>
         <div>State: {state}</div>
+        <div>
+          Number of tickets: {numberOfTickets.toString()}{" "}
+          {isSoldOut && <span className="font-bold">SOLD OUT</span>}
+        </div>
         <div>
           <div>Participants:</div>
           {participants.length ? (
@@ -58,7 +71,7 @@ export const Lottery = async ({
         </div>
       </div>
 
-      <PurchaseTicket ticketPrice={ticketPrice} />
+      {!isSoldOut && <PurchaseTicket ticketPrice={ticketPrice} />}
     </div>
   );
 };

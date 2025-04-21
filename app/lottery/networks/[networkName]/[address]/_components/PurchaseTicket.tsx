@@ -15,7 +15,8 @@ export const PurchaseTicket = ({ ticketPrice }: { ticketPrice: bigint }) => {
     walletAddress,
   } = useCheckWalletAndNetwork(`${networkName}`);
 
-  const { mutateAsync, isPending } = useSendAndConfirmTransaction();
+  const { mutateAsync, isPending, isError, error } =
+    useSendAndConfirmTransaction();
 
   const router = useRouter();
 
@@ -39,17 +40,17 @@ export const PurchaseTicket = ({ ticketPrice }: { ticketPrice: bigint }) => {
 
   return (
     <div>
-      <div>
-        <button
-          className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
-          disabled={isPending}
-          onClick={() => {
-            onPurchaseTicket();
-          }}
-        >
-          Purchase 1 ticket
-        </button>
-      </div>
+      <button
+        className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
+        disabled={isPending}
+        onClick={() => {
+          onPurchaseTicket();
+        }}
+      >
+        Purchase 1 ticket
+      </button>
+      {isPending && <div>Purchasing ticket ...</div>}
+      {isError && <div className="text-sm text-red-700">{error.message}</div>}
     </div>
   );
 };
