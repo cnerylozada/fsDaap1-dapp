@@ -150,25 +150,16 @@ export const CreateNewCrowdFundingForm = ({
         <div>
           {isPending && <div>Loading transaction ...</div>}
           {isSuccess && (
-            <>
-              <div>
-                Check your transaction:{" "}
-                <Link
-                  href={`${appScanURLRecord[appChainId]}/${data.transactionHash}`}
-                  target="_blank"
-                  className="text-blue-700 text-sm underline"
-                >
-                  Transaction Hash: {shortenHex(data.transactionHash)}
-                </Link>
-              </div>
-              <div>
-                <Link href={`./`}>
-                  <button className="p-2 bg-blue-100 rounded-md ">
-                    Go back
-                  </button>
-                </Link>
-              </div>
-            </>
+            <div>
+              Check your transaction:{" "}
+              <Link
+                href={`${appScanURLRecord[appChainId]}/${data.transactionHash}`}
+                target="_blank"
+                className="text-blue-700 text-sm underline"
+              >
+                Transaction Hash: {shortenHex(data.transactionHash)}
+              </Link>
+            </div>
           )}
           {isError && <div>{error.message}</div>}
         </div>
