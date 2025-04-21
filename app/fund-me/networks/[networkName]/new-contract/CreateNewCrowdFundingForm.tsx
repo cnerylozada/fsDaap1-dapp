@@ -47,7 +47,7 @@ export const CreateNewCrowdFundingForm = ({
     targetAppNetwork,
   } = useCheckWalletAndNetwork(`${networkName}`);
 
-  const { mutateAsync, data, isPending, isSuccess, error } =
+  const { mutate, data, isPending, isSuccess, error, isError } =
     useSendAndConfirmTransaction();
 
   const {
@@ -71,7 +71,7 @@ export const CreateNewCrowdFundingForm = ({
           BigInt(dataFeed.decimals),
         ],
       });
-      await mutateAsync(tx);
+      mutate(tx);
     }
   };
 
@@ -85,7 +85,7 @@ export const CreateNewCrowdFundingForm = ({
   return (
     <div>
       <div className="mb-2">CreateNewCrowdFundingForm</div>
-      <div>
+      <div className="space-y-4">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
           <div className="space-y-3">
             <div>
@@ -150,18 +150,27 @@ export const CreateNewCrowdFundingForm = ({
         <div>
           {isPending && <div>Loading transaction ...</div>}
           {isSuccess && (
-            <div>
-              Check your transaction:{" "}
-              <Link
-                href={`${appScanURLRecord[appChainId]}/${data.transactionHash}`}
-                target="_blank"
-                className="text-blue-700 text-sm underline"
-              >
-                Transaction Hash: {shortenHex(data.transactionHash)}
-              </Link>
-            </div>
+            <>
+              <div>
+                Check your transaction:{" "}
+                <Link
+                  href={`${appScanURLRecord[appChainId]}/${data.transactionHash}`}
+                  target="_blank"
+                  className="text-blue-700 text-sm underline"
+                >
+                  Transaction Hash: {shortenHex(data.transactionHash)}
+                </Link>
+              </div>
+              <div>
+                <Link href={`./`}>
+                  <button className="p-2 bg-blue-100 rounded-md ">
+                    Go back
+                  </button>
+                </Link>
+              </div>
+            </>
           )}
-          {error && <div>{JSON.stringify(error)}</div>}
+          {isError && <div>{error.message}</div>}
         </div>
       </div>
     </div>

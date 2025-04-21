@@ -28,9 +28,13 @@ export default async function Page({
       isValidNetwork.address
     ),
     events: [newLotteryEvent],
-    fromBlock: "earliest",
-    toBlock: "latest",
+    // blockRange: BigInt(1),
+    // // blockRange
+    fromBlock: BigInt(26293040),
+    toBlock: BigInt(26644672),
   });
+
+  console.log(`lotteryList`, lotteryList);
 
   return (
     <div className="p-4 space-y-4">
