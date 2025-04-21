@@ -17,15 +17,15 @@ import { LotteryData } from "./LotteryData";
 const getLotteryContractAddress = (txReceipt: TransactionReceipt) => {
   const newLotteryEvent = prepareEvent({
     signature:
-      "event NewLottery(address indexed _address, uint _createdAt, (string,string,address,uint256,uint256,uint256,uint256) _detail)",
+      "event NewLottery(address indexed contractAddress, uint createdAt, (string, string, address, uint256, uint256, uint256, uint256) metadata)",
   });
   const createLotteryLogs = parseEventLogs({
     events: [newLotteryEvent],
     logs: txReceipt.logs,
   });
   const { args } = createLotteryLogs[0];
-  const { _address } = args;
-  return _address;
+  const { contractAddress } = args;
+  return contractAddress;
 };
 
 const AddLotteryAsConsumer = ({
@@ -66,7 +66,7 @@ const AddLotteryAsConsumer = ({
         <div>
           <div>
             To perform randomness selection in your lottery you need to connect
-            with your subscription
+            it with your subscription
           </div>
           <button
             className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200"
@@ -178,7 +178,7 @@ export const ConnectNewLotteryWithSubscription = ({
           </div>
 
           <div>
-            {isPending && <div>Savin lottery data ...</div>}
+            {isPending && <div>Saving lottery data ...</div>}
             {isError && (
               <div className="text-sm text-red-700">{error.message}</div>
             )}

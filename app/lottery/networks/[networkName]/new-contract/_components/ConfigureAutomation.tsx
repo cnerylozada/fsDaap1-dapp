@@ -11,9 +11,11 @@ import Link from "next/link";
 const RegisterNewUpkeep = ({
   currentChainId,
   lotteryContractAddress,
+  tokensToSend,
 }: {
   currentChainId: AppChainId;
   lotteryContractAddress: string;
+  tokensToSend: bigint;
 }) => {
   const { data, mutate, isPending, isSuccess, isError, error } =
     useSendAndConfirmTransaction();
@@ -29,8 +31,8 @@ const RegisterNewUpkeep = ({
           registerUpkeep.address
         ),
         method:
-          "function registerAndPredictID(string memory _name, address _contractAddress) external",
-        params: [`lottery${Date.now()}`, lotteryContractAddress],
+          "function registerAndPredictID(string memory _name, address _contractAddress, uint _linksToSend) external",
+        params: [`lottery${Date.now()}`, lotteryContractAddress, tokensToSend],
       });
       mutate(tx);
     }
@@ -73,7 +75,7 @@ export const ConfigureAutomation = ({
   manageCreation: IManageCreation;
   currentChainId: AppChainId;
 }) => {
-  const NUMBER_TOKENS_TO_SEND = BigInt(1 * 10 ** 18);
+  const LINK_TOKENS_TO_SEND = BigInt(0.1 * 10 ** 18);
   const { data, mutate, isPending, isSuccess, isError, error } =
     useSendAndConfirmTransaction();
   const { lotteryContractAddress, metadata } = manageCreation;
@@ -93,7 +95,7 @@ export const ConfigureAutomation = ({
         ),
         method:
           "function transfer(address to, uint256 amount) public returns (bool)",
-        params: [registerUpkeep.address, NUMBER_TOKENS_TO_SEND],
+        params: [registerUpkeep.address, LINK_TOKENS_TO_SEND],
       });
       mutate(sendLINkTx);
     }
@@ -110,6 +112,7 @@ export const ConfigureAutomation = ({
         <RegisterNewUpkeep
           currentChainId={currentChainId}
           lotteryContractAddress={lotteryContractAddress}
+          tokensToSend={LINK_TOKENS_TO_SEND}
         />
       ) : (
         <>
@@ -123,7 +126,7 @@ export const ConfigureAutomation = ({
               onClick={onFundAutomation}
               disabled={isPending}
             >
-              Send +{toEther(NUMBER_TOKENS_TO_SEND)} LINK to Automation
+              Send {toEther(LINK_TOKENS_TO_SEND)} LINK to Automation
             </button>
           </div>
 

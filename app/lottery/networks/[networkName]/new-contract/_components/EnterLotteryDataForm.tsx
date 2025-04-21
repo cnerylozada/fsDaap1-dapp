@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
   IManageCreation,
@@ -17,7 +17,6 @@ export const EnterLotteryDataForm = ({
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm<LotterySchemaType>({
     mode: "all",
     resolver: zodResolver(schema),
@@ -26,14 +25,10 @@ export const EnterLotteryDataForm = ({
   const onSubmit: SubmitHandler<LotterySchemaType> = async (data) => {
     setManageCreation((_) => ({
       ..._,
-      currentStep: Steps.SELECT_SUBSCRIPTION,
+      currentStep: Steps.CREATE_SUBSCRIPTION,
       metadata: data,
     }));
   };
-
-  useEffect(() => {
-    reset();
-  }, []);
 
   return (
     <div>

@@ -3,7 +3,7 @@ import { lotteryFactoryContracts } from "@/contracts/contracts";
 import { getContractByChainAndAddress } from "@/contracts/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getContractEvents, prepareEvent, toEther } from "thirdweb";
+import { readContract, toEther } from "thirdweb";
 import { shortenAddress } from "thirdweb/utils";
 
 export default async function Page({
@@ -12,26 +12,19 @@ export default async function Page({
   params: Promise<{ networkName: string }>;
 }) {
   const { networkName } = await params;
-  const isValidNetwork = lotteryFactoryContracts.find(
+  const lotteryFactory = lotteryFactoryContracts.find(
     (_) => _.path === networkName
   );
-  if (!isValidNetwork) return notFound();
+  if (!lotteryFactory) return notFound();
 
-  const newLotteryEvent = prepareEvent({
-    signature:
-      "event NewLottery(address indexed _address, uint _createdAt, (string,string,address,uint256,uint256,uint256,uint256) _detail)",
-  });
-
-  const lotteryList = await getContractEvents({
+  const lotteryList = await readContract({
     contract: getContractByChainAndAddress(
-      isValidNetwork.chainId,
-      isValidNetwork.address
+      lotteryFactory.chainId,
+      lotteryFactory.address
     ),
-    events: [newLotteryEvent],
-    // blockRange: BigInt(1),
-    // // blockRange
-    fromBlock: BigInt(26293040),
-    toBlock: BigInt(26644672),
+    method:
+      "function contractsCreated() external view returns ((address, uint, (string, string, address, uint, uint, uint, uint))[] memory)",
+    params: [],
   });
 
   console.log(`lotteryList`, lotteryList);
@@ -51,19 +44,22 @@ export default async function Page({
           <>
             <div className="mb-2 font-bold">List of lotteries:</div>
             <div className="space-y-4">
-              {lotteryList.reverse().map(({ args, transactionHash }) => {
-                const { _detail, _createdAt, _address } = args;
+              {lotteryList.map((_) => {
+                const contractAddress = _[0];
+                const createdAt = _[1];
+                const metadata = _[2];
+
                 return (
                   <Link
-                    href={`./${networkName}/${_address}`}
-                    key={transactionHash}
+                    href={`./${networkName}/${contractAddress}`}
+                    key={contractAddress}
                     className="block border rounded-md p-3"
                   >
-                    <div>Title: {_detail[0]} </div>
-                    <div>Owner: {shortenAddress(_detail[2])}</div>
-                    <div>Prize: {toEther(_detail[6])} ETH</div>
-                    <div>Event date: {getDateAndTime(_detail[3])}</div>
-                    <div>Created at: {getDateAndTime(_createdAt)}</div>
+                    <div>Title: {metadata[0]} </div>
+                    <div>Owner: {shortenAddress(metadata[2])}</div>
+                    <div>Prize: {toEther(metadata[6])} ETH</div>
+                    <div>Event date: {getDateAndTime(metadata[3])}</div>
+                    <div>Created at: {getDateAndTime(createdAt)}</div>
                   </Link>
                 );
               })}

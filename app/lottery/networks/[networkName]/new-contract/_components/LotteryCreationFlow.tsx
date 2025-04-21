@@ -4,13 +4,13 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { z } from "zod";
 import { EnterLotteryDataForm } from "./EnterLotteryDataForm";
-import { SelectSubscription } from "./SelectSubscription";
 import { ConfigureAutomation } from "./ConfigureAutomation";
 import { ConnectNewLotteryWithSubscription } from "./ConnectNewLotteryWithSubscription";
+import { CreateSubscription } from "./CreateSubscription";
 
 export enum Steps {
   ENTER_DATA,
-  SELECT_SUBSCRIPTION,
+  CREATE_SUBSCRIPTION,
   ADD_CONSUMER,
   CONFIG_AUTOMATION,
 }
@@ -70,9 +70,9 @@ export const LotteryCreationFlow = () => {
       {manageCreation.currentStep === Steps.ENTER_DATA && (
         <EnterLotteryDataForm setManageCreation={setManageCreation} />
       )}
-      {manageCreation.currentStep === Steps.SELECT_SUBSCRIPTION && (
-        <SelectSubscription
-          walletAddress={walletAddress}
+      {manageCreation.currentStep === Steps.CREATE_SUBSCRIPTION && (
+        <CreateSubscription
+          manageCreation={manageCreation}
           currentChainId={appChainId}
           setManageCreation={setManageCreation}
         />
