@@ -1,4 +1,4 @@
-import { getContractEvents, prepareEvent } from "thirdweb";
+import { readContract } from "thirdweb";
 import { shortenAddress } from "thirdweb/utils";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -16,17 +16,14 @@ export default async function Page({
   );
   if (!storageFactory) return notFound();
 
-  const newContractCreatedEvent = prepareEvent({
-    signature: "event NewContractCreated(address _address, string _course)",
-  });
-  const storageFactoryEvents = await getContractEvents({
+  const storageContractList = await readContract({
     contract: getContractByChainAndAddress(
       storageFactory.chainId,
       storageFactory.address
     ),
-    events: [newContractCreatedEvent],
-    fromBlock: "earliest",
-    toBlock: "latest",
+    method:
+      "function contractsCreated() external view returns ((address, string)[] memory)",
+    params: [],
   });
 
   return (
@@ -49,17 +46,16 @@ export default async function Page({
       <div>
         <div>List of classrooms:</div>
         <div className="space-y-4">
-          {storageFactoryEvents.length ? (
-            storageFactoryEvents.map(async (event) => {
-              const { transactionHash, args } = event;
+          {storageContractList.length ? (
+            storageContractList.map(async (_) => {
               return (
                 <Link
-                  href={`${networkName}/${args._address}`}
-                  key={transactionHash}
+                  href={`${networkName}/${_[0]}`}
+                  key={_[0]}
                   className="block border rounded-md p-3"
                 >
-                  <div>Contract Address: {shortenAddress(args._address)}</div>
-                  <div>Course: {args._course}</div>
+                  <div>Contract Address: {shortenAddress(_[0])}</div>
+                  <div>Course: {_[1]}</div>
                 </Link>
               );
             })

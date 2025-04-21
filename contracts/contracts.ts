@@ -3,12 +3,12 @@ import { AppChainId, appNetworkPathRecord, IAppContact } from "./settings";
 export const storageFactoryContracts: IAppContact[] = [
   {
     chainId: AppChainId.optimismSepolia,
-    address: "0x23dF64F029C525db788fD416Cb0Bc24f8B82496e",
+    address: "0xb4bd38b220A43749b87e62f5f6f00D899Ec8a6B9",
     path: appNetworkPathRecord[AppChainId.optimismSepolia],
   },
   {
     chainId: AppChainId.arbitrumSepolia,
-    address: "0xdda090443d506d10530c4f2B5159634230a3484D",
+    address: "0x2e49a9AF3d708925584dcfA5624b2e2D57FB8E9d",
     path: appNetworkPathRecord[AppChainId.arbitrumSepolia],
   },
 ];
@@ -16,12 +16,12 @@ export const storageFactoryContracts: IAppContact[] = [
 export const fundMeFactoryContracts: IAppContact[] = [
   {
     chainId: AppChainId.optimismSepolia,
-    address: "0x81F24c2654dC74Ada49ec3AEa415B94e89Eb5DDC",
+    address: "0x666d5cbA00903891b328523eF3F153b00bcBE55B",
     path: appNetworkPathRecord[AppChainId.optimismSepolia],
   },
   {
     chainId: AppChainId.arbitrumSepolia,
-    address: "0xF50b41c16ABAcDa7eeEaCbb185662B36B9DA3dE3",
+    address: "0xdEb107b39c48D5345030e72c3895836cBD9eeF7C",
     path: appNetworkPathRecord[AppChainId.arbitrumSepolia],
   },
 ];
@@ -29,17 +29,17 @@ export const fundMeFactoryContracts: IAppContact[] = [
 export const lotteryFactoryContracts: IAppContact[] = [
   {
     chainId: AppChainId.optimismSepolia,
-    address: "0x2e4c03Dce41b6C45A73432C8ea98261158DD7F1F",
+    address: "0xABaE5fd3fc9e1df219aC9e84C0f4f8AEb82680aE",
     path: appNetworkPathRecord[AppChainId.optimismSepolia],
   },
   {
     chainId: AppChainId.arbitrumSepolia,
-    address: "0xB989376a524ac8dbd2722057eB581c47d6c8173C",
+    address: "0xdEb107b39c48D5345030e72c3895836cBD9eeF7C",
     path: appNetworkPathRecord[AppChainId.arbitrumSepolia],
   },
   {
     chainId: AppChainId.sepolia,
-    address: "0xfeD58721897c20694B5598f0a4D438eadf90B0C2",
+    address: "0x7A4EF9d1C894C21d3C9a7c2F7BD0C7DfCcB7bF00",
     path: appNetworkPathRecord[AppChainId.sepolia],
   },
 ];

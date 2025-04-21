@@ -1,10 +1,9 @@
 import { getDateAndTime } from "@/components/utils/utils";
-import { getContractByChainAndAddress } from "@/contracts/server";
 import { fundMeFactoryContracts } from "@/contracts/contracts";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getContractEvents, prepareEvent } from "thirdweb";
 import { shortenAddress } from "thirdweb/utils";
+import { getCrowdFundingList } from "@/server/crow-funding";
 
 export default async function Page({
   params,
@@ -17,19 +16,10 @@ export default async function Page({
   );
   if (!fundMeFactory) return notFound();
 
-  const newCrowdFundingEvent = prepareEvent({
-    signature:
-      "event NewCrowdFunding(address indexed _address, uint _createdAt, string _title, string _description, uint _minAmountInUsd, address _priceFeedAddress, int _priceFeedDecimals)",
-  });
-  const crowdFundingList = await getContractEvents({
-    contract: getContractByChainAndAddress(
-      fundMeFactory.chainId,
-      fundMeFactory.address
-    ),
-    events: [newCrowdFundingEvent],
-    fromBlock: "earliest",
-    toBlock: "latest",
-  });
+  const crowdFundingList = await getCrowdFundingList(
+    fundMeFactory.chainId,
+    fundMeFactory.address
+  );
 
   return (
     <div className="p-4 space-y-4">
@@ -46,16 +36,18 @@ export default async function Page({
         <div className="space-y-4">
           {crowdFundingList.length ? (
             crowdFundingList.map((_) => {
-              const { transactionHash, args } = _;
+              const contractAddress = _[0];
+              const createdAt = _[1];
+              const metadata = _[2];
               return (
                 <Link
-                  key={transactionHash}
-                  href={`${networkName}/${args._address}`}
+                  key={contractAddress}
+                  href={`${networkName}/${contractAddress}`}
                   className="block border rounded-md p-3"
                 >
-                  <div>Title: {args._title}</div>
-                  <div>Address: {shortenAddress(args._address)}</div>
-                  <div>Created at: {getDateAndTime(args._createdAt)}</div>
+                  <div>Title: {metadata[0]}</div>
+                  <div>Address: {shortenAddress(contractAddress)}</div>
+                  <div>Created at: {getDateAndTime(createdAt)}</div>
                 </Link>
               );
             })

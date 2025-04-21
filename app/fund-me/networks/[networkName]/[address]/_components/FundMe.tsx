@@ -1,9 +1,4 @@
-import {
-  getContractEvents,
-  prepareEvent,
-  readContract,
-  toEther,
-} from "thirdweb";
+import { readContract, toEther } from "thirdweb";
 import { AddFundsForm } from "./AddFundsForm";
 import { shortenAddress } from "thirdweb/utils";
 import { AppChainId } from "@/contracts/settings";
@@ -16,10 +11,6 @@ export const FundMe = async ({
   currentChainId: AppChainId;
   address: string;
 }) => {
-  const newFunderEvent = prepareEvent({
-    signature:
-      "event NewFunder(address _address, uint _amount, uint _createdAt)",
-  });
   const fundMeContract = getContractByChainAndAddress(currentChainId, address);
 
   const [owner, currentBalance, minAmountInUSD, funders] = await Promise.all([
@@ -38,11 +29,11 @@ export const FundMe = async ({
       method: "function getMinAmountInUSD() external view returns (uint)",
       params: [],
     }),
-    getContractEvents({
+    readContract({
       contract: fundMeContract,
-      events: [newFunderEvent],
-      fromBlock: "earliest",
-      toBlock: "latest",
+      method:
+        "function getFunders() external view returns ((address, uint, uint)[] memory)",
+      params: [],
     }),
   ]);
 
@@ -57,12 +48,14 @@ export const FundMe = async ({
         <div>
           <div className="font-bold">Funders:</div>
           {funders.length ? (
-            funders.map((_) => (
-              <div key={_.transactionHash} className="flex gap-x-5">
-                <div>Wallet: {shortenAddress(_.args._address)}</div>
-                <div>Amount: {toEther(_.args._amount)} ETH</div>
-              </div>
-            ))
+            funders.map((_) => {
+              return (
+                <div key={_[0]} className="flex gap-x-5">
+                  <div>Wallet: {shortenAddress(_[0])}</div>
+                  <div>Amount: {toEther(_[1])} ETH</div>
+                </div>
+              );
+            })
           ) : (
             <div>There are no funders yet</div>
           )}

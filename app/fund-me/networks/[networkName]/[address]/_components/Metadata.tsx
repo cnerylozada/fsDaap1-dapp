@@ -1,37 +1,37 @@
 import { getDateAndTime } from "@/components/utils/utils";
-import { ContractOptions, getContractEvents, prepareEvent } from "thirdweb";
+import { IAppContact } from "@/contracts/settings";
+import { getCrowdFundingList } from "@/server/crow-funding";
 import { shortenAddress } from "thirdweb/utils";
 
 export const Metadata = async ({
-  fundMeFactoryContract,
+  fundMeFactory,
   address,
 }: {
-  fundMeFactoryContract: Readonly<ContractOptions<[], `0x${string}`>>;
+  fundMeFactory: IAppContact;
   address: string;
 }) => {
-  const newCrowdFundingEvent = prepareEvent({
-    signature:
-      "event NewCrowdFunding(address indexed _address, uint _createdAt, string _title, string _description, uint _minAmountInUsd, address _priceFeedAddress, int _priceFeedDecimals)",
-    filters: { _address: address },
-  });
-
-  const crowdFundingDetail = await getContractEvents({
-    contract: fundMeFactoryContract,
-    events: [newCrowdFundingEvent],
-    fromBlock: "earliest",
-    toBlock: "latest",
-  });
+  const crowdFundingList = await getCrowdFundingList(
+    fundMeFactory.chainId,
+    fundMeFactory.address
+  );
 
   return (
     <div>
-      {crowdFundingDetail.map((_) => (
-        <div key={_.transactionHash} className="block border rounded-md p-3">
-          <div>Title: {_.args._title}</div>
-          <div>Contract address: {shortenAddress(_.args._address)}</div>
-          <div>Created at: {getDateAndTime(_.args._createdAt)}</div>
-          <div>Description: {_.args._description}</div>
-        </div>
-      ))}
+      {crowdFundingList
+        .filter((_) => _[0] === address)
+        .map((_) => {
+          const contractAddress = _[0];
+          const createdAt = _[1];
+          const metadata = _[2];
+          return (
+            <div key={contractAddress} className="block border rounded-md p-3">
+              <div>Title: {metadata[0]}</div>
+              <div>Contract address: {shortenAddress(contractAddress)}</div>
+              <div>Created at: {getDateAndTime(createdAt)}</div>
+              <div>Description: {metadata[1]}</div>
+            </div>
+          );
+        })}
     </div>
   );
 };
