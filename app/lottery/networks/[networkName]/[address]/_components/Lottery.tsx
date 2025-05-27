@@ -3,6 +3,7 @@ import { AppChainId } from "@/contracts/settings";
 import { readContract, toEther, ZERO_ADDRESS } from "thirdweb";
 import { shortenAddress } from "thirdweb/utils";
 import { PurchaseTicket } from "./PurchaseTicket";
+import { Mock } from "./Mock";
 
 export const Lottery = async ({
   currentChainId,
@@ -70,6 +71,7 @@ export const Lottery = async ({
             : shortenAddress(winnerAddress)}
         </div>
       </div>
+      <Mock />
 
       {!isSoldOut && <PurchaseTicket ticketPrice={ticketPrice} />}
     </div>

@@ -11,12 +11,29 @@ import { useSendAndConfirmTransaction } from "thirdweb/react";
 import { shortenHex } from "thirdweb/utils";
 import { z } from "zod";
 
-const schema = z.object({
-  funds: z.number({ invalid_type_error: "Enter a valid amount" }).positive(),
-});
-type SchemaType = z.infer<typeof schema>;
+const schema = (priceFeed: bigint, minAmountInUSD: bigint) =>
+  z.object({
+    funds: z
+      .number({ invalid_type_error: "Enter a valid amount" })
+      .positive()
+      .refine(
+        (_) =>
+          (BigInt(toWei(_.toString())) * priceFeed) / toWei("1") >=
+          minAmountInUSD,
+        {
+          message: `Your ETH amount to USD must be at least USD$${minAmountInUSD.toString()}`,
+        }
+      ),
+  });
+type SchemaType = z.infer<ReturnType<typeof schema>>;
 
-export const AddFundsForm = () => {
+export const AddFundsForm = ({
+  minAmountInUSD,
+  priceFeed,
+}: {
+  minAmountInUSD: bigint;
+  priceFeed: bigint;
+}) => {
   const { networkName, address } = useParams();
   const {
     isWalletConnectedToCorrectChain,
@@ -31,7 +48,7 @@ export const AddFundsForm = () => {
     formState: { errors },
   } = useForm<SchemaType>({
     mode: "all",
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema(priceFeed, minAmountInUSD)),
   });
 
   const { mutateAsync, data, isPending, isSuccess, error } =

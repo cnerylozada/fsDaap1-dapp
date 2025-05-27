@@ -37,7 +37,7 @@ export const CreateNewClassroom = ({
   const onSubmit: SubmitHandler<SchemaType> = async (data) => {
     const tx = prepareContractCall({
       contract: getContractByChainAndAddress(appChainId, factoryAddress),
-      method: "function createStorage(string calldata _course) external",
+      method: "function createClassroom(string calldata _course) external",
       params: [data.course],
     });
 

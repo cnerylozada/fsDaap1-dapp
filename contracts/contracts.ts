@@ -1,14 +1,14 @@
 import { AppChainId, appNetworkPathRecord, IAppContact } from "./settings";
 
-export const storageFactoryContracts: IAppContact[] = [
+export const classroomFactoryContracts: IAppContact[] = [
   {
     chainId: AppChainId.optimismSepolia,
-    address: "0xb4bd38b220A43749b87e62f5f6f00D899Ec8a6B9",
+    address: "0x76A4589E0A3f43b9532B517a65479F84a02B4b9a",
     path: appNetworkPathRecord[AppChainId.optimismSepolia],
   },
   {
     chainId: AppChainId.arbitrumSepolia,
-    address: "0x2e49a9AF3d708925584dcfA5624b2e2D57FB8E9d",
+    address: "0x5f5e23a3b3ca95545e9487389Ef88D92a8bfaC47",
     path: appNetworkPathRecord[AppChainId.arbitrumSepolia],
   },
 ];
@@ -16,12 +16,12 @@ export const storageFactoryContracts: IAppContact[] = [
 export const fundMeFactoryContracts: IAppContact[] = [
   {
     chainId: AppChainId.optimismSepolia,
-    address: "0x666d5cbA00903891b328523eF3F153b00bcBE55B",
+    address: "0xdA01A25d0c241cA1CaBC0Cf89438873DeF6e3D2d",
     path: appNetworkPathRecord[AppChainId.optimismSepolia],
   },
   {
     chainId: AppChainId.arbitrumSepolia,
-    address: "0xdEb107b39c48D5345030e72c3895836cBD9eeF7C",
+    address: "0x7f3B3e3cF75730D8b825d360E26E6EEb8afCcF59",
     path: appNetworkPathRecord[AppChainId.arbitrumSepolia],
   },
 ];
@@ -29,7 +29,7 @@ export const fundMeFactoryContracts: IAppContact[] = [
 export const lotteryFactoryContracts: IAppContact[] = [
   {
     chainId: AppChainId.optimismSepolia,
-    address: "0x66970cF63EEB194Afa916Ac2E7C082f2d16fBfE9",
+    address: "0x688bA2501Fa4117a23b938111d3401bF462319ba",
     path: appNetworkPathRecord[AppChainId.optimismSepolia],
   },
 ];
@@ -53,5 +53,15 @@ export const registerUpkeepContracts: {
   {
     chainId: AppChainId.arbitrumSepolia,
     address: "0x51273Eb85B6541Bf0e3800050bd8c2B8226ed38C",
+  },
+];
+
+export const merkleContracts: {
+  chainId: AppChainId;
+  address: string;
+}[] = [
+  {
+    chainId: AppChainId.optimismSepolia,
+    address: "0xF886c7344DA944E18230aBF71B8f5c5DB58183a9",
   },
 ];

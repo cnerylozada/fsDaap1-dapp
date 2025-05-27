@@ -1,6 +1,6 @@
-import { Students } from "@/app/storage/_components/Students";
+import { Students } from "@/app/classroom/_components/Students";
 import { getDateAndTime } from "@/components/utils/utils";
-import { storageFactoryContracts } from "@/contracts/contracts";
+import { classroomFactoryContracts } from "@/contracts/contracts";
 import { getContractByChainAndAddress } from "@/contracts/server";
 import { notFound } from "next/navigation";
 import { readContract } from "thirdweb";
@@ -11,7 +11,7 @@ export default async function Page({
   params: Promise<{ networkName: string; address: string }>;
 }) {
   const { address, networkName } = await params;
-  const isValidNetwork = storageFactoryContracts.find(
+  const isValidNetwork = classroomFactoryContracts.find(
     (_) => _.path === networkName
   );
   if (!isValidNetwork) return notFound();

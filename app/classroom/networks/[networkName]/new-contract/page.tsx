@@ -1,5 +1,5 @@
-import { CreateNewClassroom } from "@/app/storage/_components/CreateNewClassroom";
-import { storageFactoryContracts } from "@/contracts/contracts";
+import { CreateNewClassroom } from "@/app/classroom/_components/CreateNewClassroom";
+import { classroomFactoryContracts } from "@/contracts/contracts";
 import { notFound } from "next/navigation";
 
 export default async function Page({
@@ -8,7 +8,7 @@ export default async function Page({
   params: Promise<{ networkName: string }>;
 }) {
   const { networkName } = await params;
-  const isValidNetwork = storageFactoryContracts.find(
+  const isValidNetwork = classroomFactoryContracts.find(
     (_) => _.path === networkName
   );
   if (!isValidNetwork) return notFound();

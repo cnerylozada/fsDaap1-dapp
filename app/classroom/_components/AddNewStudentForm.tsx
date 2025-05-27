@@ -118,7 +118,7 @@ export const AddNewStudentForm = () => {
               </Link>
             </div>
           )}
-          {error && <div>{error.message}</div>}
+          {error && <div className="text-sm text-red-700">{error.message}</div>}
         </div>
       </div>
     </div>

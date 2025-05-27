@@ -3,7 +3,7 @@ import { shortenAddress } from "thirdweb/utils";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getContractByChainAndAddress } from "@/contracts/server";
-import { storageFactoryContracts } from "@/contracts/contracts";
+import { classroomFactoryContracts } from "@/contracts/contracts";
 
 export default async function Page({
   params,
@@ -11,15 +11,15 @@ export default async function Page({
   params: Promise<{ networkName: string }>;
 }) {
   const { networkName } = await params;
-  const storageFactory = storageFactoryContracts.find(
+  const classroomFactory = classroomFactoryContracts.find(
     (_) => _.path === networkName
   );
-  if (!storageFactory) return notFound();
+  if (!classroomFactory) return notFound();
 
-  const storageContractList = await readContract({
+  const classroomContractList = await readContract({
     contract: getContractByChainAndAddress(
-      storageFactory.chainId,
-      storageFactory.address
+      classroomFactory.chainId,
+      classroomFactory.address
     ),
     method:
       "function contractsCreated() external view returns ((address, string)[] memory)",
@@ -30,7 +30,7 @@ export default async function Page({
     <div className="p-4 space-y-4">
       <div>
         <div className="font-bold">
-          StorageFactory Contract: {shortenAddress(storageFactory.address)}
+          ClassroomFactory Contract: {shortenAddress(classroomFactory.address)}
         </div>
       </div>
 
@@ -46,8 +46,8 @@ export default async function Page({
       <div>
         <div>List of classrooms:</div>
         <div className="space-y-4">
-          {storageContractList.length ? (
-            storageContractList.map(async (_) => {
+          {classroomContractList.length ? (
+            classroomContractList.map(async (_) => {
               return (
                 <Link
                   href={`${networkName}/${_[0]}`}
