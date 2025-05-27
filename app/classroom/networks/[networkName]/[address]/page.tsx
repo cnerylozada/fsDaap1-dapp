@@ -1,4 +1,5 @@
-import { Students } from "@/app/classroom/_components/Students";
+import { AddNewStudentForm } from "@/app/classroom/_components/AddNewStudentForm";
+import { GetStudent } from "@/app/classroom/_components/GetStudent";
 import { getDateAndTime } from "@/components/utils/utils";
 import { classroomFactoryContracts } from "@/contracts/contracts";
 import { getContractByChainAndAddress } from "@/contracts/server";
@@ -27,7 +28,10 @@ export default async function Page({
     <div className="px-4">
       <div>Course: {course} </div>
       <div>Created at: {getDateAndTime(createdAt)} </div>
-      <Students />
+      <div className="space-y-4">
+        <GetStudent />
+        <AddNewStudentForm />
+      </div>
     </div>
   );
 }
