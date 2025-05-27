@@ -1,5 +1,5 @@
 import { getDateAndTime } from "@/components/utils/utils";
-import { IAppContact } from "@/contracts/settings";
+import { IAppContract } from "@/contracts/settings";
 import { getLotteryList } from "@/server/lottery";
 import { toEther } from "thirdweb";
 
@@ -7,7 +7,7 @@ export const Metadata = async ({
   lotteryFactory,
   address,
 }: {
-  lotteryFactory: IAppContact;
+  lotteryFactory: IAppContract;
   address: string;
 }) => {
   const lotteryList = await getLotteryList(

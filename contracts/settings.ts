@@ -37,7 +37,7 @@ export const appScanURLRecord: Record<AppChainId, string> = {
   [AppChainId.sepolia]: "https://sepolia.etherscan.io/tx",
 };
 
-export interface IAppContact {
+export interface IAppContract {
   chainId: AppChainId;
   address: string;
   path: string;

@@ -1,5 +1,5 @@
 import { getDateAndTime } from "@/components/utils/utils";
-import { IAppContact } from "@/contracts/settings";
+import { IAppContract } from "@/contracts/settings";
 import { getCrowdFundingList } from "@/server/crow-funding";
 import { shortenAddress } from "thirdweb/utils";
 
@@ -7,7 +7,7 @@ export const Metadata = async ({
   fundMeFactory,
   address,
 }: {
-  fundMeFactory: IAppContact;
+  fundMeFactory: IAppContract;
   address: string;
 }) => {
   const crowdFundingList = await getCrowdFundingList(

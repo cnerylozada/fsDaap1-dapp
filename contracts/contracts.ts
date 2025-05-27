@@ -1,19 +1,14 @@
-import { AppChainId, appNetworkPathRecord, IAppContact } from "./settings";
+import { AppChainId, appNetworkPathRecord, IAppContract } from "./settings";
 
-export const classroomFactoryContracts: IAppContact[] = [
+export const classroomFactoryContracts: IAppContract[] = [
   {
     chainId: AppChainId.optimismSepolia,
-    address: "0x76A4589E0A3f43b9532B517a65479F84a02B4b9a",
+    address: "0x85002AE4b35B36ffBC085C662916A8522FD31eB7",
     path: appNetworkPathRecord[AppChainId.optimismSepolia],
-  },
-  {
-    chainId: AppChainId.arbitrumSepolia,
-    address: "0x5f5e23a3b3ca95545e9487389Ef88D92a8bfaC47",
-    path: appNetworkPathRecord[AppChainId.arbitrumSepolia],
   },
 ];
 
-export const fundMeFactoryContracts: IAppContact[] = [
+export const fundMeFactoryContracts: IAppContract[] = [
   {
     chainId: AppChainId.optimismSepolia,
     address: "0xdA01A25d0c241cA1CaBC0Cf89438873DeF6e3D2d",
@@ -26,7 +21,7 @@ export const fundMeFactoryContracts: IAppContact[] = [
   },
 ];
 
-export const lotteryFactoryContracts: IAppContact[] = [
+export const lotteryFactoryContracts: IAppContract[] = [
   {
     chainId: AppChainId.optimismSepolia,
     address: "0x688bA2501Fa4117a23b938111d3401bF462319ba",
@@ -34,7 +29,7 @@ export const lotteryFactoryContracts: IAppContact[] = [
   },
 ];
 
-export const basicUniswapV2Contracts: IAppContact[] = [
+export const basicUniswapV2Contracts: IAppContract[] = [
   {
     chainId: AppChainId.sepolia,
     address: "0x38E131d58Cc9D660Efe5251FB9feF895aFE6C6FC",

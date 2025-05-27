@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getContractByChainAndAddress } from "@/contracts/server";
 import { classroomFactoryContracts } from "@/contracts/contracts";
+import { ManageAIChat } from "./_components/ManageAIChat";
 
 export default async function Page({
   params,
@@ -64,6 +65,8 @@ export default async function Page({
           )}
         </div>
       </div>
+
+      <ManageAIChat appContract={classroomFactory} />
     </div>
   );
 }

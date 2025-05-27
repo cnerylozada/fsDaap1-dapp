@@ -1,6 +1,6 @@
-import { AppChainId, appNetworkPathRecord, IAppContact } from "./settings";
+import { AppChainId, appNetworkPathRecord, IAppContract } from "./settings";
 
-export const chainlinkVRFCoordinatorContracts: (IAppContact & {
+export const chainlinkVRFCoordinatorContracts: (IAppContract & {
   keyHash: `0x${string}`;
 })[] = [
   {
