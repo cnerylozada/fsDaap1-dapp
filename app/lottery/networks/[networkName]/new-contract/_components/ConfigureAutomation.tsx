@@ -7,6 +7,7 @@ import { LINKTokenContracts } from "@/contracts/chainlink";
 import { getContractByChainAndAddress } from "@/contracts/client";
 import { LotteryData } from "./LotteryData";
 import Link from "next/link";
+import { AMOUNT_TO_FUND_AUTOMATION } from "./utils";
 
 const RegisterNewUpkeep = ({
   currentChainId,
@@ -75,7 +76,6 @@ export const ConfigureAutomation = ({
   manageCreation: IManageCreation;
   currentChainId: AppChainId;
 }) => {
-  const LINK_TOKENS_TO_SEND = BigInt(0.2 * 10 ** 18);
   const { data, mutate, isPending, isSuccess, isError, error } =
     useSendAndConfirmTransaction();
   const { lotteryContractAddress, metadata } = manageCreation;
@@ -95,7 +95,7 @@ export const ConfigureAutomation = ({
         ),
         method:
           "function transfer(address to, uint256 amount) public returns (bool)",
-        params: [registerUpkeep.address, LINK_TOKENS_TO_SEND],
+        params: [registerUpkeep.address, AMOUNT_TO_FUND_AUTOMATION],
       });
       mutate(sendLINkTx);
     }
@@ -112,7 +112,7 @@ export const ConfigureAutomation = ({
         <RegisterNewUpkeep
           currentChainId={currentChainId}
           lotteryContractAddress={lotteryContractAddress}
-          tokensToSend={LINK_TOKENS_TO_SEND}
+          tokensToSend={AMOUNT_TO_FUND_AUTOMATION}
         />
       ) : (
         <>
@@ -126,7 +126,7 @@ export const ConfigureAutomation = ({
               onClick={onFundAutomation}
               disabled={isPending}
             >
-              Send {toEther(LINK_TOKENS_TO_SEND)} LINK to Automation
+              Send {toEther(AMOUNT_TO_FUND_AUTOMATION)} LINK to Automation
             </button>
           </div>
 

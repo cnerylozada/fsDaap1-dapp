@@ -1,4 +1,3 @@
-"use client";
 import { getContractByChainAndAddress } from "@/contracts/client";
 import { AppChainId } from "@/contracts/settings";
 import {
@@ -17,6 +16,7 @@ import { Dispatch, SetStateAction } from "react";
 import { IManageCreation, Steps } from "./LotteryCreationFlow";
 import { TransactionReceipt } from "thirdweb/transaction";
 import { LotteryData } from "./LotteryData";
+import { AMOUNT_TO_FUND_VRF_COORDINATOR } from "./utils";
 
 const getSubscriptionId = (txReceipt: TransactionReceipt) => {
   const newSubscriptionEvent = prepareEvent({
@@ -41,7 +41,6 @@ const AddFundsToSubscription = ({
   currentChainId: AppChainId;
   setManageCreation: Dispatch<SetStateAction<IManageCreation>>;
 }) => {
-  const AMOUNT_TO_FUND = BigInt(1.4 * 10 ** 18);
   const { mutate, data, isError, error, isSuccess, isPending } =
     useSendAndConfirmTransaction();
 
@@ -65,7 +64,11 @@ const AddFundsToSubscription = ({
         ),
         method:
           "function transferAndCall(address to, uint value, bytes memory data) public returns (bool success)",
-        params: [VRFCoodinator.address, AMOUNT_TO_FUND, encodeSubId],
+        params: [
+          VRFCoodinator.address,
+          AMOUNT_TO_FUND_VRF_COORDINATOR,
+          encodeSubId,
+        ],
       });
       mutate(tx);
     }
@@ -76,7 +79,7 @@ const AddFundsToSubscription = ({
       {!data && (
         <div>
           <div>
-            The randomness process costs some money, so send it to your
+            The randomness process costs some money, so send them to your
             subscription
           </div>
           <button
@@ -84,7 +87,7 @@ const AddFundsToSubscription = ({
             onClick={() => onFundSubscription(subscriptionId)}
             disabled={isPending}
           >
-            Send {toEther(AMOUNT_TO_FUND)} LINK
+            Send {toEther(AMOUNT_TO_FUND_VRF_COORDINATOR)} LINK
           </button>
         </div>
       )}

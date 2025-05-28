@@ -59,7 +59,7 @@ export default async function Page({
             </div>
           </>
         ) : (
-          <div>There are no lottery created yet</div>
+          <div>There are no lotteries created yet</div>
         )}
       </div>
     </div>

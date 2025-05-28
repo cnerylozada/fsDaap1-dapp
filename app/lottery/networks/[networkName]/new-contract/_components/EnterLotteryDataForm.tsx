@@ -34,7 +34,6 @@ export const EnterLotteryDataForm = ({
     <div>
       <div className="mb-2">
         <div>Enter lottery main data</div>
-        <div>You need at least 2 LINK token to complete the whole wizard</div>
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
         <div>

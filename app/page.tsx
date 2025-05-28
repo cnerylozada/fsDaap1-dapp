@@ -125,6 +125,15 @@ export default async function Home() {
             GITHUB: fsDapp1-contracts
           </Link>
         </div>
+        <div>
+          <Link
+            href={"https://github.com/cnerylozada/fsDapp2-contracts"}
+            target="_blank"
+            className="font-bold"
+          >
+            GITHUB: fsDapp2-contracts
+          </Link>
+        </div>
       </div>
       <div className="space-y-4">
         <div>
