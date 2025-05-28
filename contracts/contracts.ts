@@ -11,13 +11,8 @@ export const classroomFactoryContracts: IAppContract[] = [
 export const fundMeFactoryContracts: IAppContract[] = [
   {
     chainId: AppChainId.optimismSepolia,
-    address: "0xdA01A25d0c241cA1CaBC0Cf89438873DeF6e3D2d",
+    address: "0x04B0789b3007Ff4B863f05eb529b08FBe629b981",
     path: appNetworkPathRecord[AppChainId.optimismSepolia],
-  },
-  {
-    chainId: AppChainId.arbitrumSepolia,
-    address: "0x7f3B3e3cF75730D8b825d360E26E6EEb8afCcF59",
-    path: appNetworkPathRecord[AppChainId.arbitrumSepolia],
   },
 ];
 

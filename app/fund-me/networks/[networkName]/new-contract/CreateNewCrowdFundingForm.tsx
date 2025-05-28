@@ -29,6 +29,7 @@ const schema = z.object({
   description: z.string().min(5).max(50),
   minAmountInUsd: z
     .number({ invalid_type_error: "Enter a valid number" })
+    .int()
     .positive(),
 });
 type SchemaType = z.infer<typeof schema>;

@@ -1,8 +1,8 @@
 import { readContract, toEther } from "thirdweb";
-import { AddFundsForm } from "./AddFundsForm";
 import { shortenAddress } from "thirdweb/utils";
 import { AppChainId } from "@/contracts/settings";
 import { getContractByChainAndAddress } from "@/contracts/server";
+import { ManageFunds } from "./ManageFunds";
 
 export const FundMe = async ({
   currentChainId,
@@ -33,7 +33,7 @@ export const FundMe = async ({
       readContract({
         contract: fundMeContract,
         method:
-          "function getFunders() external view returns ((address, uint, uint)[] memory)",
+          "function getFunders() external view returns ((address, uint, uint, bool)[] memory)",
         params: [],
       }),
       readContract({
@@ -57,9 +57,12 @@ export const FundMe = async ({
           {funders.length ? (
             funders.map((_, index) => {
               return (
-                <div key={index} className="flex gap-x-5">
-                  <div>Wallet: {shortenAddress(_[0])}</div>
-                  <div>Amount: {toEther(_[1])} ETH</div>
+                <div key={index}>
+                  <div className="flex gap-x-5">
+                    <div>Wallet: {shortenAddress(_[0])}</div>
+                    <div>Amount: {toEther(_[1])} ETH</div>
+                  </div>
+                  <div className="text-xs">{_[3] && "Withdrawn"}</div>
                 </div>
               );
             })
@@ -69,7 +72,11 @@ export const FundMe = async ({
         </div>
       </div>
 
-      <AddFundsForm minAmountInUSD={minAmountInUSD} priceFeed={priceFeed} />
+      <ManageFunds
+        owner={owner}
+        minAmountInUSD={+minAmountInUSD.toString()}
+        priceFeed={+priceFeed.toString()}
+      />
     </div>
   );
 };

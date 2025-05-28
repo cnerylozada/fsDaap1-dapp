@@ -1,5 +1,4 @@
-"use client";
-import { useCheckWalletAndNetwork } from "@/components/hooks";
+import { getAppChainIdByPath } from "@/components/utils/contracts";
 import { getContractByChainAndAddress } from "@/contracts/client";
 import { appScanURLRecord } from "@/contracts/settings";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,19 +10,14 @@ import { useSendAndConfirmTransaction } from "thirdweb/react";
 import { shortenHex } from "thirdweb/utils";
 import { z } from "zod";
 
-const schema = (priceFeed: bigint, minAmountInUSD: bigint) =>
+const schema = (priceFeed: number, minAmountInUSD: number) =>
   z.object({
     funds: z
       .number({ invalid_type_error: "Enter a valid amount" })
       .positive()
-      .refine(
-        (_) =>
-          (BigInt(toWei(_.toString())) * priceFeed) / toWei("1") >=
-          minAmountInUSD,
-        {
-          message: `Your ETH amount to USD must be at least USD$${minAmountInUSD.toString()}`,
-        }
-      ),
+      .refine((_) => _ * priceFeed >= minAmountInUSD, {
+        message: `Your ETH amount to USD must be at least USD$${minAmountInUSD.toString()}`,
+      }),
   });
 type SchemaType = z.infer<ReturnType<typeof schema>>;
 
@@ -31,16 +25,11 @@ export const AddFundsForm = ({
   minAmountInUSD,
   priceFeed,
 }: {
-  minAmountInUSD: bigint;
-  priceFeed: bigint;
+  minAmountInUSD: number;
+  priceFeed: number;
 }) => {
-  const { networkName, address } = useParams();
-  const {
-    isWalletConnectedToCorrectChain,
-    targetAppNetwork,
-    appChainId,
-    walletAddress,
-  } = useCheckWalletAndNetwork(`${networkName}`);
+  const { address, networkName } = useParams();
+  const appChainId = getAppChainIdByPath(`${networkName}`);
 
   const {
     register,
@@ -67,13 +56,6 @@ export const AddFundsForm = ({
     router.refresh();
   };
 
-  if (!walletAddress || !isWalletConnectedToCorrectChain)
-    return (
-      <div>
-        Connect your wallet to {targetAppNetwork?.name} to perform operations
-      </div>
-    );
-
   return (
     <div>
       <div className="font-bold">AddFundsForm</div>
@@ -97,8 +79,9 @@ export const AddFundsForm = ({
           </div>
           <div>
             <button
-              className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200"
+              className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer disabled:cursor-not-allowed"
               type="submit"
+              disabled={isPending}
             >
               Add funds
             </button>
