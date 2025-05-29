@@ -12,7 +12,7 @@ export const Mock = () => {
       <div>Current network: {activeWalletChain?.name}</div>
       <button
         onClick={async () => {
-          networkSwitcher.open({
+          await networkSwitcher.open({
             client: thirdwebClientSide,
             sections: [
               { label: "To continue change to", chains: [arbitrumSepolia] },

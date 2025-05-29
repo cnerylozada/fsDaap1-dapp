@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { whiteListFactoryContracts } from "@/contracts/contracts";
 import Link from "next/link";
-import { Mock } from "./_components/Mock";
+import { CreationFlow } from "./_components/CreationFlow";
 
 export default async function Page({
   params,
@@ -22,7 +22,8 @@ export default async function Page({
         </Link>
       </div>
       <div className="font-bold">Create new WhiteList</div>
-      <Mock />
+
+      <CreationFlow factoryContract={isValidNetwork} />
     </div>
   );
 }

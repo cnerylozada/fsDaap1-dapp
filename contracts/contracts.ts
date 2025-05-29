@@ -45,7 +45,7 @@ export const registerUpkeepContracts: {
 export const whiteListFactoryContracts: IAppContract[] = [
   {
     chainId: AppChainId.optimismSepolia,
-    address: "0xEEF0aAd54E7b5464065710016F2CCfED2bF5C1fb",
+    address: "0x0f7b015884168821DF2d9fCD8DB1322A4392b1DD",
     path: appNetworkPathRecord[AppChainId.optimismSepolia],
   },
 ];
