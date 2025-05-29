@@ -151,6 +151,11 @@ export default async function Home() {
             Lottery
           </Link>
         </div>
+        <div>
+          <Link href={"/white-list"} className="block p-2 border rounded-md">
+            White list
+          </Link>
+        </div>
       </div>
     </div>
   );
