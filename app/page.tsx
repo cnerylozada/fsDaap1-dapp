@@ -50,7 +50,7 @@ export default async function Home() {
         </div>
         <div>
           <Link href={"/white-list"} className="block p-2 border rounded-md">
-            White list
+            Cross chain White list
           </Link>
         </div>
       </div>

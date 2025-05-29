@@ -22,7 +22,7 @@ export default async function Page({
       whiteListFactory.address
     ),
     method:
-      "function getCreatedLists() external view returns ((address,address,address)[] memory)",
+      "function getCreatedLists() external view returns ((address,address,address,address)[] memory)",
     params: [],
   });
 
@@ -44,6 +44,8 @@ export default async function Page({
               {audiences.map((_) => {
                 const contractAddress = _[0];
                 const database = _[1];
+                const destinyMinter = _[2];
+                const arbitrumSepoliaSourceMinter = _[3];
 
                 return (
                   <Link
@@ -53,6 +55,11 @@ export default async function Page({
                   >
                     <div>NFT OnChain: {shortenAddress(contractAddress)}</div>
                     <div>Users database: {shortenAddress(database)}</div>
+                    <div>Destiny minter: {shortenAddress(destinyMinter)}</div>
+                    <div>
+                      Arbitrum Source minter:{" "}
+                      {shortenAddress(arbitrumSepoliaSourceMinter)}
+                    </div>
                   </Link>
                 );
               })}

@@ -9,10 +9,10 @@ export default async function Page({
   params: Promise<{ networkName: string }>;
 }) {
   const { networkName } = await params;
-  const isValidNetwork = whiteListFactoryContracts.find(
+  const whiteListFactory = whiteListFactoryContracts.find(
     (_) => _.path === networkName
   );
-  if (!isValidNetwork) return notFound();
+  if (!whiteListFactory) return notFound();
 
   return (
     <div className="p-4">
@@ -21,9 +21,9 @@ export default async function Page({
           Go back
         </Link>
       </div>
-      <div className="font-bold">Create new WhiteList</div>
+      <div className="font-bold">Create new Cross chain WhiteList</div>
 
-      <CreationFlow factoryContract={isValidNetwork} />
+      <CreationFlow factoryContract={whiteListFactory} />
     </div>
   );
 }

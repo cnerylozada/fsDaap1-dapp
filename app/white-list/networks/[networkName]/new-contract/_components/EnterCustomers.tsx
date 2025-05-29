@@ -1,15 +1,39 @@
 import { getContractByChainAndAddress } from "@/contracts/client";
-import { appScanURLRecord, IAppContract } from "@/contracts/settings";
-import Link from "next/link";
-import { Hex, prepareContractCall } from "thirdweb";
+import { AppChainId, IAppContract } from "@/contracts/settings";
+import {
+  Hex,
+  parseEventLogs,
+  prepareContractCall,
+  prepareEvent,
+} from "thirdweb";
 import { useSendAndConfirmTransaction } from "thirdweb/react";
-import { shortenHex } from "thirdweb/utils";
 import { getMerkleTree } from "../../[address]/_components/utils";
+import { Dispatch, SetStateAction } from "react";
+import { IManageCreation, Steps } from "./CreationFlow";
+import { TransactionReceipt } from "thirdweb/transaction";
+import { useCheckWalletAndNetwork } from "@/components/hooks";
+import { useParams } from "next/navigation";
+
+const getDestinyMinterContractAddress = (txReceipt: TransactionReceipt) => {
+  const newDestinyMinter = prepareEvent({
+    signature: "event NewDestinyMinter(address indexed destinyMinter)",
+  });
+  const createWhiteListLogs = parseEventLogs({
+    events: [newDestinyMinter],
+    logs: txReceipt.logs,
+  });
+
+  const { args } = createWhiteListLogs[0];
+  const { destinyMinter } = args;
+  return destinyMinter;
+};
 
 export const EnterCustomers = ({
   factoryContract,
+  setManageCreation,
 }: {
   factoryContract: IAppContract;
+  setManageCreation: Dispatch<SetStateAction<IManageCreation>>;
 }) => {
   const { mutate, isPending, isSuccess, isError, error, data } =
     useSendAndConfirmTransaction();
@@ -18,11 +42,11 @@ export const EnterCustomers = ({
     const whiteList: { walletAddress: string; chainId: number }[] = [
       {
         walletAddress: "0x54e8dc4C949eEFAdb78DB60F3feCe3A47FcBFDa1",
-        chainId: 11155420,
+        chainId: AppChainId.optimismSepolia,
       },
       {
         walletAddress: "0x3d4670AE7C08e5812F616E16bCf14b79a25F6F53",
-        chainId: 11155420,
+        chainId: AppChainId.arbitrumSepolia,
       },
     ];
     const formatWhiteList = whiteList.map(
@@ -40,28 +64,58 @@ export const EnterCustomers = ({
     });
     mutate(transaction);
   };
+
+  const { networkName } = useParams();
+  const { isWalletConnectedToCorrectChain, targetAppNetwork } =
+    useCheckWalletAndNetwork(`${networkName}`);
+
+  if (!isWalletConnectedToCorrectChain)
+    return (
+      <div>
+        Connect your wallet to {targetAppNetwork?.name} to perform operations
+      </div>
+    );
   return (
     <div>
-      <div>
-        <button onClick={onSubmit}>Submit</button>
-      </div>
-
-      {isPending && <div>Loading transaction ...</div>}
-      {isSuccess && (
+      {isSuccess && data ? (
         <div>
-          Check your transaction:{" "}
-          <Link
-            href={`${appScanURLRecord[factoryContract.chainId]}/${
-              data.transactionHash
-            }`}
-            target="_blank"
-            className="text-blue-700 text-sm underline"
+          <button
+            className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
+            onClick={() => {
+              const destinyMinter = getDestinyMinterContractAddress(data);
+              setManageCreation((_) => ({
+                ..._,
+                currentStep: Steps.DEPLOY_SOURCE_MINTER,
+                destinyContractAddress: destinyMinter,
+              }));
+            }}
           >
-            Transaction Hash: {shortenHex(data.transactionHash)}
-          </Link>
+            Continue
+          </button>
         </div>
+      ) : (
+        <>
+          <div className="mb-3">
+            First, lets enter the data of your audience. After the final step,
+            only they will be able to claim only 1 NFT stored{" "}
+            {targetAppNetwork?.name}
+          </div>
+
+          <div>
+            <button
+              className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
+              onClick={onSubmit}
+              disabled={isPending}
+            >
+              Submit my audience
+            </button>
+          </div>
+          {isPending && <div>Loading transaction ...</div>}
+          {isError && (
+            <div className="text-sm text-red-700">{error.message}</div>
+          )}
+        </>
       )}
-      {isError && <div>{error.message}</div>}
     </div>
   );
 };
