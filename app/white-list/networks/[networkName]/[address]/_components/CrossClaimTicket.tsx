@@ -1,15 +1,12 @@
 "use client";
-import { useParams } from "next/navigation";
-import { useSendAndConfirmTransaction } from "thirdweb/react";
-import { Hex, prepareContractCall } from "thirdweb";
-import { getContractByChainAndAddress } from "@/contracts/client";
-import { getProofByCustomers } from "./utils";
-import Link from "next/link";
-import { appScanURLRecord } from "@/contracts/settings";
-import { shortenHex } from "thirdweb/utils";
 import { useCheckWalletAndNetwork } from "@/components/hooks";
+import { getContractByChainAndAddress } from "@/contracts/client";
+import { useParams } from "next/navigation";
+import { Hex, prepareContractCall } from "thirdweb";
+import { useSendAndConfirmTransaction } from "thirdweb/react";
+import { getProofByCustomers } from "./utils";
 
-export const ClaimTicket = ({
+export const CrossClaimTicket = ({
   customers,
 }: {
   customers: readonly (readonly [string, bigint])[];
@@ -30,13 +27,13 @@ export const ClaimTicket = ({
     if (walletAddress) {
       const proof = getProofByCustomers(customers, walletAddress, appChainId);
 
-      reset();
       const transaction = prepareContractCall({
         contract: getContractByChainAndAddress(appChainId, `${address}`),
         method:
-          "function claimNFT(bytes32[] memory _proof, (address,uint256) memory _user) external",
+          "function sendMessage(bytes32[] memory _proof, (address,uint256) memory _user) external",
         params: [proof as Hex[], [walletAddress, BigInt(appChainId)]],
       });
+
       mutate(transaction);
     }
   };
@@ -50,6 +47,8 @@ export const ClaimTicket = ({
 
   return (
     <div>
+      <div>CrossClaimTicket</div>
+
       <div>
         <button
           className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
@@ -59,26 +58,6 @@ export const ClaimTicket = ({
           Claim NFT
         </button>
       </div>
-      {isPending && <div>Loading transaction ...</div>}
-      {isSuccess && (
-        <div>
-          <div>Enjoy your new NFT in your wallet!</div>
-          Check your transaction:{" "}
-          <Link
-            href={`${appScanURLRecord[appChainId]}/${data.transactionHash}`}
-            target="_blank"
-            className="text-blue-700 text-sm underline"
-          >
-            Transaction Hash: {shortenHex(data.transactionHash)}
-          </Link>
-        </div>
-      )}
-      {isError && (
-        <div className="text-sm text-red-700">
-          Somethig went wrong. Maybe you already claimed a NFT or you are not
-          able to claim a NFT
-        </div>
-      )}
     </div>
   );
 };

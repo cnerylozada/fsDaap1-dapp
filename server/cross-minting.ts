@@ -17,3 +17,22 @@ export const verify = async (
     params: [proof, [walletAddress, BigInt(activeWalletChain)]],
   });
 };
+
+export const getWhiteListCustomers = async (
+  chainId: AppChainId,
+  contractAddress: string
+) => {
+  const DBAddress = await readContract({
+    contract: getContractByChainAndAddress(chainId, contractAddress),
+    method: "function getDBAddress() external view returns (address)",
+    params: [],
+  });
+
+  const customers = await readContract({
+    contract: getContractByChainAndAddress(chainId, DBAddress),
+    method:
+      "function getUsers() external view returns ((address,uint256)[] memory)",
+    params: [],
+  });
+  return customers;
+};

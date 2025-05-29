@@ -1,5 +1,6 @@
 import { whiteListFactoryContracts } from "@/contracts/contracts";
 import { getContractByChainAndAddress } from "@/contracts/server";
+import { AppChainId, appNetworkPathRecord } from "@/contracts/settings";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { readContract } from "thirdweb";
@@ -48,19 +49,33 @@ export default async function Page({
                 const arbitrumSepoliaSourceMinter = _[3];
 
                 return (
-                  <Link
-                    href={`./${networkName}/${contractAddress}`}
+                  <div
                     key={contractAddress}
-                    className="block border rounded-md p-3"
+                    className="block border rounded-md p-3 space-y-3"
                   >
-                    <div>NFT OnChain: {shortenAddress(contractAddress)}</div>
-                    <div>Users database: {shortenAddress(database)}</div>
-                    <div>Destiny minter: {shortenAddress(destinyMinter)}</div>
-                    <div>
-                      Arbitrum Source minter:{" "}
-                      {shortenAddress(arbitrumSepoliaSourceMinter)}
-                    </div>
-                  </Link>
+                    <Link
+                      href={`./${networkName}/${contractAddress}`}
+                      className="block rounded-md p-3 bg-red-50"
+                    >
+                      <div>Claim your NFT from Op Sepolia!</div>
+                      <div>NFT OnChain: {shortenAddress(contractAddress)}</div>
+                      <div>Users database: {shortenAddress(database)}</div>
+                      <div>Destiny minter: {shortenAddress(destinyMinter)}</div>
+                    </Link>
+
+                    <Link
+                      href={`./${
+                        appNetworkPathRecord[AppChainId.arbitrumSepolia]
+                      }/${arbitrumSepoliaSourceMinter}/cross/${networkName}/${contractAddress}`}
+                      className="block rounded-md p-3 bg-blue-50"
+                    >
+                      <div>Claim your NFT from Arbitrum Sepolia!</div>
+                      <div>
+                        Arbitrum Source minter:{" "}
+                        {shortenAddress(arbitrumSepoliaSourceMinter)}
+                      </div>
+                    </Link>
+                  </div>
                 );
               })}
             </div>

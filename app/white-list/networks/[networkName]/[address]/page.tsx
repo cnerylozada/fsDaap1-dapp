@@ -1,10 +1,10 @@
 import { whiteListFactoryContracts } from "@/contracts/contracts";
 import { notFound } from "next/navigation";
-import { isAddress, readContract } from "thirdweb";
+import { isAddress } from "thirdweb";
 import Link from "next/link";
 import { UsersDB } from "./_components/Users";
-import { getContractByChainAndAddress } from "@/contracts/server";
 import { ClaimTicket } from "./_components/ClaimTicket";
+import { getWhiteListCustomers } from "@/server/cross-minting";
 
 export default async function Page({
   params,
@@ -17,18 +17,10 @@ export default async function Page({
   );
   if (!whiteListFactory || !isAddress(address)) return notFound();
 
-  const DBAddress = await readContract({
-    contract: getContractByChainAndAddress(whiteListFactory.chainId, address),
-    method: "function getDBAddress() external view returns (address)",
-    params: [],
-  });
-
-  const customers = await readContract({
-    contract: getContractByChainAndAddress(whiteListFactory.chainId, DBAddress),
-    method:
-      "function getUsers() external view returns ((address,uint256)[] memory)",
-    params: [],
-  });
+  const customers = await getWhiteListCustomers(
+    whiteListFactory.chainId,
+    address
+  );
 
   return (
     <div className="p-4 space-y-4">
