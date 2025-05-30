@@ -1,4 +1,8 @@
-import { AppChainId, appScanURLRecord } from "@/contracts/settings";
+import {
+  AppChainId,
+  appNetworkPathRecord,
+  appScanURLRecord,
+} from "@/contracts/settings";
 import Link from "next/link";
 import { useSendAndConfirmTransaction } from "thirdweb/react";
 import { shortenHex } from "thirdweb/utils";
@@ -10,6 +14,7 @@ import {
   prepareEvent,
 } from "thirdweb";
 import { TransactionReceipt } from "thirdweb/transaction";
+import { IManageCreation } from "./CrossChainClaimmingFlow";
 
 const getMessageId = (txReceipt: TransactionReceipt) => {
   const messageSentEvent = prepareEvent({
@@ -26,31 +31,38 @@ const getMessageId = (txReceipt: TransactionReceipt) => {
 };
 
 export const ClaimCrossTicket = ({
+  manageCreation,
   walletAddress,
   appChainId,
-  proof,
   sourceMinterContractAddress,
+  destinyAddress,
 }: {
+  manageCreation: IManageCreation;
   walletAddress: string;
   appChainId: AppChainId;
-  proof: string[];
   sourceMinterContractAddress: string;
+  destinyAddress: string;
 }) => {
-  const { mutate, data, isPending, isSuccess, isError, error, reset } =
+  const { mutate, data, isPending, isSuccess, isError, reset } =
     useSendAndConfirmTransaction();
 
   const onCrossClaimNFT = async () => {
     reset();
-    const transaction = prepareContractCall({
-      contract: getContractByChainAndAddress(
-        appChainId,
-        sourceMinterContractAddress
-      ),
-      method:
-        "function sendMessage(bytes32[] memory _proof, (address,uint256) memory _user) external",
-      params: [proof as Hex[], [walletAddress, BigInt(appChainId)]],
-    });
-    mutate(transaction);
+    if (manageCreation.proof) {
+      const transaction = prepareContractCall({
+        contract: getContractByChainAndAddress(
+          appChainId,
+          sourceMinterContractAddress
+        ),
+        method:
+          "function sendMessage(bytes32[] memory _proof, (address,uint256) memory _user) external",
+        params: [
+          manageCreation.proof as Hex[],
+          [walletAddress, BigInt(appChainId)],
+        ],
+      });
+      mutate(transaction);
+    }
   };
   return (
     <div>
@@ -78,7 +90,6 @@ export const ClaimCrossTicket = ({
             </Link>
           </div>
           <div>
-            Check your transaction:{" "}
             <Link
               href={`https://ccip.chain.link/#/side-drawer/msg/${getMessageId(
                 data
@@ -89,9 +100,28 @@ export const ClaimCrossTicket = ({
               Track your cross transaction!
             </Link>
           </div>
+          <div>
+            <div>
+              It will take while before the NFT arrive in your wallet, to import
+              it you will need the NFT address: {destinyAddress} and your
+              tokenId. After the cross-chain transaction is done you can check
+              your tokenId here
+            </div>
+            <Link
+              href={`/white-list/networks/${appNetworkPathRecord[appChainId]}/${destinyAddress}/token-id`}
+              target="_blank"
+            >
+              Check my tokenId
+            </Link>
+          </div>
         </div>
       )}
-      {isError && <div className="text-sm text-red-700">{error.message}</div>}
+      {isError && (
+        <div className="text-sm text-red-700">
+          Somethig went wrong. Maybe you already claimed a NFT or you are not
+          able to claim a NFT
+        </div>
+      )}
     </div>
   );
 };

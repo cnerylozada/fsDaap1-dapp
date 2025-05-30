@@ -16,16 +16,15 @@ import { useParams } from "next/navigation";
 
 const getDestinyMinterContractAddress = (txReceipt: TransactionReceipt) => {
   const newDestinyMinter = prepareEvent({
-    signature: "event NewDestinyMinter(address indexed destinyMinter)",
+    signature:
+      "event NewDestinyMinter(address indexed destinyMinter, bytes32 merkleRoot)",
   });
   const createWhiteListLogs = parseEventLogs({
     events: [newDestinyMinter],
     logs: txReceipt.logs,
   });
-
   const { args } = createWhiteListLogs[0];
-  const { destinyMinter } = args;
-  return destinyMinter;
+  return args;
 };
 
 export const EnterCustomers = ({
@@ -82,11 +81,13 @@ export const EnterCustomers = ({
           <button
             className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
             onClick={() => {
-              const destinyMinter = getDestinyMinterContractAddress(data);
+              const { destinyMinter, merkleRoot } =
+                getDestinyMinterContractAddress(data);
               setManageCreation((_) => ({
                 ..._,
                 currentStep: Steps.DEPLOY_SOURCE_MINTER,
                 destinyContractAddress: destinyMinter,
+                merkleRoot,
               }));
             }}
           >

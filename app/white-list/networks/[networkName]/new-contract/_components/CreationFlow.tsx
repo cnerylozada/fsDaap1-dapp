@@ -15,6 +15,7 @@ export interface IManageCreation {
   currentStep: Steps;
   destinyContractAddress: string | null;
   sourceContractAddress: string | null;
+  merkleRoot: string | null;
 }
 
 export const CreationFlow = ({
@@ -26,6 +27,7 @@ export const CreationFlow = ({
     currentStep: Steps.ENTER_DATA,
     destinyContractAddress: null,
     sourceContractAddress: null,
+    merkleRoot: null,
   });
 
   const activeAccount = useActiveAccount();

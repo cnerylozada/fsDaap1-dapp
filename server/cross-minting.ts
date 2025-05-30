@@ -53,7 +53,6 @@ export const getFormattedSendingFee = async (
     proof,
     walletAddress
   );
-  console.log(`rawFee`, rawFee);
 
   const LINKToken = LINKTokenContracts.find((_) => _.chainId === chainId);
   if (!LINKToken)

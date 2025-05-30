@@ -6,7 +6,12 @@ import {
   useSendAndConfirmTransaction,
 } from "thirdweb/react";
 import { IManageCreation, Steps } from "./CreationFlow";
-import { parseEventLogs, prepareContractCall, prepareEvent } from "thirdweb";
+import {
+  Hex,
+  parseEventLogs,
+  prepareContractCall,
+  prepareEvent,
+} from "thirdweb";
 import { getContractByChainAndAddress } from "@/contracts/client";
 import { sourceMinterFactoryContract } from "@/contracts/contracts";
 import { Dispatch, SetStateAction } from "react";
@@ -16,12 +21,12 @@ const getSourceMinterContractAddress = (txReceipt: TransactionReceipt) => {
   const newSourceMinter = prepareEvent({
     signature: "event NewSourceMinter(address indexed sourceMinterAddress)",
   });
-  const setReceiverAddressLogs = parseEventLogs({
+  const createSourceMinterLogs = parseEventLogs({
     events: [newSourceMinter],
     logs: txReceipt.logs,
   });
 
-  const { args } = setReceiverAddressLogs[0];
+  const { args } = createSourceMinterLogs[0];
   const { sourceMinterAddress } = args;
   return sourceMinterAddress;
 };
@@ -40,15 +45,22 @@ export const DeploySourceMinter = ({
     useSendAndConfirmTransaction();
 
   const onCreateSourceMinter = async () => {
-    if (activeWalletChain && manageCreation.destinyContractAddress) {
+    if (
+      activeWalletChain &&
+      manageCreation.destinyContractAddress &&
+      manageCreation.merkleRoot
+    ) {
       const transaction = prepareContractCall({
         contract: getContractByChainAndAddress(
           sourceMinterFactoryContract.chainId,
           sourceMinterFactoryContract.address
         ),
         method:
-          "function setReceiverAddress(address _opSepoliaReceiverAddress) external",
-        params: [manageCreation.destinyContractAddress],
+          "function createSourceMinter(address _opSepoliaDestinyAddress, bytes32 _merkleRoot) external",
+        params: [
+          manageCreation.destinyContractAddress,
+          manageCreation.merkleRoot as Hex,
+        ],
       });
       mutate(transaction);
     }
@@ -116,7 +128,7 @@ export const DeploySourceMinter = ({
               ) : (
                 <>
                   <div className="mb-3">
-                    Let create a new contract that users from{" "}
+                    Lets create a new contract that users from{" "}
                     {arbitrumSepoliaMedatada?.name} will use
                   </div>
                   <div>

@@ -50,6 +50,9 @@ export const ClaimTicket = ({
 
   return (
     <div>
+      <div className="mb-3 font-bold">
+        If you are on the white-list, then you will be able to claim just 1 NFT!
+      </div>
       <div>
         <button
           className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"

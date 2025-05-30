@@ -3,16 +3,50 @@ import { IToken } from "./models";
 import { getContractByChainAndAddress } from "@/contracts/client";
 import { transfer } from "thirdweb/extensions/erc20";
 import { sendAndConfirmTransaction } from "thirdweb";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { getProofByCustomers } from "../../../../_components/utils";
+import { getFormattedSendingFee } from "@/server/cross-minting";
+import { AppChainId } from "@/contracts/settings";
+import { IManageCreation, Steps } from "./CrossChainClaimmingFlow";
 
 export const PayFee = ({
-  sendingFee,
+  customers,
   sourceMinterAddress,
+  appChainId,
   activeAccount,
+  setManageCreation,
 }: {
-  sendingFee: IToken;
-  sourceMinterAddress: string;
+  customers: readonly (readonly [string, bigint])[];
   activeAccount: Account;
+  appChainId: AppChainId;
+  sourceMinterAddress: string;
+  setManageCreation: Dispatch<SetStateAction<IManageCreation>>;
 }) => {
+  const [sendingFee, setSendingFee] = useState<{
+    token: IToken;
+    proof: string[];
+  }>({
+    token: {
+      rawAmount: BigInt(0),
+      formattedAmount: 0,
+      tokenDecimals: 0,
+      tokenAddress: "",
+      chainId: appChainId,
+    },
+    proof: [""],
+  });
+  const [isPaid, setIsPaid] = useState(false);
+  const getSendingFee = async (walletAddress: string) => {
+    const proof = getProofByCustomers(customers, walletAddress, appChainId);
+    const fee = await getFormattedSendingFee(
+      appChainId,
+      sourceMinterAddress,
+      proof,
+      walletAddress
+    );
+    return { fee, proof };
+  };
+
   const transferTokens = async (
     token: IToken,
     sourceMinterAddress: string,
@@ -29,20 +63,54 @@ export const PayFee = ({
     });
   };
 
+  useEffect(() => {
+    getSendingFee(activeAccount.address).then((_) =>
+      setSendingFee({ token: _.fee, proof: _.proof })
+    );
+  }, []);
+
+  if (!sendingFee.token.formattedAmount) return <div>Loading fee...</div>;
+
   return (
     <div>
-      <div className="mb-3">
-        Performing cross chain transactions cost some money, so please pay the
-        fees
+      <div>
+        Performing cross chain transactions cost some money, so first pay the
+        fees using your LINK tokens
       </div>
-      <button
-        className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
-        onClick={async () => {
-          await transferTokens(sendingFee, sourceMinterAddress, activeAccount);
-        }}
-      >
-        Pay Fee
-      </button>
+      <div className="mb-3">
+        Sending Fee: {sendingFee.token.formattedAmount} LINK
+      </div>
+
+      {isPaid ? (
+        <div>
+          <button
+            className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
+            onClick={() => {
+              setManageCreation((_) => ({
+                ..._,
+                currentStep: Steps.CLAIM_CROSS_TICKET,
+                proof: sendingFee.proof,
+              }));
+            }}
+          >
+            Continue
+          </button>
+        </div>
+      ) : (
+        <button
+          className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
+          onClick={async () => {
+            await transferTokens(
+              sendingFee.token,
+              sourceMinterAddress,
+              activeAccount
+            );
+            setIsPaid(true);
+          }}
+        >
+          Pay Fee {sendingFee.token.formattedAmount} LINK
+        </button>
+      )}
     </div>
   );
 };

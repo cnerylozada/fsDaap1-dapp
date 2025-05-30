@@ -45,13 +45,13 @@ export const registerUpkeepContracts: {
 export const whiteListFactoryContracts: IAppContract[] = [
   {
     chainId: AppChainId.optimismSepolia,
-    address: "0xD3Be5f340bF0A1a0f5Ed96DE7B349E99B9DaDB75",
+    address: "0x8D69cEFf900A8EA4a1Df5C1b1c9DB0e71e0260BA",
     path: appNetworkPathRecord[AppChainId.optimismSepolia],
   },
 ];
 
 export const sourceMinterFactoryContract: IAppContract = {
   chainId: AppChainId.arbitrumSepolia,
-  address: "0x174ffE85335fdb3A79895cb37B58dC17bd51cF46",
+  address: "0xe71AfF81de4451020a21F7FEF4952B5e6A7EB4c0",
   path: appNetworkPathRecord[AppChainId.arbitrumSepolia],
 };

@@ -1,7 +1,7 @@
 "use client";
 import { getContractByChainAndAddress } from "@/contracts/client";
 import { IAppContract } from "@/contracts/settings";
-import { getSessionIdByWallet } from "@/server/classroomFactory";
+import { getSessionIdByWallet } from "@/server/classroom-factory";
 import { createSession } from "@/server/nebula";
 import { useState } from "react";
 import { prepareContractCall, sendAndConfirmTransaction } from "thirdweb";

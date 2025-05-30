@@ -5,8 +5,9 @@ import {
 import { notFound } from "next/navigation";
 import { isAddress } from "thirdweb";
 import Link from "next/link";
-import { CrossChainClaimingFlow } from "./_components/CrossChainClaimingFlow";
+import { CrossChainClaimmingFlow } from "./_components/CrossChainClaimmingFlow";
 import { getWhiteListCustomers } from "@/server/cross-minting";
+import { UsersDB } from "../../../_components/Users";
 
 export default async function Page({
   params,
@@ -48,8 +49,9 @@ export default async function Page({
           Go back to list of audiences
         </Link>
       </div>
+      <UsersDB customers={customers} />
 
-      <CrossChainClaimingFlow customers={customers} />
+      <CrossChainClaimmingFlow customers={customers} />
     </div>
   );
 }

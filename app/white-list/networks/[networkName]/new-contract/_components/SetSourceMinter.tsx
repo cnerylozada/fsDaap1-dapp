@@ -55,8 +55,9 @@ export const SetSourceMinter = ({
   return (
     <div>
       <div className="mb-3">
-        Finally lets connect your already {arbitrumSepoliaMedatada?.name}{" "}
-        contract with another smart contract stored in {opSepoliaMetadata?.name}
+        Finally lets connect your already deployed{" "}
+        {arbitrumSepoliaMedatada?.name} contract with another smart contract
+        stored in {opSepoliaMetadata?.name}
       </div>
 
       <div className="mb-3 font-bold">
