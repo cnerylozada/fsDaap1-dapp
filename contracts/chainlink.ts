@@ -26,7 +26,7 @@ export const chainlinkVRFCoordinatorContracts: (IAppContract & {
   },
 ];
 
-export const LINKTokenContracts: { chainId: AppChainId; address: string }[] = [
+export const LINKTokenContracts: Pick<IAppContract, "chainId" | "address">[] = [
   {
     chainId: AppChainId.sepolia,
     address: "0x779877A7B0D9E8603169DdbD7836e478b4624789",

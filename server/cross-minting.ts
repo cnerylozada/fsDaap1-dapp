@@ -1,22 +1,10 @@
 "use server";
+import { LINKTokenContracts } from "@/contracts/chainlink";
 import { getContractByChainAndAddress } from "@/contracts/server";
 import { AppChainId } from "@/contracts/settings";
-import { Hex, readContract } from "thirdweb";
-
-export const verify = async (
-  appChainId: AppChainId,
-  contractAddress: string,
-  proof: Hex[],
-  walletAddress: string,
-  activeWalletChain: number
-) => {
-  return readContract({
-    contract: getContractByChainAndAddress(appChainId, contractAddress),
-    method:
-      "function verify(bytes32[] memory _proof, (address,uint256) memory _user) external view returns (bool)",
-    params: [proof, [walletAddress, BigInt(activeWalletChain)]],
-  });
-};
+import { Hex, readContract, toTokens } from "thirdweb";
+import { decimals } from "thirdweb/extensions/erc20";
+import { formatNumber } from "thirdweb/utils";
 
 export const getWhiteListCustomers = async (
   chainId: AppChainId,
@@ -35,4 +23,41 @@ export const getWhiteListCustomers = async (
     params: [],
   });
   return customers;
+};
+
+const getFee = async (
+  chainId: AppChainId,
+  contractAddress: string,
+  proof: string[],
+  walletAddress: string
+) => {
+  const fee = await readContract({
+    contract: getContractByChainAndAddress(chainId, contractAddress),
+    method:
+      "function getFee(bytes32[] memory _proof, (address,uint256) memory _user) external view returns (uint)",
+    params: [proof as Hex[], [walletAddress, BigInt(chainId)]],
+  });
+  return fee;
+};
+
+export const getFormattedSendingFee = async (
+  chainId: AppChainId,
+  contractAddress: string,
+  proof: string[],
+  walletAddress: string
+) => {
+  const rawFee = await getFee(
+    chainId,
+    `${contractAddress}`,
+    proof,
+    walletAddress
+  );
+  const LINKToken = LINKTokenContracts.find((_) => _.chainId === chainId);
+  if (!LINKToken) return 0;
+
+  const LINKdecimals = await decimals({
+    contract: getContractByChainAndAddress(chainId, LINKToken.address),
+  });
+  const formatTokens = toTokens(rawFee, LINKdecimals);
+  return formatNumber(+formatTokens, 6);
 };

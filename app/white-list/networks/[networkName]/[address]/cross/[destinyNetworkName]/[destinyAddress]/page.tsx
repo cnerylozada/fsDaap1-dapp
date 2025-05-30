@@ -28,7 +28,8 @@ export default async function Page({
   if (
     sourceMinterFactoryContract.path !== networkName ||
     !isAddress(address) ||
-    !whiteListFactory
+    !whiteListFactory ||
+    !isAddress(destinyAddress)
   )
     return notFound();
 
@@ -36,7 +37,6 @@ export default async function Page({
     whiteListFactory.chainId,
     destinyAddress
   );
-  console.log(`customers`, customers);
 
   return (
     <div className="p-4 space-y-4">
