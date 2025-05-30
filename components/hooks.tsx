@@ -15,6 +15,7 @@ export const useCheckWalletAndNetwork = (pathName: string) => {
     activeWalletChain.id === targetAppNetwork.id;
 
   return {
+    activeAccount,
     appChainId,
     walletAddress: activeAccount?.address,
     isWalletConnectedToCorrectChain,

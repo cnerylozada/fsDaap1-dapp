@@ -1,4 +1,5 @@
 "use server";
+import { IToken } from "@/app/white-list/networks/[networkName]/[address]/cross/[destinyNetworkName]/[destinyAddress]/_components/models";
 import { LINKTokenContracts } from "@/contracts/chainlink";
 import { getContractByChainAndAddress } from "@/contracts/server";
 import { AppChainId } from "@/contracts/settings";
@@ -45,19 +46,35 @@ export const getFormattedSendingFee = async (
   contractAddress: string,
   proof: string[],
   walletAddress: string
-) => {
+): Promise<IToken> => {
   const rawFee = await getFee(
     chainId,
     `${contractAddress}`,
     proof,
     walletAddress
   );
+  console.log(`rawFee`, rawFee);
+
   const LINKToken = LINKTokenContracts.find((_) => _.chainId === chainId);
-  if (!LINKToken) return 0;
+  if (!LINKToken)
+    return {
+      rawAmount: BigInt(0),
+      formattedAmount: 0,
+      tokenDecimals: 0,
+      tokenAddress: "",
+      chainId,
+    };
 
   const LINKdecimals = await decimals({
     contract: getContractByChainAndAddress(chainId, LINKToken.address),
   });
   const formatTokens = toTokens(rawFee, LINKdecimals);
-  return formatNumber(+formatTokens, 6);
+
+  return {
+    rawAmount: rawFee,
+    formattedAmount: formatNumber(+formatTokens, 5),
+    tokenDecimals: LINKdecimals,
+    tokenAddress: LINKToken.address,
+    chainId,
+  };
 };
