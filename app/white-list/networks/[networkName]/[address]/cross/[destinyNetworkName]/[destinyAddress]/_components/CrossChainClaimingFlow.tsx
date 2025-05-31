@@ -16,7 +16,7 @@ export interface IManageCreation {
   merkleRoot: string | null;
 }
 
-export const CrossChainClaimmingFlow = ({
+export const CrossChainClaimingFlow = ({
   customers,
 }: {
   customers: readonly (readonly [string, bigint])[];
@@ -49,7 +49,7 @@ export const CrossChainClaimmingFlow = ({
       <div>CrossClaimTicket</div>
       <div className="mb-3 font-bold">
         If you are on the white-list, then you will be able to claim just 1 NFT!
-        Even if you are on the list, performing cross-chain claimming can cause
+        Even if you are on the list, performing cross-chain claiming can cause
         errors difficult to debug. So please before continue, check if you
         already have this NFT in your wallet.
       </div>

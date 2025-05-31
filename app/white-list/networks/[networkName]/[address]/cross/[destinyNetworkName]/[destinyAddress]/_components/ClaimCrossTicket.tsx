@@ -14,7 +14,7 @@ import {
   prepareEvent,
 } from "thirdweb";
 import { TransactionReceipt } from "thirdweb/transaction";
-import { IManageCreation } from "./CrossChainClaimmingFlow";
+import { IManageCreation } from "./CrossChainClaimingFlow";
 
 const getMessageId = (txReceipt: TransactionReceipt) => {
   const messageSentEvent = prepareEvent({

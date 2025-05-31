@@ -5,7 +5,7 @@ import {
 import { notFound } from "next/navigation";
 import { isAddress } from "thirdweb";
 import Link from "next/link";
-import { CrossChainClaimmingFlow } from "./_components/CrossChainClaimmingFlow";
+import { CrossChainClaimingFlow } from "./_components/CrossChainClaimingFlow";
 import { getWhiteListCustomers } from "@/server/cross-minting";
 import { UsersDB } from "../../../_components/Users";
 
@@ -51,7 +51,7 @@ export default async function Page({
       </div>
       <UsersDB customers={customers} />
 
-      <CrossChainClaimmingFlow customers={customers} />
+      <CrossChainClaimingFlow customers={customers} />
     </div>
   );
 }

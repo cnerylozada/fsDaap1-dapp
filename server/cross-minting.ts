@@ -85,19 +85,23 @@ export const getNFTTokenList = async (
   walletAddress: string
 ) => {
   const contract = getContractByChainAndAddress(chainId, contractAddress);
-  const balance = await balanceOf({
-    owner: walletAddress,
-    contract,
-  });
-
   let tokenList: bigint[] = [];
-  for (let index = 0; index < balance; index++) {
-    const tokenId = await tokenOfOwnerByIndex({
-      contract,
+  try {
+    const balance = await balanceOf({
       owner: walletAddress,
-      index: BigInt(index),
+      contract,
     });
-    tokenList = [...tokenList, tokenId];
+    for (let index = 0; index < balance; index++) {
+      const tokenId = await tokenOfOwnerByIndex({
+        contract,
+        owner: walletAddress,
+        index: BigInt(index),
+      });
+      tokenList = [...tokenList, tokenId];
+    }
+    return tokenList;
+  } catch (error) {
+    console.error(`server function: getNFTTokenList`, error);
+    return tokenList;
   }
-  return tokenList;
 };

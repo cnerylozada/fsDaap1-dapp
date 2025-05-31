@@ -7,7 +7,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { getProofByCustomers } from "../../../../_components/utils";
 import { getFormattedSendingFee } from "@/server/cross-minting";
 import { AppChainId } from "@/contracts/settings";
-import { IManageCreation, Steps } from "./CrossChainClaimmingFlow";
+import { IManageCreation, Steps } from "./CrossChainClaimingFlow";
 
 export const PayFee = ({
   customers,
