@@ -1,8 +1,4 @@
-import {
-  AppChainId,
-  appNetworkPathRecord,
-  appScanURLRecord,
-} from "@/contracts/settings";
+import { AppChainId, appScanURLRecord } from "@/contracts/settings";
 import Link from "next/link";
 import { useSendAndConfirmTransaction } from "thirdweb/react";
 import { shortenHex } from "thirdweb/utils";
@@ -15,6 +11,7 @@ import {
 } from "thirdweb";
 import { TransactionReceipt } from "thirdweb/transaction";
 import { IManageClaiming } from "./CrossChainClaimingFlow";
+import { useParams } from "next/navigation";
 
 const getMessageId = (txReceipt: TransactionReceipt) => {
   const messageSentEvent = prepareEvent({
@@ -34,15 +31,13 @@ export const ClaimCrossTicket = ({
   manageClaiming,
   walletAddress,
   currentChainId,
-  sourceMinterContractAddress,
-  destinyAddress,
 }: {
   manageClaiming: IManageClaiming;
   walletAddress: string;
   currentChainId: AppChainId;
-  sourceMinterContractAddress: string;
-  destinyAddress: string;
 }) => {
+  const { address, destinyNetworkName, destinyAddress } = useParams();
+
   const { mutate, data, isPending, isSuccess, isError, reset } =
     useSendAndConfirmTransaction();
 
@@ -50,10 +45,7 @@ export const ClaimCrossTicket = ({
     reset();
     if (manageClaiming.proof) {
       const transaction = prepareContractCall({
-        contract: getContractByChainAndAddress(
-          currentChainId,
-          sourceMinterContractAddress
-        ),
+        contract: getContractByChainAndAddress(currentChainId, `${address}`),
         method:
           "function sendMessage(bytes32[] memory _proof, (address,uint256) memory _user) external",
         params: [
@@ -66,50 +58,55 @@ export const ClaimCrossTicket = ({
   };
   return (
     <div>
-      <div>
-        <button
-          className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
-          onClick={onCrossClaimNFT}
-          disabled={isPending}
-        >
-          Claim Cross Ticket
-        </button>
-      </div>
+      {!data && (
+        <div>
+          <button
+            className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
+            onClick={onCrossClaimNFT}
+            disabled={isPending}
+          >
+            Claim Cross Ticket
+          </button>
+        </div>
+      )}
 
       {isPending && <div>Loading transaction ...</div>}
       {isSuccess && (
-        <div>
-          <div>
-            Check your transaction:{" "}
-            <Link
-              href={`${appScanURLRecord[currentChainId]}/${data.transactionHash}`}
-              target="_blank"
-              className="text-blue-700 text-sm underline"
-            >
-              Transaction Hash: {shortenHex(data.transactionHash)}
-            </Link>
-          </div>
-          <div>
-            <Link
-              href={`https://ccip.chain.link/#/side-drawer/msg/${getMessageId(
-                data
-              )}`}
-              target="_blank"
-              className="text-blue-700 text-sm underline"
-            >
-              Track your cross transaction!
-            </Link>
-          </div>
+        <div className="space-y-3">
           <div>
             <div>
-              It will take while before the NFT arrive in your wallet, to import
-              it you will need the NFT address: {destinyAddress} and your
+              Check your transaction:{" "}
+              <Link
+                href={`${appScanURLRecord[currentChainId]}/${data.transactionHash}`}
+                target="_blank"
+                className="text-blue-700 text-sm underline"
+              >
+                Transaction Hash: {shortenHex(data.transactionHash)}
+              </Link>
+            </div>
+            <div>
+              <Link
+                href={`https://ccip.chain.link/#/side-drawer/msg/${getMessageId(
+                  data
+                )}`}
+                target="_blank"
+                className="text-blue-700 text-sm underline"
+              >
+                Track your cross transaction!
+              </Link>
+            </div>
+          </div>
+          <div>
+            <div className="font-bold">
+              It will take a while before the NFT arrive in your wallet, to
+              import it you will need the NFT address: {destinyAddress} and your
               tokenId. After the cross-chain transaction is done you can check
               your tokenId here
             </div>
             <Link
-              href={`/white-list/networks/${appNetworkPathRecord[currentChainId]}/${destinyAddress}/token-id`}
+              href={`/white-list/networks/${destinyNetworkName}/${destinyAddress}/token-id`}
               target="_blank"
+              className="text-blue-700 text-sm underline"
             >
               Check my tokenId
             </Link>
@@ -118,7 +115,7 @@ export const ClaimCrossTicket = ({
       )}
       {isError && (
         <div className="text-sm text-red-700">
-          Somethig went wrong. Maybe you already claimed a NFT or you are not
+          Somethig went wrong. Maybe you already claimed the NFT or you are not
           able to claim a NFT
         </div>
       )}

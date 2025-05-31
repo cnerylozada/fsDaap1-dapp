@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { formatNumber } from "thirdweb/utils";
 import { Account } from "thirdweb/wallets";
 
-export const TokensBalance = ({
+export const WalletTokensBalance = ({
   activeAccount,
   currentChainId,
   tokenAddressList,

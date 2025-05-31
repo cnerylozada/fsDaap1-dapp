@@ -20,7 +20,7 @@ export const CrossChainClaimingFlow = ({
 }: {
   customers: readonly (readonly [string, bigint])[];
 }) => {
-  const { networkName, address, destinyAddress } = useParams();
+  const { networkName, address } = useParams();
 
   const {
     isWalletConnectedToCorrectChain,
@@ -67,8 +67,6 @@ export const CrossChainClaimingFlow = ({
           manageClaiming={manageClaiming}
           walletAddress={walletAddress}
           currentChainId={appChainId}
-          sourceMinterContractAddress={`${address}`}
-          destinyAddress={`${destinyAddress}`}
         />
       )}
     </div>

@@ -5,11 +5,11 @@ import { AppChainId } from "@/contracts/settings";
 import { readContract } from "thirdweb";
 
 export const getLotteryList = async (
-  chainId: AppChainId,
+  currentChainId: AppChainId,
   contractAddress: string
 ) => {
   const lotteryList = await readContract({
-    contract: getContractByChainAndAddress(chainId, contractAddress),
+    contract: getContractByChainAndAddress(currentChainId, contractAddress),
     method:
       "function contractsCreated() external view returns ((address, uint, (string, string, address, uint, uint, uint, uint))[] memory)",
     params: [],
