@@ -5,6 +5,7 @@ import { getContractByChainAndAddress } from "@/contracts/server";
 import { AppChainId } from "@/contracts/settings";
 import { Hex, readContract, toTokens } from "thirdweb";
 import { decimals } from "thirdweb/extensions/erc20";
+import { balanceOf, tokenOfOwnerByIndex } from "thirdweb/extensions/erc721";
 import { formatNumber } from "thirdweb/utils";
 
 export const getWhiteListCustomers = async (
@@ -76,4 +77,27 @@ export const getFormattedSendingFee = async (
     tokenAddress: LINKToken.address,
     chainId,
   };
+};
+
+export const getNFTTokenList = async (
+  chainId: AppChainId,
+  contractAddress: string,
+  walletAddress: string
+) => {
+  const contract = getContractByChainAndAddress(chainId, contractAddress);
+  const balance = await balanceOf({
+    owner: walletAddress,
+    contract,
+  });
+
+  let tokenList: bigint[] = [];
+  for (let index = 0; index < balance; index++) {
+    const tokenId = await tokenOfOwnerByIndex({
+      contract,
+      owner: walletAddress,
+      index: BigInt(index),
+    });
+    tokenList = [...tokenList, tokenId];
+  }
+  return tokenList;
 };
