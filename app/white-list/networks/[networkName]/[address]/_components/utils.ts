@@ -22,7 +22,7 @@ export const getMerkleTree = (
 export const getProofByCustomers = (
   customers: readonly (readonly [string, bigint])[],
   walletAddress: string,
-  chainId: number
+  currentChainId: number
 ) => {
   const merkleTree = getMerkleTree(customers);
   const hash = keccak256(
@@ -31,7 +31,7 @@ export const getProofByCustomers = (
         { name: "walletAddress", type: "address" },
         { name: "chainId", type: "uint256" },
       ],
-      [walletAddress, BigInt(chainId)]
+      [walletAddress, BigInt(currentChainId)]
     )
   );
   return merkleTree.getHexProof(hash);

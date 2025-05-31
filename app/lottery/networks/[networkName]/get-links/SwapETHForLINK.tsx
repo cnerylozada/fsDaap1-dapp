@@ -5,7 +5,7 @@ import { LINKTokenContracts } from "@/contracts/chainlink";
 import { getContractByChainAndAddress } from "@/contracts/client";
 import { basicUniswapV2Contracts } from "@/contracts/contracts";
 import { AppChainId, appScanURLRecord } from "@/contracts/settings";
-import { getTokensBalance } from "@/server/tokens";
+import { getTokensBalance } from "@/server/commons";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";

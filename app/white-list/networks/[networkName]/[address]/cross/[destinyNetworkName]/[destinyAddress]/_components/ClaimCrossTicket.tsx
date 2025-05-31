@@ -14,7 +14,7 @@ import {
   prepareEvent,
 } from "thirdweb";
 import { TransactionReceipt } from "thirdweb/transaction";
-import { IManageCreation } from "./CrossChainClaimingFlow";
+import { IManageClaiming } from "./CrossChainClaimingFlow";
 
 const getMessageId = (txReceipt: TransactionReceipt) => {
   const messageSentEvent = prepareEvent({
@@ -31,15 +31,15 @@ const getMessageId = (txReceipt: TransactionReceipt) => {
 };
 
 export const ClaimCrossTicket = ({
-  manageCreation,
+  manageClaiming,
   walletAddress,
-  appChainId,
+  currentChainId,
   sourceMinterContractAddress,
   destinyAddress,
 }: {
-  manageCreation: IManageCreation;
+  manageClaiming: IManageClaiming;
   walletAddress: string;
-  appChainId: AppChainId;
+  currentChainId: AppChainId;
   sourceMinterContractAddress: string;
   destinyAddress: string;
 }) => {
@@ -48,17 +48,17 @@ export const ClaimCrossTicket = ({
 
   const onCrossClaimNFT = async () => {
     reset();
-    if (manageCreation.proof) {
+    if (manageClaiming.proof) {
       const transaction = prepareContractCall({
         contract: getContractByChainAndAddress(
-          appChainId,
+          currentChainId,
           sourceMinterContractAddress
         ),
         method:
           "function sendMessage(bytes32[] memory _proof, (address,uint256) memory _user) external",
         params: [
-          manageCreation.proof as Hex[],
-          [walletAddress, BigInt(appChainId)],
+          manageClaiming.proof as Hex[],
+          [walletAddress, BigInt(currentChainId)],
         ],
       });
       mutate(transaction);
@@ -82,7 +82,7 @@ export const ClaimCrossTicket = ({
           <div>
             Check your transaction:{" "}
             <Link
-              href={`${appScanURLRecord[appChainId]}/${data.transactionHash}`}
+              href={`${appScanURLRecord[currentChainId]}/${data.transactionHash}`}
               target="_blank"
               className="text-blue-700 text-sm underline"
             >
@@ -108,7 +108,7 @@ export const ClaimCrossTicket = ({
               your tokenId here
             </div>
             <Link
-              href={`/white-list/networks/${appNetworkPathRecord[appChainId]}/${destinyAddress}/token-id`}
+              href={`/white-list/networks/${appNetworkPathRecord[currentChainId]}/${destinyAddress}/token-id`}
               target="_blank"
             >
               Check my tokenId

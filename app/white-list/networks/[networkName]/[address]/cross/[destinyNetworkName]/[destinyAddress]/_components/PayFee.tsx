@@ -5,55 +5,69 @@ import { transfer } from "thirdweb/extensions/erc20";
 import { sendAndConfirmTransaction } from "thirdweb";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { getProofByCustomers } from "../../../../_components/utils";
-import { getFormattedSendingFee } from "@/server/cross-minting";
+import { getSendingFee } from "@/server/cross-minting";
 import { AppChainId } from "@/contracts/settings";
-import { IManageCreation, Steps } from "./CrossChainClaimingFlow";
+import { IManageClaiming, Steps } from "./CrossChainClaimingFlow";
+import { LINKTokenContracts } from "@/contracts/chainlink";
+import { TokensBalance } from "./TokensBalance";
+import { useSendAndConfirmTransaction } from "thirdweb/react";
 
 export const PayFee = ({
   customers,
   sourceMinterAddress,
-  appChainId,
+  currentChainId,
   activeAccount,
-  setManageCreation,
+  setManageClaiming,
 }: {
   customers: readonly (readonly [string, bigint])[];
   activeAccount: Account;
-  appChainId: AppChainId;
+  currentChainId: AppChainId;
   sourceMinterAddress: string;
-  setManageCreation: Dispatch<SetStateAction<IManageCreation>>;
+  setManageClaiming: Dispatch<SetStateAction<IManageClaiming>>;
 }) => {
-  const [sendingFee, setSendingFee] = useState<{
+  const LINKToken = LINKTokenContracts.find(
+    (_) => _.chainId === currentChainId
+  );
+  const tokenAddressList = LINKToken ? ["", LINKToken.address] : [""];
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [feeDetails, setFeeDetails] = useState<{
     token: IToken;
     proof: string[];
   }>({
     token: {
       rawAmount: BigInt(0),
       formattedAmount: 0,
-      tokenDecimals: 0,
       tokenAddress: "",
-      chainId: appChainId,
     },
     proof: [""],
   });
-  const [isPaid, setIsPaid] = useState(false);
-  const getSendingFee = async (walletAddress: string) => {
-    const proof = getProofByCustomers(customers, walletAddress, appChainId);
-    const fee = await getFormattedSendingFee(
-      appChainId,
+
+  const getSendingFeeDetails = async (walletAddress: string) => {
+    setIsLoading(true);
+    const proof = getProofByCustomers(customers, walletAddress, currentChainId);
+    const fee = await getSendingFee(
+      currentChainId,
       sourceMinterAddress,
       proof,
       walletAddress
     );
-    return { fee, proof };
+    setFeeDetails({ token: fee, proof });
+    setIsLoading(false);
   };
 
-  const transferTokens = async (
+  const { mutate, isPending, isSuccess, data, isError, error } =
+    useSendAndConfirmTransaction();
+  const onPaySendingFee = async (
     token: IToken,
     sourceMinterAddress: string,
     activeAccount: Account
   ) => {
     const transaction = transfer({
-      contract: getContractByChainAndAddress(token.chainId, token.tokenAddress),
+      contract: getContractByChainAndAddress(
+        currentChainId,
+        token.tokenAddress
+      ),
       amountWei: token.rawAmount,
       to: sourceMinterAddress,
     });
@@ -64,12 +78,8 @@ export const PayFee = ({
   };
 
   useEffect(() => {
-    getSendingFee(activeAccount.address).then((_) =>
-      setSendingFee({ token: _.fee, proof: _.proof })
-    );
-  }, []);
-
-  if (!sendingFee.token.formattedAmount) return <div>Loading fee...</div>;
+    getSendingFeeDetails(activeAccount.address);
+  }, [activeAccount]);
 
   return (
     <div>
@@ -77,39 +87,58 @@ export const PayFee = ({
         Performing cross chain transactions cost some money, so first pay the
         fees using your LINK tokens
       </div>
+
       <div className="mb-3">
-        Sending Fee: {sendingFee.token.formattedAmount} LINK
+        {isLoading ? (
+          <>Loading fee ...</>
+        ) : (
+          <>Sending Fee: {feeDetails.token.formattedAmount} LINK</>
+        )}
       </div>
 
-      {isPaid ? (
-        <div>
-          <button
-            className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
-            onClick={() => {
-              setManageCreation((_) => ({
-                ..._,
-                currentStep: Steps.CLAIM_CROSS_TICKET,
-                proof: sendingFee.proof,
-              }));
-            }}
-          >
-            Continue
-          </button>
-        </div>
-      ) : (
-        <button
-          className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
-          onClick={async () => {
-            await transferTokens(
-              sendingFee.token,
-              sourceMinterAddress,
-              activeAccount
-            );
-            setIsPaid(true);
-          }}
-        >
-          Pay Fee {sendingFee.token.formattedAmount} LINK
-        </button>
+      <TokensBalance
+        activeAccount={activeAccount}
+        currentChainId={currentChainId}
+        tokenAddressList={tokenAddressList}
+      />
+
+      {!isLoading && (
+        <>
+          {!data && (
+            <button
+              className="mt-3 p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
+              onClick={async () => {
+                await onPaySendingFee(
+                  feeDetails.token,
+                  sourceMinterAddress,
+                  activeAccount
+                );
+              }}
+            >
+              Pay Fee {feeDetails.token.formattedAmount} LINK
+            </button>
+          )}
+
+          {isPending && <div>Sending funds...</div>}
+          {isSuccess && data && (
+            <div>
+              <button
+                className="p-2 bg-blue-100 rounded-md"
+                onClick={() => {
+                  setManageClaiming((_) => ({
+                    ..._,
+                    currentStep: Steps.CLAIM_CROSS_TICKET,
+                  }));
+                }}
+              >
+                Continue
+              </button>
+            </div>
+          )}
+          {isError && (
+            <div className="text-sm text-red-700">{error.message}</div>
+          )}
+        </>
       )}
     </div>
   );

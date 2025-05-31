@@ -10,10 +10,9 @@ export enum Steps {
   CLAIM_CROSS_TICKET,
 }
 
-export interface IManageCreation {
+export interface IManageClaiming {
   currentStep: Steps;
   proof: string[] | null;
-  merkleRoot: string | null;
 }
 
 export const CrossChainClaimingFlow = ({
@@ -31,10 +30,9 @@ export const CrossChainClaimingFlow = ({
     activeAccount,
   } = useCheckWalletAndNetwork(`${networkName}`);
 
-  const [manageCreation, setManageCreation] = useState<IManageCreation>({
+  const [manageClaiming, setManageClaiming] = useState<IManageClaiming>({
     currentStep: Steps.PAY_FEE,
     proof: null,
-    merkleRoot: null,
   });
 
   if (!activeAccount || !walletAddress || !isWalletConnectedToCorrectChain)
@@ -49,26 +47,26 @@ export const CrossChainClaimingFlow = ({
       <div>CrossClaimTicket</div>
       <div className="mb-3 font-bold">
         If you are on the white-list, then you will be able to claim just 1 NFT!
-        Even if you are on the list, performing cross-chain claiming can cause
-        errors difficult to debug. So please before continue, check if you
+        Even if you are on the list, performing cross-chain transaction can
+        cause errors difficult to debug. So please before continue, check if you
         already have this NFT in your wallet.
       </div>
 
-      {manageCreation.currentStep === Steps.PAY_FEE && (
+      {manageClaiming.currentStep === Steps.PAY_FEE && (
         <PayFee
           customers={customers}
           activeAccount={activeAccount}
-          appChainId={appChainId}
+          currentChainId={appChainId}
           sourceMinterAddress={`${address}`}
-          setManageCreation={setManageCreation}
+          setManageClaiming={setManageClaiming}
         />
       )}
 
-      {manageCreation.currentStep === Steps.CLAIM_CROSS_TICKET && (
+      {manageClaiming.currentStep === Steps.CLAIM_CROSS_TICKET && (
         <ClaimCrossTicket
-          manageCreation={manageCreation}
+          manageClaiming={manageClaiming}
           walletAddress={walletAddress}
-          appChainId={appChainId}
+          currentChainId={appChainId}
           sourceMinterContractAddress={`${address}`}
           destinyAddress={`${destinyAddress}`}
         />

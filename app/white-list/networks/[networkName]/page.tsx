@@ -1,6 +1,10 @@
 import { whiteListFactoryContracts } from "@/contracts/contracts";
 import { getContractByChainAndAddress } from "@/contracts/server";
-import { AppChainId, appNetworkPathRecord } from "@/contracts/settings";
+import {
+  AppChainId,
+  appNetworkPathRecord,
+  appNetworkRecord,
+} from "@/contracts/settings";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { readContract } from "thirdweb";
@@ -26,6 +30,9 @@ export default async function Page({
       "function getCreatedLists() external view returns ((address,address,address,address)[] memory)",
     params: [],
   });
+
+  const sourceMinterNetwork = appNetworkRecord[AppChainId.arbitrumSepolia];
+  const destinyMinterNetwork = appNetworkRecord[whiteListFactory.chainId];
 
   return (
     <div className="p-4 space-y-4">
@@ -57,7 +64,9 @@ export default async function Page({
                       href={`./${networkName}/${contractAddress}`}
                       className="block rounded-md p-3 bg-red-50"
                     >
-                      <div>Claim your NFT from Op Sepolia!</div>
+                      <div>
+                        Claim your NFT from {destinyMinterNetwork?.name}!
+                      </div>
                       <div>NFT OnChain: {shortenAddress(contractAddress)}</div>
                       <div>Users database: {shortenAddress(database)}</div>
                       <div>Destiny minter: {shortenAddress(destinyMinter)}</div>
@@ -69,9 +78,12 @@ export default async function Page({
                       }/${arbitrumSepoliaSourceMinter}/cross/${networkName}/${contractAddress}`}
                       className="block rounded-md p-3 bg-blue-50"
                     >
-                      <div>Claim your NFT from Arbitrum Sepolia!</div>
                       <div>
-                        Arbitrum Source minter:{" "}
+                        Claim your {destinyMinterNetwork?.name} NFT from{" "}
+                        {sourceMinterNetwork?.name}!
+                      </div>
+                      <div>
+                        Source minter:{" "}
                         {shortenAddress(arbitrumSepoliaSourceMinter)}
                       </div>
                     </Link>

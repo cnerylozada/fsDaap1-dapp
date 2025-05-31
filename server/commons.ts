@@ -5,18 +5,17 @@ import { getWalletBalance } from "thirdweb/wallets";
 
 export const getTokensBalance = async (
   walletAddress: string,
-  chainId: AppChainId,
+  currentChainId: AppChainId,
   tokenAddressList: string[]
 ) => {
-  const tokens = await Promise.all(
+  return Promise.all(
     tokenAddressList.map((_) =>
       getWalletBalance({
         client: thirdwebServerSide,
-        chain: appNetworkRecord[chainId],
+        chain: appNetworkRecord[currentChainId],
         address: walletAddress,
         tokenAddress: _,
       })
     )
   );
-  return tokens;
 };
