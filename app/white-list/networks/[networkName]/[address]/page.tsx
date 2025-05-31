@@ -5,6 +5,7 @@ import Link from "next/link";
 import { UsersDB } from "./_components/Users";
 import { ClaimTicket } from "./_components/ClaimTicket";
 import { getWhiteListCustomers } from "@/server/cross-minting";
+import { MyNFTs } from "./_components/MyNFTs";
 
 export default async function Page({
   params,
@@ -30,6 +31,11 @@ export default async function Page({
         </Link>
       </div>
       <UsersDB customers={customers} />
+
+      <MyNFTs
+        currentChainId={whiteListFactory.chainId}
+        contractAddress={address}
+      />
 
       <ClaimTicket customers={customers} />
     </div>

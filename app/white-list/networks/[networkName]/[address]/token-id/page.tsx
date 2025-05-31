@@ -20,7 +20,7 @@ export default async function Page({
     <div className="p-4 space-y-4">
       <div className="text-right">
         <Link href={`../`} className="text-blue-700">
-          Go back
+          Go back to list of audiences
         </Link>
       </div>
       <GetTokenId />

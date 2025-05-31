@@ -42,13 +42,13 @@ export const GetTokenId = () => {
 
   return (
     <div>
-      <div className="font-bold">Your token list:</div>
+      <div className="font-bold">Your token-id list:</div>
       <div>
         If you already claimed your NFT and want to import it in your wallet
         then you need the NFT address:{" "}
         <span className="text-xs md:text-base">{address}</span>
       </div>
-      <div>You need also a token id:</div>
+      <div className="font-bold">You need also a token id:</div>
       {isLoading && <div>Loading...</div>}
       {!isLoading && tokenList.length ? (
         tokenList.map((_, index) => (
@@ -57,7 +57,9 @@ export const GetTokenId = () => {
           </div>
         ))
       ) : (
-        <div>There are no tokens</div>
+        <div>
+          There is no token-id list or maybe your cross-transaction is progress
+        </div>
       )}
     </div>
   );
