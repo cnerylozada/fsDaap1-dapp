@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { getContractByChainAndAddress } from "@/contracts/client";
 import { IAppContract } from "@/contracts/settings";
