@@ -11,5 +11,7 @@ export const formatToValidPath = (chain: ChainOptions) => {
 
 export const getDateAndTime = (timestamp: bigint) => {
   const date = new Date(+timestamp.toString() * 1000);
-  return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+  return date.toLocaleString("en-US", {
+    timeZoneName: "short",
+  });
 };
