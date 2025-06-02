@@ -15,12 +15,16 @@ import {
 import { toTokens } from "thirdweb";
 import Link from "next/link";
 import { AppChainId } from "@/contracts/settings";
+import { WalletTokensBalance } from "@/components/WalletTokensBalance";
+import { Account } from "thirdweb/wallets";
 
 export const EnterLotteryDataForm = ({
   currentChainId,
+  activeAccount,
   setManageCreation,
 }: {
   currentChainId: AppChainId;
+  activeAccount: Account;
   setManageCreation: Dispatch<SetStateAction<IManageCreation>>;
 }) => {
   const {
@@ -65,6 +69,11 @@ export const EnterLotteryDataForm = ({
           </Link>
         )}
       </div>
+
+      <WalletTokensBalance
+        activeAccount={activeAccount}
+        currentChainId={currentChainId}
+      />
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
         <div>

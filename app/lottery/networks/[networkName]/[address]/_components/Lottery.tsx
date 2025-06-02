@@ -67,7 +67,9 @@ export const Lottery = async ({
         <div>
           <div>Participants:</div>
           {participants.length ? (
-            participants.map((_) => <div key={_}>{shortenAddress(_)}</div>)
+            participants.map((_, index) => (
+              <div key={index}>{shortenAddress(_)}</div>
+            ))
           ) : (
             <div>There are no participants yet</div>
           )}

@@ -7,7 +7,6 @@ import { EnterLotteryDataForm } from "./EnterLotteryDataForm";
 import { ConfigureAutomation } from "./ConfigureAutomation";
 import { ConnectNewLotteryWithSubscription } from "./ConnectNewLotteryWithSubscription";
 import { CreateSubscription } from "./CreateSubscription";
-import { WalletTokensBalance } from "@/components/WalletTokensBalance";
 
 export enum Steps {
   ENTER_DATA,
@@ -69,15 +68,11 @@ export const LotteryCreationFlow = () => {
 
   return (
     <div className="space-y-4">
-      <WalletTokensBalance
-        activeAccount={activeAccount}
-        currentChainId={appChainId}
-      />
-
       {manageCreation.currentStep === Steps.ENTER_DATA && (
         <EnterLotteryDataForm
-          setManageCreation={setManageCreation}
+          activeAccount={activeAccount}
           currentChainId={appChainId}
+          setManageCreation={setManageCreation}
         />
       )}
       {manageCreation.currentStep === Steps.CREATE_SUBSCRIPTION && (
