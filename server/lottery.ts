@@ -11,7 +11,7 @@ export const getLotteryList = async (
   const lotteryList = await readContract({
     contract: getContractByChainAndAddress(currentChainId, contractAddress),
     method:
-      "function contractsCreated() external view returns ((address, uint, (string, string, address, uint, uint, uint, uint))[] memory)",
+      "function getCreatedContractList() external view returns ((address, uint, (string, string, address, uint, uint, uint, uint))[] memory)",
     params: [],
   });
   return lotteryList;

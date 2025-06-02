@@ -1,3 +1,4 @@
+import { sortContractListByCreatedAt } from "@/components/utils/contracts";
 import { getDateAndTime } from "@/components/utils/utils";
 import { lotteryFactoryContracts } from "@/contracts/contracts";
 import { getLotteryList } from "@/server/lottery";
@@ -37,7 +38,7 @@ export default async function Page({
           <>
             <div className="mb-2 font-bold">List of lotteries:</div>
             <div className="space-y-4">
-              {lotteryList.map((_) => {
+              {sortContractListByCreatedAt(lotteryList).map((_) => {
                 const contractAddress = _[0];
                 const createdAt = _[1];
                 const metadata = _[2];

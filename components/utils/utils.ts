@@ -1,3 +1,5 @@
+import { LINKTokenContracts } from "@/contracts/chainlink";
+import { AppChainId } from "@/contracts/settings";
 import { ChainOptions } from "thirdweb/chains";
 
 export const formatToValidPath = (chain: ChainOptions) => {
@@ -15,3 +17,11 @@ export const getDateAndTime = (timestamp: bigint) => {
     timeZoneName: "short",
   });
 };
+
+// export const getTokenAddressList = (currentChainId: AppChainId) => {
+//   const LINKToken = LINKTokenContracts.find(
+//     (_) => _.chainId === currentChainId
+//   );
+//   const tokenAddressList = LINKToken ? ["", LINKToken.address] : [""];
+//   return tokenAddressList;
+// };

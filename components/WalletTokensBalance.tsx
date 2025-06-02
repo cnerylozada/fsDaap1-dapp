@@ -1,3 +1,4 @@
+"use client";
 import { AppChainId } from "@/contracts/settings";
 import { getTokensBalance } from "@/server/commons";
 import { useEffect, useState } from "react";
