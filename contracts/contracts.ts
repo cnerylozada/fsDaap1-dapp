@@ -3,7 +3,7 @@ import { AppChainId, appNetworkPathRecord, IAppContract } from "./settings";
 export const classroomFactoryContracts: IAppContract[] = [
   {
     chainId: AppChainId.optimismSepolia,
-    address: "0x85002AE4b35B36ffBC085C662916A8522FD31eB7",
+    address: "0x493de640Fb67583Becab98000Ac21159EB10f28D",
     path: appNetworkPathRecord[AppChainId.optimismSepolia],
   },
 ];
@@ -11,7 +11,7 @@ export const classroomFactoryContracts: IAppContract[] = [
 export const fundMeFactoryContracts: IAppContract[] = [
   {
     chainId: AppChainId.optimismSepolia,
-    address: "0x04B0789b3007Ff4B863f05eb529b08FBe629b981",
+    address: "0x2F8c2362B74D0b800A39b1fD9A739fdb41E31584",
     path: appNetworkPathRecord[AppChainId.optimismSepolia],
   },
 ];

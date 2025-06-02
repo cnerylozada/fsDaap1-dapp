@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getContractByChainAndAddress } from "@/contracts/server";
 import { classroomFactoryContracts } from "@/contracts/contracts";
 import { ManageAIChat } from "./_components/ManageAIChat";
+import { sortContractListByCreatedAt } from "@/components/utils/contracts";
 
 export default async function Page({
   params,
@@ -23,7 +24,7 @@ export default async function Page({
       classroomFactory.address
     ),
     method:
-      "function contractsCreated() external view returns ((address, string)[] memory)",
+      "function getCreatedContractList() external view returns ((address,uint256,string)[] memory)",
     params: [],
   });
 
@@ -48,18 +49,20 @@ export default async function Page({
         <div>List of classrooms:</div>
         <div className="space-y-4">
           {classroomContractList.length ? (
-            classroomContractList.map(async (_) => {
-              return (
-                <Link
-                  href={`${networkName}/${_[0]}`}
-                  key={_[0]}
-                  className="block border rounded-md p-3"
-                >
-                  <div>Contract Address: {shortenAddress(_[0])}</div>
-                  <div>Course: {_[1]}</div>
-                </Link>
-              );
-            })
+            sortContractListByCreatedAt(classroomContractList).map(
+              async (_) => {
+                return (
+                  <Link
+                    href={`${networkName}/${_[0]}`}
+                    key={_[0]}
+                    className="block border rounded-md p-3"
+                  >
+                    <div>Contract Address: {shortenAddress(_[0])}</div>
+                    <div>Course: {_[2]}</div>
+                  </Link>
+                );
+              }
+            )
           ) : (
             <div>There are no classrooms created yet</div>
           )}

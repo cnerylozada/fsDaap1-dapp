@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { shortenAddress } from "thirdweb/utils";
 import { getCrowdFundingList } from "@/server/crow-funding";
+import { sortContractListByCreatedAt } from "@/components/utils/contracts";
 
 export default async function Page({
   params,
@@ -35,7 +36,7 @@ export default async function Page({
         <div className="mb-2 font-bold">List of crowd-funding:</div>
         <div className="space-y-4">
           {crowdFundingList.length ? (
-            crowdFundingList.map((_) => {
+            sortContractListByCreatedAt(crowdFundingList).map((_) => {
               const contractAddress = _[0];
               const createdAt = _[1];
               const metadata = _[2];

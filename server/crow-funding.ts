@@ -11,7 +11,7 @@ export const getCrowdFundingList = async (
   const crowdFundingList = await readContract({
     contract: getContractByChainAndAddress(currentChainId, contractAddress),
     method:
-      "function contractsCreated() external view returns ((address, uint, (string, string, uint, address, int))[] memory)",
+      "function getCreatedContractList() external view returns ((address, uint, (string, string, uint, address, int))[] memory)",
     params: [],
   });
   return crowdFundingList;

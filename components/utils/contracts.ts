@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AppChainId, appNetworkPathRecord } from "@/contracts/settings";
 
 export function formatToken(value: bigint, decimals: number) {
@@ -13,4 +14,16 @@ export const getAppChainIdByPath = (path: string) => {
     ([, value]) => value === path
   )[0];
   return +entry[0] as AppChainId;
+};
+
+export const sortContractListByCreatedAt = <
+  T extends readonly [string, bigint, any]
+>(
+  list: readonly T[]
+) => {
+  return [...list].sort((currentItem, nextItem) => {
+    if (currentItem[1] > nextItem[1]) return -1;
+    if (currentItem[1] < nextItem[1]) return 1;
+    return 0;
+  });
 };
