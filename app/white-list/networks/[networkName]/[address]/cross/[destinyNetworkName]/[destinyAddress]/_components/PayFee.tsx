@@ -6,7 +6,6 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { getSendingFee } from "@/server/cross-minting";
 import { AppChainId } from "@/contracts/settings";
 import { IManageClaiming, Steps } from "./CrossChainClaimingFlow";
-import { LINKTokenContracts } from "@/contracts/chainlink";
 import { useSendAndConfirmTransaction } from "thirdweb/react";
 import { WalletTokensBalance } from "@/components/WalletTokensBalance";
 import { getProofByCustomers } from "../../../../_components/utils";
@@ -24,11 +23,6 @@ export const PayFee = ({
   sourceMinterAddress: string;
   setManageClaiming: Dispatch<SetStateAction<IManageClaiming>>;
 }) => {
-  const LINKToken = LINKTokenContracts.find(
-    (_) => _.chainId === currentChainId
-  );
-  const tokenAddressList = LINKToken ? ["", LINKToken.address] : [""];
-
   const [isLoading, setIsLoading] = useState(true);
   const [feeDetails, setFeeDetails] = useState<{
     token: IToken;
@@ -92,7 +86,6 @@ export const PayFee = ({
       <WalletTokensBalance
         activeAccount={activeAccount}
         currentChainId={currentChainId}
-        tokenAddressList={tokenAddressList}
       />
 
       {!isLoading && (

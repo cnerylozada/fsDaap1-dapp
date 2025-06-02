@@ -169,7 +169,7 @@ export const ConnectNewLotteryWithSubscription = ({
         <>
           <div>
             <button
-              className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200"
+              className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
               onClick={onCreateLottery}
               disabled={isPending}
             >

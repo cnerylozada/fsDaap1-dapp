@@ -83,7 +83,7 @@ const AddFundsToSubscription = ({
             subscription
           </div>
           <button
-            className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200"
+            className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
             onClick={() => onFundSubscription(subscriptionId)}
             disabled={isPending}
           >
