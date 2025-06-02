@@ -1,5 +1,4 @@
 "use server";
-
 import { getContractByChainAndAddress } from "@/contracts/server";
 import { AppChainId } from "@/contracts/settings";
 import { readContract } from "thirdweb";
@@ -15,4 +14,15 @@ export const getLotteryList = async (
     params: [],
   });
   return lotteryList;
+};
+
+export const getETHToLINKPriceFeed = async (
+  currentChainId: AppChainId,
+  contractAddress: string
+) => {
+  return readContract({
+    contract: getContractByChainAndAddress(currentChainId, contractAddress),
+    method: "function getETHToLINKPriceFeed() external view returns (uint)",
+    params: [],
+  });
 };

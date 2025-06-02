@@ -7,6 +7,7 @@ import { EnterLotteryDataForm } from "./EnterLotteryDataForm";
 import { ConfigureAutomation } from "./ConfigureAutomation";
 import { ConnectNewLotteryWithSubscription } from "./ConnectNewLotteryWithSubscription";
 import { CreateSubscription } from "./CreateSubscription";
+import { WalletTokensBalance } from "@/components/WalletTokensBalance";
 
 export enum Steps {
   ENTER_DATA,
@@ -49,6 +50,7 @@ export const LotteryCreationFlow = () => {
     targetAppNetwork,
     walletAddress,
     appChainId,
+    activeAccount,
   } = useCheckWalletAndNetwork(`${networkName}`);
 
   const [manageCreation, setManageCreation] = useState<IManageCreation>({
@@ -58,7 +60,7 @@ export const LotteryCreationFlow = () => {
     subscriptionId: null,
   });
 
-  if (!walletAddress || !isWalletConnectedToCorrectChain)
+  if (!activeAccount || !walletAddress || !isWalletConnectedToCorrectChain)
     return (
       <div>
         Connect your wallet to {targetAppNetwork?.name} to perform operations
@@ -66,9 +68,17 @@ export const LotteryCreationFlow = () => {
     );
 
   return (
-    <div>
+    <div className="space-y-4">
+      <WalletTokensBalance
+        activeAccount={activeAccount}
+        currentChainId={appChainId}
+      />
+
       {manageCreation.currentStep === Steps.ENTER_DATA && (
-        <EnterLotteryDataForm setManageCreation={setManageCreation} />
+        <EnterLotteryDataForm
+          setManageCreation={setManageCreation}
+          currentChainId={appChainId}
+        />
       )}
       {manageCreation.currentStep === Steps.CREATE_SUBSCRIPTION && (
         <CreateSubscription

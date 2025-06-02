@@ -21,7 +21,7 @@ export default async function Page({
           Go back
         </Link>
       </div>
-      <div className="font-bold">Create new Lottery</div>
+      <div className="mb-2 font-bold">Create new Lottery</div>
       <LotteryCreationFlow />
     </div>
   );

@@ -7,10 +7,20 @@ import {
   LotterySchemaType,
   Steps,
 } from "./LotteryCreationFlow";
+import {
+  AMOUNT_TO_FUND_AUTOMATION,
+  AMOUNT_TO_FUND_VRF_COORDINATOR,
+  CHAINLINK_TOKEN_DECIMALS,
+} from "./utils";
+import { toTokens } from "thirdweb";
+import Link from "next/link";
+import { AppChainId } from "@/contracts/settings";
 
 export const EnterLotteryDataForm = ({
+  currentChainId,
   setManageCreation,
 }: {
+  currentChainId: AppChainId;
   setManageCreation: Dispatch<SetStateAction<IManageCreation>>;
 }) => {
   const {
@@ -31,10 +41,31 @@ export const EnterLotteryDataForm = ({
   };
 
   return (
-    <div>
-      <div className="mb-2">
+    <div className="space-y-3">
+      <div>
         <div>Enter lottery main data</div>
+        <div className="font-bold">
+          You need at least{" "}
+          {toTokens(
+            AMOUNT_TO_FUND_VRF_COORDINATOR + AMOUNT_TO_FUND_AUTOMATION,
+            CHAINLINK_TOKEN_DECIMALS
+          )}{" "}
+          LINK in your wallet to complete the whole flow
+        </div>
+        {currentChainId === AppChainId.sepolia ? (
+          <Link href={"./swapping"} className="text-blue-700 underline">
+            Dont have enough LINK? Change your ETH for LINK
+          </Link>
+        ) : (
+          <Link
+            href={"https://faucets.chain.link/"}
+            className="text-blue-700 underline"
+          >
+            Get ETH or LINK from chainlink
+          </Link>
+        )}
       </div>
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
         <div>
           <div>

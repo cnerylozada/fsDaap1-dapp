@@ -1,19 +1,27 @@
 "use client";
+import { LINKTokenContracts } from "@/contracts/chainlink";
 import { AppChainId } from "@/contracts/settings";
 import { getTokensBalance } from "@/server/commons";
 import { useEffect, useState } from "react";
 import { formatNumber } from "thirdweb/utils";
 import { Account } from "thirdweb/wallets";
 
+const getTokenAddressList = (currentChainId: AppChainId) => {
+  const LINKToken = LINKTokenContracts.find(
+    (_) => _.chainId === currentChainId
+  );
+  const tokenAddressList = LINKToken ? ["", LINKToken.address] : [""];
+  return tokenAddressList;
+};
+
 export const WalletTokensBalance = ({
   activeAccount,
   currentChainId,
-  tokenAddressList,
 }: {
   activeAccount: Account;
   currentChainId: AppChainId;
-  tokenAddressList: string[];
 }) => {
+  const tokenAddressList = getTokenAddressList(currentChainId);
   const [walletTokens, setWalletTokens] = useState<
     { displayValue: string; name: string; symbol: string }[]
   >([]);
