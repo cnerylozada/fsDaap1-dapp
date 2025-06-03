@@ -15,10 +15,11 @@ export default async function Home() {
       <div className="mb-4">
         <ul className="list-disc list-inside">
           <li>
-            I have created 4 littlle projects to show a bit what I can buid in
+            I have created 4 littlle projects to show a bit what I can build in
             blockchain / on-chain AI applications using solidity and hardhat as
             main stack
           </li>
+          <li>My main coding rules: clean code and simplicity</li>
           <li>
             I would glad to reveice your feedback. You can find the smart
             contracts and dapp code in these repositories:
