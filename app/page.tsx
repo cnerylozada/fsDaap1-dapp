@@ -3,7 +3,20 @@ import Link from "next/link";
 export default async function Home() {
   return (
     <div className="p-4">
+      <div className="mb-2">
+        <Link
+          href={"https://www.linkedin.com/in/cristian-nery-027b70180/"}
+          target="_blank"
+          className="underline text-blue-700"
+        >
+          Author: cristh nery web2/web3 developer
+        </Link>
+      </div>
       <div className="mb-4">
+        <div>
+          I would glad to reveice your feedback. You can find the smart
+          contracts and dapp code in these repositories:
+        </div>
         <div>
           <Link
             href={"https://github.com/cnerylozada/fsDaap1-dapp"}

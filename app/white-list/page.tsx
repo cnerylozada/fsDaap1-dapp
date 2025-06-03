@@ -7,6 +7,22 @@ export default function Page() {
     <div className="p-4 space-y-4">
       <div className="font-bold">White-list Factory Contract</div>
       <div>
+        <div className="font-bold">Key features:</div>
+        <ul className="list-disc list-inside">
+          <li>
+            Call functions in a smart contract from another contract in a
+            different network using chainlink-ccip
+          </li>
+          <li>Validate if a object is present in a list using merkle-verify</li>
+          <li>Use of popular openzepellin libraries</li>
+          <li>Custom token-URI in NFT contract</li>
+          <li>Get NFTs from wallet</li>
+          <li>Get events data by on-chain transactions</li>
+          <li>Get tokens balance from wallet</li>
+          <li>Solidity best practices</li>
+        </ul>
+      </div>
+      <div>
         <div className="mb-2">Select your network:</div>
         <div className="space-x-4">
           {whiteListFactoryContracts.map((_) => (
