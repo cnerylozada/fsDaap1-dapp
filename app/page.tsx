@@ -12,6 +12,27 @@ export default async function Home() {
           Author: cristh nery web2/web3 developer
         </Link>
       </div>
+      <div className="mb-2 p-2 border rounded-md">
+        <div>About me:</div>
+        <ul className="list-disc list-inside">
+          <li>
+            I'm a software developer with 6 years of experience. I’ve worked 4
+            years in web2 using Next.js, TypeScript, React, React Native,
+            Tailwind, NestJS, and Node.js as my main stack — and around 2 years
+            in web3, focused on the Ethereum ecosystem using Thirdweb, Hardhat
+            Ignition, Solidity, and on-chain AI agents.
+          </li>
+          <li>I'm comfortable developing for both mobile and web platforms.</li>
+          <li>
+            Regarding AI, I enjoy using n8n and am currently learning LangChain
+            to build more advanced AI agents.
+          </li>
+          <li>
+            In the blockchain space, I’m also exploring Rust and Solana to
+            expand my skills beyond Ethereum.
+          </li>
+        </ul>
+      </div>
       <div className="mb-4">
         <ul className="list-disc list-inside">
           <li>
