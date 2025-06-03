@@ -27,3 +27,5 @@ export const sortContractListByCreatedAt = <
     return 0;
   });
 };
+
+export const CHAINLINK_TOKEN_DECIMALS = 18;

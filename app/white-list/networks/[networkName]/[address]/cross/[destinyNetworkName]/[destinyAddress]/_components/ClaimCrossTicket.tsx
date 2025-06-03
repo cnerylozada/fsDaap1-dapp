@@ -99,9 +99,10 @@ export const ClaimCrossTicket = ({
           <div>
             <div className="font-bold">
               It will take a while before the NFT arrive in your wallet, to
-              import it you will need the NFT address: {destinyAddress} and your
-              tokenId. After the cross-chain transaction is done you can check
-              your tokenId here
+              import it you will need the NFT address:{" "}
+              <span className="text-xs md:text-base">{destinyAddress}</span> and
+              your tokenId. After the cross-chain transaction is done you can
+              check your tokenId here
             </div>
             <Link
               href={`/white-list/networks/${destinyNetworkName}/${destinyAddress}/token-id`}

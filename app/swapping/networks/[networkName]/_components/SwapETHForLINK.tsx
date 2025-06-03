@@ -1,5 +1,6 @@
 "use client";
 import { useCheckWalletAndNetwork } from "@/components/hooks";
+import { CHAINLINK_TOKEN_DECIMALS } from "@/components/utils/contracts";
 import { WalletTokensBalance } from "@/components/WalletTokensBalance";
 import { getContractByChainAndAddress } from "@/contracts/client";
 import { basicUniswapV2Contracts } from "@/contracts/contracts";
@@ -11,7 +12,6 @@ import { useEffect, useState } from "react";
 import { prepareContractCall, toWei } from "thirdweb";
 import { useSendAndConfirmTransaction } from "thirdweb/react";
 import { shortenHex, toEther, toTokens } from "thirdweb/utils";
-import { CHAINLINK_TOKEN_DECIMALS } from "../new-contract/_components/utils";
 
 const MINIMUM_EH_TO_CHANGE = toWei("0.00055");
 

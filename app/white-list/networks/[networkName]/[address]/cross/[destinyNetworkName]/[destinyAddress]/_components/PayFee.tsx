@@ -9,6 +9,7 @@ import { IManageClaiming, Steps } from "./CrossChainClaimingFlow";
 import { useSendAndConfirmTransaction } from "thirdweb/react";
 import { WalletTokensBalance } from "@/components/WalletTokensBalance";
 import { getProofByCustomers } from "../../../../_components/utils";
+import Link from "next/link";
 
 export const PayFee = ({
   customers,
@@ -69,27 +70,37 @@ export const PayFee = ({
   }, [activeAccount]);
 
   return (
-    <div>
+    <div className="space-y-3">
       <div>
-        Performing cross chain transactions cost some money, so first pay the
-        fees using your LINK tokens
+        <div>
+          Performing cross chain transactions cost some money, so first pay the
+          fees using your LINK tokens
+        </div>
+
+        <div>
+          {isLoading ? (
+            <>Loading fee ...</>
+          ) : (
+            <>Sending Fee: {feeDetails.token.formattedAmount} LINK</>
+          )}
+        </div>
       </div>
 
-      <div className="mb-3">
-        {isLoading ? (
-          <>Loading fee ...</>
-        ) : (
-          <>Sending Fee: {feeDetails.token.formattedAmount} LINK</>
-        )}
+      <div>
+        <WalletTokensBalance
+          activeAccount={activeAccount}
+          currentChainId={currentChainId}
+        />
+        <Link
+          href={"https://faucets.chain.link/"}
+          className="text-blue-700 underline"
+        >
+          Dont have enough LINK? Get ETH or LINK from chainlink
+        </Link>
       </div>
-
-      <WalletTokensBalance
-        activeAccount={activeAccount}
-        currentChainId={currentChainId}
-      />
 
       {!isLoading && (
-        <div className="mt-3">
+        <div>
           {!data && (
             <button
               className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"

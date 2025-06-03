@@ -58,7 +58,8 @@ export const GetTokenId = () => {
         ))
       ) : (
         <div>
-          There is no token-id list or maybe your cross-transaction is progress
+          There is no token-id list or maybe your cross-transaction is in
+          progress
         </div>
       )}
     </div>

@@ -10,13 +10,13 @@ import {
 import {
   AMOUNT_TO_FUND_AUTOMATION,
   AMOUNT_TO_FUND_VRF_COORDINATOR,
-  CHAINLINK_TOKEN_DECIMALS,
 } from "./utils";
 import { toTokens } from "thirdweb";
 import Link from "next/link";
-import { AppChainId } from "@/contracts/settings";
+import { AppChainId, appNetworkPathRecord } from "@/contracts/settings";
 import { WalletTokensBalance } from "@/components/WalletTokensBalance";
 import { Account } from "thirdweb/wallets";
+import { CHAINLINK_TOKEN_DECIMALS } from "@/components/utils/contracts";
 
 export const EnterLotteryDataForm = ({
   currentChainId,
@@ -57,7 +57,12 @@ export const EnterLotteryDataForm = ({
           LINK in your wallet to complete the whole flow
         </div>
         {currentChainId === AppChainId.sepolia ? (
-          <Link href={"./swapping"} className="text-blue-700 underline">
+          <Link
+            href={`/swapping/networks/${
+              appNetworkPathRecord[AppChainId.sepolia]
+            }`}
+            className="text-blue-700 underline"
+          >
             Dont have enough LINK? Change your ETH for LINK
           </Link>
         ) : (
@@ -65,7 +70,7 @@ export const EnterLotteryDataForm = ({
             href={"https://faucets.chain.link/"}
             className="text-blue-700 underline"
           >
-            Get ETH or LINK from chainlink
+            Dont have enough LINK? Get ETH or LINK from chainlink
           </Link>
         )}
       </div>

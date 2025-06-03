@@ -1,3 +1,5 @@
+import { sortContractListByCreatedAt } from "@/components/utils/contracts";
+import { getDateAndTime } from "@/components/utils/utils";
 import { whiteListFactoryContracts } from "@/contracts/contracts";
 import { getContractByChainAndAddress } from "@/contracts/server";
 import {
@@ -21,13 +23,13 @@ export default async function Page({
   );
   if (!whiteListFactory) return notFound();
 
-  const audiences = await readContract({
+  const audienceList = await readContract({
     contract: getContractByChainAndAddress(
       whiteListFactory.chainId,
       whiteListFactory.address
     ),
     method:
-      "function getCreatedLists() external view returns ((address,address,address,address)[] memory)",
+      "function getCreatedContractList() external view returns ((address,uint256,(address,address,address))[] memory)",
     params: [],
   });
 
@@ -45,15 +47,17 @@ export default async function Page({
         </Link>
       </div>
       <div>
-        {audiences.length ? (
+        {audienceList.length ? (
           <>
             <div className="mb-2 font-bold">List of audiences:</div>
             <div className="space-y-4">
-              {audiences.map((_) => {
+              {sortContractListByCreatedAt(audienceList).map((_) => {
                 const contractAddress = _[0];
-                const database = _[1];
-                const destinyMinter = _[2];
-                const arbitrumSepoliaSourceMinter = _[3];
+                const createdAt = _[1];
+                const metadata = _[2];
+                const database = metadata[0];
+                const destinyMinter = metadata[1];
+                const arbitrumSepoliaSourceMinter = metadata[2];
 
                 return (
                   <div
@@ -67,6 +71,7 @@ export default async function Page({
                       <div>
                         Claim your NFT from {destinyMinterNetwork?.name}!
                       </div>
+                      <div>Created at: {getDateAndTime(createdAt)}</div>
                       <div>NFT OnChain: {shortenAddress(contractAddress)}</div>
                       <div>Users database: {shortenAddress(database)}</div>
                       <div>Destiny minter: {shortenAddress(destinyMinter)}</div>

@@ -1,4 +1,4 @@
-export const CHAINLINK_TOKEN_DECIMALS = 18;
+import { CHAINLINK_TOKEN_DECIMALS } from "@/components/utils/contracts";
 
 export const AMOUNT_TO_FUND_VRF_COORDINATOR = BigInt(
   2.1 * 10 ** CHAINLINK_TOKEN_DECIMALS
