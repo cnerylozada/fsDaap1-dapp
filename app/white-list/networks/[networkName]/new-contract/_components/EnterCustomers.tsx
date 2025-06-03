@@ -1,7 +1,13 @@
 import { getContractByChainAndAddress } from "@/contracts/client";
-import { AppChainId, IAppContract } from "@/contracts/settings";
+import {
+  AppChainId,
+  appNetworkPathRecord,
+  appNetworkRecord,
+  IAppContract,
+} from "@/contracts/settings";
 import {
   Hex,
+  isAddress,
   parseEventLogs,
   prepareContractCall,
   prepareEvent,
@@ -11,8 +17,9 @@ import { getMerkleTree } from "../../[address]/_components/utils";
 import { Dispatch, SetStateAction } from "react";
 import { IManageCreation, Steps } from "./CreationFlow";
 import { TransactionReceipt } from "thirdweb/transaction";
-import { useCheckWalletAndNetwork } from "@/components/hooks";
-import { useParams } from "next/navigation";
+import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const getDestinyMinterContractAddress = (txReceipt: TransactionReceipt) => {
   const newDestinyMinter = prepareEvent({
@@ -27,6 +34,40 @@ const getDestinyMinterContractAddress = (txReceipt: TransactionReceipt) => {
   return args;
 };
 
+const chains = [
+  {
+    value: AppChainId.optimismSepolia,
+    label: appNetworkPathRecord[AppChainId.optimismSepolia],
+  },
+  {
+    value: AppChainId.arbitrumSepolia,
+    label: appNetworkPathRecord[AppChainId.arbitrumSepolia],
+  },
+];
+const isUnique = (array: string[]) => new Set(array).size === array.length;
+const schema = z.object({
+  audience: z
+    .array(
+      z.object({
+        walletAddress: z.string().refine((_) => isAddress(_), {
+          message: `Enter a valid wallet address`,
+        }),
+        chainId: z.number().int(),
+      })
+    )
+    .min(1, "Enter at least 1 user")
+    .refine(
+      (audience) => {
+        const walletAddresses = audience.map((user) => user.walletAddress);
+        return isUnique(walletAddresses);
+      },
+      {
+        message: "Wallet addresses must be unique",
+      }
+    ),
+});
+type SchemaType = z.infer<typeof schema>;
+
 export const EnterCustomers = ({
   factoryContract,
   setManageCreation,
@@ -34,21 +75,27 @@ export const EnterCustomers = ({
   factoryContract: IAppContract;
   setManageCreation: Dispatch<SetStateAction<IManageCreation>>;
 }) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    control,
+  } = useForm<SchemaType>({
+    mode: "all",
+    resolver: zodResolver(schema),
+    defaultValues: {
+      audience: [{ walletAddress: "0x0", chainId: AppChainId.optimismSepolia }],
+    },
+  });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "audience",
+  });
+
   const { mutate, isPending, isSuccess, isError, error, data } =
     useSendAndConfirmTransaction();
-
-  const onSubmit = () => {
-    const whiteList: { walletAddress: string; chainId: number }[] = [
-      {
-        walletAddress: "0x54e8dc4C949eEFAdb78DB60F3feCe3A47FcBFDa1",
-        chainId: AppChainId.optimismSepolia,
-      },
-      {
-        walletAddress: "0x3d4670AE7C08e5812F616E16bCf14b79a25F6F53",
-        chainId: AppChainId.arbitrumSepolia,
-      },
-    ];
-    const formatWhiteList = whiteList.map(
+  const onSubmit: SubmitHandler<SchemaType> = async (data) => {
+    const formatWhiteList = data.audience.map(
       (_) => [_.walletAddress, BigInt(_.chainId)] as const
     );
     const merkleRoot = getMerkleTree(formatWhiteList).getHexRoot();
@@ -64,59 +111,120 @@ export const EnterCustomers = ({
     mutate(transaction);
   };
 
-  const { networkName } = useParams();
-  const { isWalletConnectedToCorrectChain, targetAppNetwork } =
-    useCheckWalletAndNetwork(`${networkName}`);
-
-  if (!isWalletConnectedToCorrectChain)
-    return (
-      <div>
-        Connect your wallet to {targetAppNetwork?.name} to perform operations
-      </div>
-    );
   return (
     <div>
-      {isSuccess && data ? (
+      <div className="mb-3">
         <div>
+          First, lets enter the data of your audience. Enter their wallet
+          address and the network where they will perform minting After the
+          final step, only they will be able to claim only 1 NFT stored in{" "}
+          {appNetworkRecord[factoryContract.chainId]?.name}
+        </div>
+        <div>Please enter at least 1 row. Wallet addresses must be unique</div>
+      </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+        <div className="text-right">
           <button
-            className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
+            className="p-2 text-sm bg-blue-100 rounded-md cursor-pointer"
+            type="button"
             onClick={() => {
-              const { destinyMinter, merkleRoot } =
-                getDestinyMinterContractAddress(data);
-              setManageCreation((_) => ({
-                ..._,
-                currentStep: Steps.DEPLOY_SOURCE_MINTER,
-                destinyContractAddress: destinyMinter,
-                merkleRoot,
-              }));
+              append({
+                chainId: AppChainId.optimismSepolia,
+                walletAddress: "0x0",
+              });
             }}
           >
-            Continue
+            Add new user
           </button>
         </div>
-      ) : (
-        <>
-          <div className="mb-3">
-            First, lets enter the data of your audience. After the final step,
-            only they will be able to claim only 1 NFT stored{" "}
-            {targetAppNetwork?.name}
-          </div>
-
-          <div>
-            <button
-              className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
-              onClick={onSubmit}
-              disabled={isPending}
-            >
-              Submit my audience
-            </button>
-          </div>
-          {isPending && <div>Loading transaction ...</div>}
-          {isError && (
-            <div className="text-sm text-red-700">{error.message}</div>
+        <div className="space-y-2">
+          {fields.map((field, index) => {
+            return (
+              <div
+                key={field.id}
+                className="p-3 md:flex space-y-3 md:space-y-0 md:space-x-3 border rounded-md"
+              >
+                <div className="md:w-[50%]">
+                  <input
+                    className="border w-full"
+                    placeholder="0x54e8dc4C949eEFAdb78DB60F3feCe3A47FcBFDa1"
+                    {...register(`audience.${index}.walletAddress`)}
+                  />
+                  {!!errors?.audience?.[index]?.walletAddress && (
+                    <div className="mt-1 text-sm text-red-700">
+                      {errors?.audience?.[index]?.walletAddress?.message}
+                    </div>
+                  )}
+                </div>
+                <div className="md:w-[50%] flex space-x-3 justify-between">
+                  <select
+                    className="grow border"
+                    {...register(`audience.${index}.chainId`, {
+                      valueAsNumber: true,
+                    })}
+                  >
+                    {chains.map((_) => (
+                      <option key={_.value} value={_.value}>
+                        {_.label}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    className="py-1 px-2 text-xs bg-blue-100 rounded-md cursor-pointer"
+                    onClick={() => remove(index)}
+                  >
+                    Remove field
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+          {!!errors?.audience && (
+            <div className="mt-1 text-sm text-red-700">
+              {errors?.audience?.message}
+            </div>
           )}
-        </>
-      )}
+        </div>
+        <div>
+          {isSuccess && data ? (
+            <div>
+              <button
+                type="button"
+                className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
+                onClick={() => {
+                  const { destinyMinter, merkleRoot } =
+                    getDestinyMinterContractAddress(data);
+                  setManageCreation((_) => ({
+                    ..._,
+                    currentStep: Steps.DEPLOY_SOURCE_MINTER,
+                    destinyContractAddress: destinyMinter,
+                    merkleRoot,
+                  }));
+                }}
+              >
+                Continue
+              </button>
+            </div>
+          ) : (
+            <>
+              <div>
+                <button
+                  className="p-2 bg-blue-100 rounded-md disabled:bg-gray-200 cursor-pointer"
+                  type="submit"
+                  disabled={!isValid || isPending}
+                >
+                  Submit my audience
+                </button>
+              </div>
+              {isPending && <div>Loading transaction ...</div>}
+              {isError && (
+                <div className="text-sm text-red-700">{error.message}</div>
+              )}
+            </>
+          )}
+        </div>
+      </form>
     </div>
   );
 };

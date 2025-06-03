@@ -14,7 +14,7 @@ export const MyNFTs = ({
   currentChainId: AppChainId;
   contractAddress: string;
 }) => {
-  const { networkName } = useParams();
+  const { networkName, address } = useParams();
   const { isWalletConnectedToCorrectChain, targetAppNetwork, walletAddress } =
     useCheckWalletAndNetwork(`${networkName}`);
 
@@ -51,6 +51,11 @@ export const MyNFTs = ({
 
   return (
     <div>
+      <div>
+        NFT contract address:{" "}
+        <span className="text-xs md:text-base">{address}</span>
+      </div>
+
       <div className="mb-2 font-bold">Did you already claim your NFT?</div>
       <div className="mb-2">
         <button

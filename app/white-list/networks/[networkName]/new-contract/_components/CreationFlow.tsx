@@ -4,7 +4,8 @@ import { EnterCustomers } from "./EnterCustomers";
 import { IAppContract } from "@/contracts/settings";
 import { DeploySourceMinter } from "./DeploySourceMinter";
 import { SetSourceMinter } from "./SetSourceMinter";
-import { useActiveAccount } from "thirdweb/react";
+import { useCheckWalletAndNetwork } from "@/components/hooks";
+import { useParams } from "next/navigation";
 
 export enum Steps {
   ENTER_DATA,
@@ -30,9 +31,20 @@ export const CreationFlow = ({
     merkleRoot: null,
   });
 
-  const activeAccount = useActiveAccount();
-  if (!activeAccount)
-    return <div>Connect your wallet to perform operations</div>;
+  const { networkName } = useParams();
+  const {
+    isWalletConnectedToCorrectChain,
+    targetAppNetwork,
+    walletAddress,
+    activeAccount,
+  } = useCheckWalletAndNetwork(`${networkName}`);
+
+  if (!activeAccount || !walletAddress || !isWalletConnectedToCorrectChain)
+    return (
+      <div>
+        Connect your wallet to {targetAppNetwork?.name} to perform operations
+      </div>
+    );
 
   return (
     <div>

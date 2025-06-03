@@ -69,13 +69,11 @@ export const AddFundsForm = ({
                 placeholder="0.5 ETH"
               />
             </div>
-            <div>
-              {!!errors.funds && (
-                <div className="mt-1 text-sm text-red-700">
-                  {errors.funds.message}
-                </div>
-              )}
-            </div>
+            {!!errors.funds && (
+              <div className="mt-1 text-sm text-red-700">
+                {errors.funds.message}
+              </div>
+            )}
           </div>
           <div>
             <button
