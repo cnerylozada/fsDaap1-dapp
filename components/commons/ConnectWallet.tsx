@@ -2,11 +2,11 @@
 import { appNetworkRecord } from "@/contracts/settings";
 import { thirdwebClientSide } from "@/lib/thirdweb/client";
 import { ConnectButton } from "thirdweb/react";
-import { createWallet, inAppWallet } from "thirdweb/wallets";
+import { createWallet } from "thirdweb/wallets";
 
 export const ConnectWallet = () => {
   const wallets = [
-    inAppWallet({ auth: { options: ["google"] } }),
+    // inAppWallet({ auth: { options: ["google"] } }),
     createWallet("io.metamask"),
   ];
 
